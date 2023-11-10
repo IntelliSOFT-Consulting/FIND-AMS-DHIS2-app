@@ -1,6 +1,19 @@
-import {Table} from "antd";
+import {Button, Table} from "antd";
+import {CardItem} from "../../../shared/components/CardItem";
+import {createUseStyles} from "react-jss";
+
+const useStyles = createUseStyles({
+    header: {
+        display: "flex",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "space-between"
+    }
+})
 
 export const AMSTableComponent = () => {
+    const styles = useStyles()
+
     const dataSource = [
         {
             key: '1',
@@ -33,10 +46,16 @@ export const AMSTableComponent = () => {
             key: 'address',
         },
     ];
-    return (
-        <div>
-            <p className="">hello</p>
-            <Table dataSource={dataSource} columns={columns} />
+
+    const header = () => (
+        <div className={styles.header}>
+            <p>AMS CHART REVIEW</p>
+            <Button type="primary">Add New</Button>
         </div>
+    )
+    return (
+        <CardItem title={header()}>
+            <Table dataSource={dataSource} columns={columns}/>
+        </CardItem>
     )
 }
