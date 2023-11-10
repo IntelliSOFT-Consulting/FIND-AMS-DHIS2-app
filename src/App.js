@@ -4,8 +4,8 @@ import i18n from '@dhis2/d2-i18n'
 import classes from './App.module.css'
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { ConfigProvider } from "antd";
-import NavigationLayout from "./layouts/navigationLayout";
-import Home from "./pages/Home";
+import NavigationLayout from "./shared/layouts/navigationLayout";
+import Home from "./shared/pages/Home";
 
 const query = {
     me: {

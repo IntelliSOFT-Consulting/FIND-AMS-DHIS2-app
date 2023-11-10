@@ -8,7 +8,7 @@ import {
 import { Menu, Layout } from "antd";
 import { createUseStyles } from "react-jss";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import routes from "../routes";
+import routes from "../../routes";
 
 const { Content, Sider } = Layout;
 

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ams.iml" filepath="$PROJECT_DIR$/.idea/ams.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/FIND-AMS-DHIS2-app.iml" filepath="$PROJECT_DIR$/.idea/FIND-AMS-DHIS2-app.iml" />
     </modules>
   </component>
 </project>
