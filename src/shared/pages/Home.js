@@ -78,7 +78,7 @@ export default function Home() {
     const links = [
         {
             title: "AMS Chart Review",
-            path: `/chart-review`,
+            path: `/charts`,
             icon: ArrowTopRightOnSquareIcon,
         },
         {
