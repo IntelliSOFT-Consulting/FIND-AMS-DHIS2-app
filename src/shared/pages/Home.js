@@ -1,7 +1,6 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { ChartPieIcon, ArrowTopRightOnSquareIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
 
 const styles = createUseStyles({
     container: {
