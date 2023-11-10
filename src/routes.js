@@ -1,8 +1,8 @@
-import {ChartReview} from "./modules/Charts/views/ChartReview";
+import {ChartReview} from "./modules/Charts/views/ChartReview.js";
 
 const routes = [
     {
-        path: "/charts/review",
+        path: "/chart-review",
         component: ChartReview
     }
 ];
