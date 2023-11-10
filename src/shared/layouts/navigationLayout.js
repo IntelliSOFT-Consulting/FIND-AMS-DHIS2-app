@@ -4,6 +4,7 @@ import {
     PieChartOutlined as ChartPieIcon,
     ArrowDownOutlined as ArrowDownRightIcon,
     SettingOutlined as Cog6ToothIcon,
+    PieChartOutlined as Pie
 } from "@ant-design/icons";
 import { Menu, Layout } from "antd";
 import { createUseStyles } from "react-jss";
@@ -52,6 +53,7 @@ function getItem(label, key, icon, children, type) {
 }
 const items = [
     getItem("Dashboard", "/", <HomeIcon />, null, "item"),
+    getItem("AMS Chart Review", "/chart-review", <Pie />, null, "item"),
     getItem("Surgeries", "/surgeries", <ChartPieIcon />, null, "item"),
 
     getItem("Reports", "/reports", <ArrowDownRightIcon />, null, "item"),
