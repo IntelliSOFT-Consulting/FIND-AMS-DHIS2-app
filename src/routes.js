@@ -1,9 +1,10 @@
-import {ChartReview} from "./modules/Charts/views/ChartReview.jsx";
+import {AMSChartReview} from "./modules/Charts/views/AMSChartReview";
+
 
 const routes = [
     {
-        path: "/chart-review",
-        component: ChartReview
+        path: "/charts/*",
+        component: AMSChartReview
     }
 ];
 
