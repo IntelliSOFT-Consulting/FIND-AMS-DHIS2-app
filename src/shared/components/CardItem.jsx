@@ -8,7 +8,7 @@ const useStyles = createUseStyles({
         backgroundColor: "#2C6693",
         color: "white",
         margin: 0,
-        padding: "4px 1.5rem",
+        padding: "2px 1.5rem",
         marginBottom: "20px",
         fontSize: "14px",
         width: "100%",
