@@ -1,4 +1,4 @@
-import {ChartReview} from "./modules/Charts/views/ChartReview.js";
+import {ChartReview} from "./modules/Charts/views/ChartReview.jsx";
 
 const routes = [
     {
