@@ -6,17 +6,27 @@ const useStyles = createUseStyles({
     header: {
         display: "flex",
         width: "100%",
-        alignItems: "center",
-        justifyContent: "space-between",
         fontWeight: "400",
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    headerText: {
+        fontSize: '10px'
     },
     newButton: {
-        padding: "0.7rem 3.5rem",
+        padding: ".2rem 2rem",
         borderRadius: "6px",
         color: "#1d5288",
         fontWeight: "600",
         border: "0",
         cursor: "pointer",
+        fontSize: "8px",
+        "@media (min-width: 768px)": {
+            alignSelf: 'center',
+            padding: "0.7rem 3.5rem",
+            fontSize: "12px",
+
+        }
     },
     searchContainer: {
         display: "flex",
@@ -41,8 +51,8 @@ const useStyles = createUseStyles({
     inputWrapper: {
         position: "relative",
         width: "85%",
-        "@media (min-width: 768px)": {
-
+        "@media (min-width: 1024px)": {
+            width: "80%"
         }
     },
     inputs: {
@@ -67,7 +77,6 @@ const useStyles = createUseStyles({
         fontSize: "10px",
         "@media (min-width: 768px)": {
             width: "6rem",
-            letterSpacing: ".1rem",
             fontSize: "14px"
         }
     }
@@ -122,7 +131,7 @@ export const AMSTableComponent = () => {
 
     const header = () => (
         <div className={styles.header}>
-            <p>AMS CHART REVIEW</p>
+            <p className={styles.headerText}>AMS CHART REVIEW</p>
             <button className={styles.newButton}>ADD NEW</button>
         </div>
     )

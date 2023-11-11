@@ -8,10 +8,13 @@ const useStyles = createUseStyles({
         backgroundColor: "#2C6693",
         color: "white",
         margin: 0,
-        padding: "2px 1.5rem",
+        padding: "2px .5rem",
         marginBottom: "20px",
         fontSize: "14px",
         width: "100%",
+        "@media (min-width: 768px)": {
+            padding: "2px 1.5rem",
+        }
     },
     card: {
         height: "fit-content !important",
