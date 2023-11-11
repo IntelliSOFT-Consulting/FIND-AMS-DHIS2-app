@@ -32,7 +32,7 @@ const useStyles = createUseStyles({
     },
     cardBody: {
         padding: "20px",
-        width: "100%"
+        width: "100%",
     },
     footer: {
         padding: "10px 1.5rem",

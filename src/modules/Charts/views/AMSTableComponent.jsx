@@ -24,18 +24,52 @@ const useStyles = createUseStyles({
         width: "100%",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "1rem 2rem",
+        padding: "1rem 0rem",
         gap: "2rem",
-        "@media (min-width: 768px)": {
+        "@media (min-width: 1024px)": {
             flexDirection: "row",
             gap: "10rem",
-        }
+        },
+        marginBottom: "2rem"
     },
     addLink: {
         textDecoration: "underline",
         color: "#1677FF",
         fontStyle: "italic",
         cursor: "pointer"
+    },
+    inputWrapper: {
+        position: "relative",
+        width: "85%",
+        "@media (min-width: 768px)": {
+
+        }
+    },
+    inputs: {
+        borderBottomRightRadius: "0px !important",
+        borderTopRightRadius: "0px !important",
+        width: "90%",
+        borderRight: "0px"
+    },
+    inputButton: {
+        position: "absolute",
+        top: "50%",
+        transform: "translateY(-50%)",
+        height: "100%",
+        width: "4rem",
+        borderLeft: "0px",
+        borderTopLeftRadius: "0px",
+        borderBottomLeftRadius: "0px",
+        backgroundColor: "#EDF7FF",
+        color: "#1677FF",
+        textTransform: "uppercase",
+        fontWeight: "600",
+        fontSize: "10px",
+        "@media (min-width: 768px)": {
+            width: "6rem",
+            letterSpacing: ".1rem",
+            fontSize: "14px"
+        }
     }
 
 })
@@ -99,23 +133,33 @@ export const AMSTableComponent = () => {
             <div className={styles.searchContainer}>
                 <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
                     <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
-                    <DatePicker
-                        size="large"
-                        id="date"
-                        placeholder="Select date"
-                        label="Filter by Date"
-                        enterButton="Go"
-                    />
+                    <div className={styles.inputWrapper}>
+                        <DatePicker
+                            className={styles.inputs}
+                            size="large"
+                            id="date"
+                            placeholder="Select date"
+                            label="Filter by Date"
+                            enterButton="Go"
+                        />
+                        <Button className={styles.inputButton}>Go</Button>
+                    </div>
+
                 </div>
                 <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
                     <label style={{cursor: "pointer"}} htmlFor="date">Search Specific Records</label>
-                    <Input.Search
-                        size="large"
-                        id="date"
-                        placeholder="Search using IP/OP NO."
-                        label="Filter by Date"
-                        enterButton="Search"
-                    />
+                    <div className={styles.inputWrapper}>
+                        <Input
+                            className={styles.inputs}
+                            size="large"
+                            id="date"
+                            placeholder="Search using IP/OP NO."
+                            label="Filter by Date"
+                            enterButton="Search"
+                        />
+                        <Button className={styles.inputButton}>SEARCH</Button>
+                    </div>
+
                 </div>
             </div>
             <Table
