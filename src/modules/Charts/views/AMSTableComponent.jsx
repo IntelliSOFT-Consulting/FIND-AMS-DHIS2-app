@@ -11,7 +11,10 @@ const useStyles = createUseStyles({
         justifyContent: "space-between",
     },
     headerText: {
-        fontSize: '10px'
+        fontSize: '10px',
+        "@media (min-width: 768px)": {
+            fontSize: "14px"
+        }
     },
     newButton: {
         padding: ".2rem 2rem",
