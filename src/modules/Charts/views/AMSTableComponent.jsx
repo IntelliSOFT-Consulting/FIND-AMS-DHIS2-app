@@ -137,7 +137,7 @@ export const AMSTableComponent = () => {
         <div className={styles.header}>
             <p className={styles.headerText}>AMS CHART REVIEW</p>
             <button
-                onClick={()=>navigate("/charts/review-form")}
+                onClick={()=>navigate("/charts/members-present-form")}
                 className={styles.newButton}>ADD NEW</button>
         </div>
     )

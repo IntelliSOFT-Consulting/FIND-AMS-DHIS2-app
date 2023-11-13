@@ -7,7 +7,7 @@ export const chartRoutes = [
         component: AMSTableComponent
     },
     {
-        path: "/review-form",
+        path: "/members-present-form",
         component: MembersForm
     },
 
