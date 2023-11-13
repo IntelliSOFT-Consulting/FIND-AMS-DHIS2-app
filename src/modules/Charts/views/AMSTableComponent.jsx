@@ -1,39 +1,11 @@
 import {Button, DatePicker, Input, Space, Table} from "antd";
-import {CardItem} from "../../../shared/components/CardItem";
+import {CardItem} from "../../../shared/components/cards/CardItem";
 import {createUseStyles} from "react-jss";
 import {useAxios} from "../../../shared/hooks/useAxios";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
 const useStyles = createUseStyles({
-    header: {
-        display: "flex",
-        width: "100%",
-        fontWeight: "400",
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
-    headerText: {
-        fontSize: '10px',
-        "@media (min-width: 768px)": {
-            fontSize: "14px"
-        }
-    },
-    newButton: {
-        padding: ".2rem 2rem",
-        borderRadius: "6px",
-        color: "#1d5288",
-        fontWeight: "600",
-        border: "0",
-        cursor: "pointer",
-        fontSize: "8px",
-        "@media (min-width: 768px)": {
-            alignSelf: 'center',
-            padding: "0.7rem 3.5rem",
-            fontSize: "12px",
-
-        }
-    },
     searchContainer: {
         display: "flex",
         flexDirection: "column",
@@ -134,11 +106,12 @@ export const AMSTableComponent = () => {
     ];
 
     const header = () => (
-        <div className={styles.header}>
-            <p className={styles.headerText}>AMS CHART REVIEW</p>
+        <div className="card-header">
+            <p className="card-header-text">AMS CHART REVIEW</p>
             <button
-                onClick={()=>navigate("/charts/members-present-form")}
-                className={styles.newButton}>ADD NEW</button>
+                onClick={() => navigate("/charts/members-present-form")}
+                className="primary-btn">ADD NEW
+            </button>
         </div>
     )
 

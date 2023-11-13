@@ -5,6 +5,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {ConfigProvider} from "antd";
 import NavigationLayout from "./shared/layouts/navigationLayout";
 import Home from "./shared/pages/Home";
+import "./styles/index.css"
 
 const query = {
     me: {
