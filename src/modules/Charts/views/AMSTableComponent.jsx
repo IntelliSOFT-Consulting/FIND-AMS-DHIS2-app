@@ -1,6 +1,8 @@
 import {Button, DatePicker, Input, Space, Table} from "antd";
 import {CardItem} from "../../../shared/components/CardItem";
 import {createUseStyles} from "react-jss";
+import {useAxios} from "../../../shared/hooks/useAxios";
+import {useEffect} from "react";
 
 const useStyles = createUseStyles({
     header: {
@@ -89,41 +91,37 @@ const useStyles = createUseStyles({
 export const AMSTableComponent = () => {
     const styles = useStyles()
 
-    const dataSource = [
-        {
-            key: '1',
-            name: 'Mike',
-            age: 32,
-            address: '10 Downing Street',
-        },
-        {
-            key: '2',
-            name: 'John',
-            age: 42,
-            address: '10 Downing Street',
-        },
-    ];
+    const {loading, makeRequest, error, data} = useAxios()
+
+    useEffect(() => {
+        makeRequest({
+            url: "/users"
+        })
+    }, []);
+
 
     const columns = [
         {
             title: 'IP/OP NO.',
-            dataIndex: 'name',
+            dataIndex: 'address',
             key: 'name',
+            render: item => Object.values(item)[3]
         },
         {
             title: 'WARD',
-            dataIndex: 'age',
-            key: 'age',
+            dataIndex: 'username',
+            key: 'name',
         },
         {
             title: 'DATE ADDED',
             dataIndex: 'address',
-            key: 'address',
+            key: 'name',
+            render: () => new Date().toLocaleDateString()
         },
         {
             title: "Actions",
             dataIndex: "Actions",
-            key: "Actions",
+            key: "name",
             render: (text, record) => (
                 <Space size="middle">
                     <div className={styles.addLink}>Add</div>
@@ -152,7 +150,6 @@ export const AMSTableComponent = () => {
                             id="date"
                             placeholder="Select date"
                             label="Filter by Date"
-                            enterButton="Go"
                         />
                         <Button className={styles.inputButton}>Go</Button>
                     </div>
@@ -167,7 +164,6 @@ export const AMSTableComponent = () => {
                             id="date"
                             placeholder="Search using IP/OP NO."
                             label="Filter by Date"
-                            enterButton="Search"
                         />
                         <Button className={styles.inputButton}>SEARCH</Button>
                     </div>
@@ -175,8 +171,10 @@ export const AMSTableComponent = () => {
                 </div>
             </div>
             <Table
-                pagination={dataSource?.length > 10 ? {pageSize: 10} : false}
-                dataSource={dataSource}
+                rowKey={record => record?.name}
+                loading={loading}
+                pagination={data?.length > 10 ? {pageSize: 10} : false}
+                dataSource={data}
                 columns={columns}
                 bordered
                 size="small"
