@@ -106,17 +106,17 @@ export const AMSTableComponent = () => {
 
     const columns = [
         {
-            title: 'Name',
+            title: 'IP/OP NO.',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Age',
+            title: 'WARD',
             dataIndex: 'age',
             key: 'age',
         },
         {
-            title: 'Address',
+            title: 'DATE ADDED',
             dataIndex: 'address',
             key: 'address',
         },
