@@ -1,7 +1,7 @@
-import {Outlet, Route, Routes} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import {chartRoutes} from "../routes";
 
-export const AMSChartReview = () => {
+export const AMSChartLayout = () => {
     return (
         <Routes>
             {chartRoutes.map(route=>(

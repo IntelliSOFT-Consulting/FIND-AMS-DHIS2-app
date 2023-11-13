@@ -1,10 +1,10 @@
-import {AMSChartReview} from "./modules/Charts/views/AMSChartReview";
+import {AMSChartLayout} from "./modules/Charts/layout/AMSChartLayout";
 
 
 const routes = [
     {
         path: "/charts/*",
-        component: AMSChartReview
+        component: AMSChartLayout
     }
 ];
 
