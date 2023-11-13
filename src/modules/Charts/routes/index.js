@@ -1,5 +1,5 @@
 import {AMSTableComponent} from "../views/AMSTableComponent";
-import {ChartReviewForm} from "../views/ChartReviewForm";
+import {MembersForm} from "../views/MembersForm";
 
 export const chartRoutes = [
     {
@@ -8,7 +8,7 @@ export const chartRoutes = [
     },
     {
         path: "/review-form",
-        component: ChartReviewForm
+        component: MembersForm
     },
 
 ]
