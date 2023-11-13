@@ -3,6 +3,7 @@ import {CardItem} from "../../../shared/components/CardItem";
 import {createUseStyles} from "react-jss";
 import {useAxios} from "../../../shared/hooks/useAxios";
 import {useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 
 const useStyles = createUseStyles({
     header: {
@@ -91,6 +92,8 @@ const useStyles = createUseStyles({
 export const AMSTableComponent = () => {
     const styles = useStyles()
 
+    const navigate = useNavigate()
+
     const {loading, makeRequest, error, data} = useAxios()
 
     useEffect(() => {
@@ -133,7 +136,9 @@ export const AMSTableComponent = () => {
     const header = () => (
         <div className={styles.header}>
             <p className={styles.headerText}>AMS CHART REVIEW</p>
-            <button className={styles.newButton}>ADD NEW</button>
+            <button
+                onClick={()=>navigate("/charts/review-form")}
+                className={styles.newButton}>ADD NEW</button>
         </div>
     )
 
