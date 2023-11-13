@@ -156,12 +156,12 @@ export const AMSTableComponent = () => {
 
                 </div>
                 <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
-                    <label style={{cursor: "pointer"}} htmlFor="date">Search Specific Records</label>
+                    <label style={{cursor: "pointer"}} htmlFor="ip/op">Search Specific Records</label>
                     <div className={styles.inputWrapper}>
                         <Input
                             className={styles.inputs}
                             size="large"
-                            id="date"
+                            id="ip/op"
                             placeholder="Search using IP/OP NO."
                             label="Filter by Date"
                         />
