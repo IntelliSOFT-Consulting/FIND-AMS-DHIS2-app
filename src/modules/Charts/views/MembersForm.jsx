@@ -1,6 +1,6 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {createUseStyles} from "react-jss";
-import {Button, DatePicker, Select, Space, Table} from "antd";
+import {Button, DatePicker, Input, Select, Space, Table} from "antd";
 import {useNavigate} from "react-router-dom";
 
 
@@ -9,6 +9,7 @@ const useStyles = createUseStyles({
         display: "grid",
         gridTemplateColumns: "1fr",
         gap: "2rem",
+        alignContent: "center",
         "@media (min-width: 768px)": {
             gridTemplateColumns: "1fr 1fr",
             gap: "2rem 4rem"
@@ -72,15 +73,11 @@ export const MembersForm = () => {
         <CardItem title={Header()}>
             <form className={styles.formContainer}>
                 <div className="form-control">
-                    <p>Full Names<span style={{color: "red"}}>&nbsp;*</span></p>
-                    <Select
-                        defaultValue="Full Names"
-                        required
-                        size="large"
-                    />
+                    <label htmlFor="fullName">Full Names<span style={{color: "red"}}>&nbsp;*</span></label>
+                    <Input size="large" id="fullName" />
                 </div>
                 <div className="form-control">
-                    <p>Date<span style={{color: "red"}}>&nbsp;*</span></p>
+                    <label htmlFor="date">Date<span style={{color: "red"}}>&nbsp;*</span></label>
                     <DatePicker
                         required
                         className={styles.inputs}
@@ -91,8 +88,9 @@ export const MembersForm = () => {
                     />
                 </div>
                 <div className="form-control">
-                    <p>Designation<span style={{color: "red"}}>&nbsp;*</span></p>
+                    <label htmlFor="designation">Designation<span style={{color: "red"}}>&nbsp;*</span></label>
                     <Select
+                        id="designation"
                         defaultValue="Designation"
                         required
                         size="large"
