@@ -3,6 +3,7 @@ import {CardItem} from "../../../shared/components/cards/CardItem";
 import {createUseStyles} from "react-jss";
 import {useNavigate} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
+import {useEffect, useState} from "react"
 
 const useStyles = createUseStyles({
     searchContainer: {
@@ -96,8 +97,12 @@ const Header = () => {
 
 export const AMSTableComponent = () => {
     const styles = useStyles()
-
     const navigate = useNavigate()
+
+    //state hooks
+    const [records, setRecords] = useState([])
+    const [date, setDate] = useState(null)
+    const [ip, setIp] = useState(null)
 
 
     /**
@@ -143,6 +148,14 @@ export const AMSTableComponent = () => {
         }
     ];
 
+    /**
+     * Load state on query execution
+     */
+    useEffect(() => {
+        setRecords(data?.events.instances)
+    }, [data]);
+
+
 
     return (
         <CardItem title={Header()}>
@@ -151,6 +164,8 @@ export const AMSTableComponent = () => {
                     <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
                     <div className={styles.inputWrapper}>
                         <DatePicker
+                            onChange={(date, dateString) => setDate(dateString)}
+                            value={date}
                             className={styles.inputs}
                             size="large"
                             id="date"
@@ -165,6 +180,8 @@ export const AMSTableComponent = () => {
                     <label style={{cursor: "pointer"}} htmlFor="ip/op">Search Specific Records</label>
                     <div className={styles.inputWrapper}>
                         <Input
+                            value={ip}
+                            onChange={evt => setIp(evt.target.value)}
                             className={styles.inputs}
                             size="large"
                             id="ip/op"
@@ -179,8 +196,8 @@ export const AMSTableComponent = () => {
             <Table
                 rowKey={record => record?.name}
                 loading={loading}
-                pagination={data?.events.instances.length > 10 ? {pageSize: 10} : false}
-                dataSource={data?.events?.instances}
+                pagination={records?.length > 10 ? {pageSize: 10} : false}
+                dataSource={records}
                 columns={columns}
                 bordered
                 size="small"
