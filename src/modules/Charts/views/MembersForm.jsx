@@ -38,7 +38,7 @@ export const MembersForm = () => {
         <div className="card-header">
             <p className="card-header-text">MEMBERS PRESENT</p>
             <button
-                onClick={() => navigate("/charts/members-present-form")}
+                onClick={() => navigate("/charts/submitted-form")}
                 className="primary-btn">START
             </button>
         </div>
