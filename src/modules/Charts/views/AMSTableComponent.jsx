@@ -1,9 +1,8 @@
 import {Button, DatePicker, Input, Space, Table} from "antd";
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {createUseStyles} from "react-jss";
-import {useAxios} from "../../../shared/hooks/useAxios";
-import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
+import {useDataQuery} from "@dhis2/app-runtime";
 
 const useStyles = createUseStyles({
     searchContainer: {
@@ -67,13 +66,22 @@ export const AMSTableComponent = () => {
 
     const navigate = useNavigate()
 
-    const {loading, makeRequest, error, data} = useAxios()
+    const query = {
+        events: {
+            resource: "tracker/events",
+            params: {
+                page: 1,
+                pageSize: 15,
+                program: "KqmTbzBTDVj",
+                orgUnit: "p3FIxnPMytB",
+                fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
+                ouMode: "SELECTED",
+                order: "occurredAt:desc"
+            }
+        }
+    }
 
-    useEffect(() => {
-        makeRequest({
-            url: "/users"
-        })
-    }, []);
+    const {loading, error, data,} = useDataQuery(query)
 
 
     const columns = [
@@ -101,8 +109,9 @@ export const AMSTableComponent = () => {
             render: (text, record) => (
                 <Space size="middle">
                     <div
-                        onClick={()=>navigate("/charts/submitted-form")}
-                        className={styles.addLink}>View</div>
+                        onClick={() => navigate("/charts/submitted-form")}
+                        className={styles.addLink}>View
+                    </div>
                 </Space>
             )
         }
@@ -154,8 +163,8 @@ export const AMSTableComponent = () => {
             <Table
                 rowKey={record => record?.name}
                 loading={loading}
-                pagination={data?.length > 10 ? {pageSize: 10} : false}
-                dataSource={data}
+                pagination={data?.events.instances.length > 10 ? {pageSize: 10} : false}
+                dataSource={data?.events?.instances }
                 columns={columns}
                 bordered
                 size="small"
@@ -164,7 +173,7 @@ export const AMSTableComponent = () => {
                         <div>
                             <p>No Results. Add new chart</p>
                             <Button type="primary">
-                                View
+                                New
                             </Button>
                         </div>
                     ),
