@@ -61,27 +61,29 @@ const useStyles = createUseStyles({
 
 })
 
+const query = {
+    events: {
+        resource: "tracker/events",
+        params: {
+            page: 1,
+            pageSize: 15,
+            program: "KqmTbzBTDVj",
+            orgUnit: "p3FIxnPMytB",
+            fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
+            ouMode: "SELECTED",
+            order: "occurredAt:desc"
+        }
+    }
+}
+
+
 export const AMSTableComponent = () => {
     const styles = useStyles()
 
     const navigate = useNavigate()
 
-    const query = {
-        events: {
-            resource: "tracker/events",
-            params: {
-                page: 1,
-                pageSize: 15,
-                program: "KqmTbzBTDVj",
-                orgUnit: "p3FIxnPMytB",
-                fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
-                ouMode: "SELECTED",
-                order: "occurredAt:desc"
-            }
-        }
-    }
 
-    const {loading, error, data,} = useDataQuery(query)
+    const {loading, error, data} = useDataQuery(query)
 
 
     const columns = [
