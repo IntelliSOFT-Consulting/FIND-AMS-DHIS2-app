@@ -54,7 +54,7 @@ function getItem(label, key, icon, children, type) {
 const items = [
     getItem("Dashboard", "/", <HomeIcon />, null, "item"),
     getItem("AMS Chart Review", "/charts", <Pie />, null, "item"),
-    getItem("Surgeries", "/surgeries", <ChartPieIcon />, null, "item"),
+    getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ChartPieIcon />, null, "item"),
 
     getItem("Reports", "/reports", <ArrowDownRightIcon />, null, "item"),
     getItem("Configurations", "/configurations", <Cog6ToothIcon />, null, "item"),
