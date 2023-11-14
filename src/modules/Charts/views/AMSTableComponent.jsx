@@ -24,7 +24,8 @@ const useStyles = createUseStyles({
         textDecoration: "underline",
         color: "#1677FF",
         fontStyle: "italic",
-        cursor: "pointer"
+        cursor: "pointer",
+        fontSize: "10px"
     },
     inputWrapper: {
         position: "relative",
@@ -99,7 +100,9 @@ export const AMSTableComponent = () => {
             key: "name",
             render: (text, record) => (
                 <Space size="middle">
-                    <div className={styles.addLink}>Add</div>
+                    <div
+                        onClick={()=>navigate("/charts/submitted-form")}
+                        className={styles.addLink}>View</div>
                 </Space>
             )
         }
