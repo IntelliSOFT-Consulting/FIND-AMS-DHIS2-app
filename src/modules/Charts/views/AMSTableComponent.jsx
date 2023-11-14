@@ -75,6 +75,23 @@ const query = {
         }
     }
 }
+/**
+ * Card header component
+ * @returns {JSX.Element}
+ */
+const Header = () => {
+
+    const navigate = useNavigate()
+    return (
+        <div className="card-header">
+            <p className="card-header-text">AMS CHART REVIEW</p>
+            <button
+                onClick={() => navigate("/charts/members-present-form")}
+                className="primary-btn">ADD NEW
+            </button>
+        </div>
+    )
+}
 
 
 export const AMSTableComponent = () => {
@@ -83,9 +100,16 @@ export const AMSTableComponent = () => {
     const navigate = useNavigate()
 
 
-    const {loading, error, data} = useDataQuery(query)
+    /**
+     * Query hook
+     */
+    const {loading, data} = useDataQuery(query)
 
 
+    /**
+     * Table columns
+     * @type {[{dataIndex: string, title: string, render: (function(*): unknown), key: string},{dataIndex: string, title: string, key: string},{dataIndex: string, title: string, render: (function(): string), key: string},{dataIndex: string, title: string, render: (function(*, *): *), key: string}]}
+     */
     const columns = [
         {
             title: 'IP/OP NO.',
@@ -119,19 +143,9 @@ export const AMSTableComponent = () => {
         }
     ];
 
-    const header = () => (
-        <div className="card-header">
-            <p className="card-header-text">AMS CHART REVIEW</p>
-            <button
-                onClick={() => navigate("/charts/members-present-form")}
-                className="primary-btn">ADD NEW
-            </button>
-        </div>
-    )
-
 
     return (
-        <CardItem title={header()}>
+        <CardItem title={Header()}>
             <div className={styles.searchContainer}>
                 <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
                     <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
@@ -166,7 +180,7 @@ export const AMSTableComponent = () => {
                 rowKey={record => record?.name}
                 loading={loading}
                 pagination={data?.events.instances.length > 10 ? {pageSize: 10} : false}
-                dataSource={data?.events?.instances }
+                dataSource={data?.events?.instances}
                 columns={columns}
                 bordered
                 size="small"
