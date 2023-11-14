@@ -1,6 +1,7 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {createUseStyles} from "react-jss";
 import {Button, DatePicker, Select, Space, Table} from "antd";
+import {useNavigate} from "react-router-dom";
 
 
 const useStyles = createUseStyles({
@@ -30,6 +31,7 @@ const useStyles = createUseStyles({
 
 export const MembersForm = () => {
     const styles = useStyles()
+    const navigate = useNavigate()
 
     const Header = () => (
         <div className="card-header">
