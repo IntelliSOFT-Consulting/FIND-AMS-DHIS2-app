@@ -13,7 +13,7 @@ export const chartRoutes = [
         component: MembersForm
     },
     {
-        path: "/submitted-form",
+        path: "/submitted-form/:trackerId",
         component: SubmittedData
     },
     {
