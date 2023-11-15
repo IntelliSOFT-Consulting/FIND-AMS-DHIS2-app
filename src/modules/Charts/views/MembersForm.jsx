@@ -44,7 +44,7 @@ export const MembersForm = () => {
 
     const {stages, program} = useSelector(state => state.forms)
 
-    const {name: orgUnitName, id: orgUnitID} = useSelector(state => state.orgUnit)
+    const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
     const membersSection = stages && stages[0].sections[0]
 
