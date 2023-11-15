@@ -11,6 +11,7 @@ import {createUseStyles} from "react-jss";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import routes from "../../routes";
 import {useGetForms} from "../hooks/useGetForms";
+import {useGetOrgUnit} from "../hooks/useGetOrgUnit";
 
 const {Content, Sider} = Layout;
 
@@ -65,6 +66,7 @@ const NavigationLayout = ({user, program, organisationUnits}) => {
     const classes = styles();
 
     const {getForms} = useGetForms()
+    const {getOrgUnit} = useGetOrgUnit()
 
     const navigate = useNavigate();
 
@@ -80,6 +82,7 @@ const NavigationLayout = ({user, program, organisationUnits}) => {
 
     useEffect(() => {
         getForms()
+        getOrgUnit()
     }, []);
 
     return (

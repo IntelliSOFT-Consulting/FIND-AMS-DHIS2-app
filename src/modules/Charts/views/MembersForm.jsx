@@ -1,7 +1,11 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {createUseStyles} from "react-jss";
-import {Button, DatePicker, Input, Select, Space, Table} from "antd";
+import {Form, notification, Space, Spin, Table} from "antd";
 import {useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
+import InputItem from "../../../shared/components/Fields/InputItem";
+import {useDataEngine} from "@dhis2/app-runtime";
+import {useEffect, useState} from "react";
 
 
 const useStyles = createUseStyles({
@@ -32,89 +36,168 @@ const useStyles = createUseStyles({
 
 export const MembersForm = () => {
     const styles = useStyles()
+
     const navigate = useNavigate()
+    const [form] = Form.useForm();
+
+    const engine = useDataEngine()
+
+    const {stages, program} = useSelector(state => state.forms)
+
+    const {name: orgUnitName, id: orgUnitID} = useSelector(state => state.orgUnit)
+
+    const membersSection = stages && stages[0].sections[0]
+
+    const [members, setMembers] = useState([])
+    const [nameElementID, setNameElementID] = useState("")
+    const [loading, setLoading] = useState(false)
+
+
+    useEffect(() => {
+        if (membersSection?.dataElements) {
+            const fullNamesObject = membersSection.dataElements.find(element => element.name.includes("Full"))
+            setNameElementID(fullNamesObject.id)
+
+        }
+    }, [membersSection]);
+
+
+    const columns = [
+        {
+            title: 'Full Names',
+            dataIndex: nameElementID,
+            key: nameElementID,
+        },
+        {
+            title: "Action",
+            dataIndex: nameElementID,
+            key: nameElementID,
+            render: (text, record) => (
+                <Space size="middle">
+                    <div
+                        onClick={() => setMembers(prev => prev.filter(item => item[nameElementID] !== record[nameElementID]))}
+                        className={styles.removeLink}>
+                        Remove
+                    </div>
+                </Space>
+            )
+        }
+    ]
+
+    const addMembers = (values) => {
+        const formValues = form.getFieldsValue({strict: false})
+        setMembers(prev => prev?.length > 0 ? [...prev, {...formValues}] : [{...formValues}])
+        form.resetFields()
+    }
+
+
+    const onFinish = async () => {
+        const payload = {
+            events: [
+                {
+                    "occurredAt": new Date().toJSON().slice(0, 10),
+                    "notes": [],
+                    program,
+                    "programStage": stages[0].id,
+                    orgUnit: orgUnitID,
+                    dataValues: Object.keys(members).map(key => ({
+                        dateElement: key,
+                        value: members[key]
+                    }))
+                }
+            ]
+        }
+
+        try {
+            if (members.length < 1)
+                return
+            setLoading(true)
+            const {response} = await engine.mutate({
+                resource: "tracker",
+                type: "create",
+                data: payload
+            })
+            if (response?.id) {
+                navigate(`/charts/new-form/${response.id}`)
+            }
+
+        } catch (e) {
+            notification.error({
+                message: "error",
+                description: "Something went wrong"
+            })
+            console.log("error", e)
+        } finally {
+            setLoading(false)
+        }
+    }
+
 
     const Header = () => (
         <div className="card-header">
             <p className="card-header-text">MEMBERS PRESENT</p>
             <button
-                onClick={() => navigate("/charts/new-form")}
+                onClick={onFinish}
                 className="primary-btn">START
             </button>
         </div>
     )
 
-    const columns = [
-        {
-            title: 'Full Names',
-            dataIndex: 'fullName',
-            key: 'fullName',
-        },
-        {
-            title: "Action",
-            dataIndex: "Actions",
-            key: "name",
-            render: (text, record) => (
-                <Space size="middle">
-                    <div className={styles.removeLink}>Remove</div>
-                </Space>
-            )
-        }
-
-    ]
-    const dummyData = [
-        {fullName: "John Doe"},
-        {fullName: "Jane Doe"},
-        {fullName: "Mike Doe"},
-        {fullName: "Beth Doe"},
-    ]
 
     return (
         <CardItem title={Header()}>
-            <form className={styles.formContainer}>
-                <div className="form-control">
-                    <label htmlFor="fullName">Full Names<span style={{color: "red"}}>&nbsp;*</span></label>
-                    <Input size="large" id="fullName" />
-                </div>
-                <div className="form-control">
-                    <label htmlFor="date">Date<span style={{color: "red"}}>&nbsp;*</span></label>
-                    <DatePicker
-                        required
-                        className={styles.inputs}
-                        size="large"
-                        id="date"
-                        placeholder="Date"
-                        label="Filter by Date"
-                    />
-                </div>
-                <div className="form-control">
-                    <label htmlFor="designation">Designation<span style={{color: "red"}}>&nbsp;*</span></label>
-                    <Select
-                        id="designation"
-                        defaultValue="Designation"
-                        required
-                        size="large"
-                    />
-                </div>
-                <div className={styles.placeholderDiv}/>
-                <button
-                    style={{
-                        width: "fit-content",
-                        fontWeight: "700",
-                        fontSize: "16px",
-                        backgroundColor: "#E3EEF7",
-                        marginLeft: "auto",
-                        padding: ".8rem 4rem"
-                    }}
-                    className="primary-btn">ADD
-                </button>
-                <div className={styles.placeholderDiv}/>
+            <Form
+                className={styles.formContainer} form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
+                {membersSection?.dataElements.map(dataElement => (
+                    <Form.Item
+                        key={dataElement.id}
+                        label={dataElement.name}
+                        name={dataElement.id}
+                        rules={[
+                            {
+                                required: dataElement.required,
+                                message: `Please input ${dataElement.displayName}!`,
+                            },
+                            dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
+                        ]}
+                    >
+                        <InputItem
+                            type={dataElement.optionSet ? "SELECT" : dataElement.valueType}
+                            options={dataElement.optionSet?.options?.map((option) => ({
+                                label: option.name,
+                                value: option.code,
+                            }))}
+                            placeholder={`Enter ${dataElement.name}`}
+                            name={dataElement.id}
+                        />
+                    </Form.Item>
+                ))}
+                {loading ? (
+                    <Spin style={{gridColumn: "1", marginLeft: "auto",}}/>
+                ) : (
+                    <button
+                        onClick={addMembers}
+                        style={{
+                            gridColumn: "1",
+                            width: "fit-content",
+                            fontWeight: "700",
+                            fontSize: "16px",
+                            backgroundColor: "#E3EEF7",
+                            marginLeft: "auto",
+                            padding: ".8rem 4rem"
+                        }}
+                        type="button"
+                        className="primary-btn">ADD
+                    </button>
+                )}
+
                 <Table
-                    pagination={dummyData?.length > 10 ? {pageSize: 10} : false}
+                    style={{gridColumn: "1"}}
+                    pagination={members?.length > 10 ? {pageSize: 10} : false}
                     bordered
-                    rowKey={record =>record?.fullName}
+                    rowKey={record => record[nameElementID]}
                     columns={columns}
-                    dataSource={dummyData}
+                    dataSource={members}
                     locale={{
                         emptyText: (
                             <div>
@@ -124,8 +207,7 @@ export const MembersForm = () => {
                     }}
                 />
 
-
-            </form>
+            </Form>
         </CardItem>
     )
 }

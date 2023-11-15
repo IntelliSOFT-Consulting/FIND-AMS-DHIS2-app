@@ -17,7 +17,7 @@ export const chartRoutes = [
         component: SubmittedData
     },
     {
-        path: "/new-form",
+        path: "/new-form/:trackerId",
         component: NewForm
     },
 

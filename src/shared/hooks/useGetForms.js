@@ -32,6 +32,7 @@ export const useGetForms = () => {
 
             dispatch(
                 setForms({
+                    program: program?.id,
                     stages
                 })
             )
