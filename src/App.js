@@ -6,6 +6,8 @@ import {ConfigProvider} from "antd";
 import NavigationLayout from "./shared/layouts/navigationLayout";
 import Home from "./shared/pages/Home";
 import "./styles/index.css"
+import {Provider} from "react-redux";
+import {store} from "./shared/redux/store/index"
 
 const query = {
     me: {
@@ -49,31 +51,33 @@ const MyApp = () => (
             },
         }}
     >
-        <BrowserRouter>
-            <DataQuery query={query}>
-                {({error, loading, data}) => {
-                    if (error) return <span>ERROR</span>
-                    if (loading) return <span>...</span>
-                    return (
-                        <Routes>
-                            <Route
-                                path="/*"
-                                element={
-                                    <NavigationLayout
-                                        user={data?.me}
-                                        title={i18n.t("FIND AMS")}
-                                    />
-                                }
-                            />
-                            <Route
-                                path="/"
-                                element={<Home user={data?.me} title={i18n.t("FIND AMS")}/>}
-                            />
-                        </Routes>
-                    )
-                }}
-            </DataQuery>
-        </BrowserRouter>
+        <Provider store={store}>
+            <BrowserRouter>
+                <DataQuery query={query}>
+                    {({error, loading, data}) => {
+                        if (error) return <span>ERROR</span>
+                        if (loading) return <span>...</span>
+                        return (
+                            <Routes>
+                                <Route
+                                    path="/*"
+                                    element={
+                                        <NavigationLayout
+                                            user={data?.me}
+                                            title={i18n.t("FIND AMS")}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/"
+                                    element={<Home user={data?.me} title={i18n.t("FIND AMS")}/>}
+                                />
+                            </Routes>
+                        )
+                    }}
+                </DataQuery>
+            </BrowserRouter>
+        </Provider>
     </ConfigProvider>
 )
 

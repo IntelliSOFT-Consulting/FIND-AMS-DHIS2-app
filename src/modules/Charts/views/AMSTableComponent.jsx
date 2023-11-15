@@ -72,7 +72,7 @@ const query = {
             orgUnit: "p3FIxnPMytB",
             fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
             ouMode: "SELECTED",
-            order: "occurredAt:desc"
+            order: "occurredAt:desc",
         }
     }
 }
@@ -102,13 +102,14 @@ export const AMSTableComponent = () => {
     //state hooks
     const [records, setRecords] = useState([])
     const [date, setDate] = useState(null)
+    const [dateString, setDateString] = useState(null)
     const [ip, setIp] = useState(null)
 
 
     /**
      * Query hook
      */
-    const {loading, data} = useDataQuery(query)
+    const {loading, data, refetch} = useDataQuery(query)
 
 
     /**
@@ -156,6 +157,31 @@ export const AMSTableComponent = () => {
     }, [data]);
 
 
+    /**
+     * Filter the records by adding filter parameter with the data element id of the date
+     * @returns {Promise<void>}
+     */
+    const filterByIp = async () => {
+        setDate(null)
+        setDateString(null)
+        if (ip)
+            await refetch({
+                filter: `qm3sLorGhAm:ILIKE:${ip}`
+            })
+    }
+
+    /**
+     * Filter the records by adding filter parameter with the data element id of the date
+     * @returns {Promise<void>}
+     */
+    const filterByDate = async () => {
+        setIp(null)
+        if (dateString)
+            await refetch({
+                filter: `xyfKcCPVDgv:ILIKE:${dateString}`
+            })
+    }
+
 
     return (
         <CardItem title={Header()}>
@@ -164,7 +190,10 @@ export const AMSTableComponent = () => {
                     <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
                     <div className={styles.inputWrapper}>
                         <DatePicker
-                            onChange={(date, dateString) => setDate(dateString)}
+                            onChange={(date, dateString) =>{
+                                setDate(date)
+                                setDateString(dateString)
+                            }}
                             value={date}
                             className={styles.inputs}
                             size="large"
@@ -172,7 +201,9 @@ export const AMSTableComponent = () => {
                             placeholder="Select date"
                             label="Filter by Date"
                         />
-                        <Button className={styles.inputButton}>Go</Button>
+                        <Button
+                            onClick={filterByDate}
+                            className={styles.inputButton}>Go</Button>
                     </div>
 
                 </div>
@@ -188,7 +219,9 @@ export const AMSTableComponent = () => {
                             placeholder="Search using IP/OP NO."
                             label="Filter by Date"
                         />
-                        <Button className={styles.inputButton}>SEARCH</Button>
+                        <Button
+                            onClick={filterByIp}
+                            className={styles.inputButton}>SEARCH</Button>
                     </div>
 
                 </div>
