@@ -66,7 +66,7 @@ const useStyles = createUseStyles({
 const query = {
     events: {
         resource: "tracker/events",
-        params: ({filter}) => ({
+        params: ({filter="", occurredAt="", occurredAfter= ""}) => ({
             page: 1,
             pageSize: 15,
             program: "KqmTbzBTDVj",
@@ -74,6 +74,8 @@ const query = {
             fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
             ouMode: "SELECTED",
             order: "occurredAt:desc",
+            occurredAt,
+            occurredAfter,
             filter
         })
     }
@@ -133,9 +135,9 @@ export const AMSTableComponent = () => {
         },
         {
             title: 'DATE ADDED',
-            dataIndex: 'createdAt',
+            dataIndex: 'occurredAt',
             key: 'event',
-            render: (text, record) => (record?.dataValues.find(dataValue => dataValue.dataElement === "u4UlC8FpDCV"))?.value
+            render: (text, record) => new Date(record.occurredAt).toLocaleDateString()
         },
         {
             title: "Actions",
@@ -178,7 +180,8 @@ export const AMSTableComponent = () => {
     const filterByDate = async () => {
         if (dateString)
             await refetch({
-                filter: `xyfKcCPVDgv:ILIKE:${dateString}`
+                occurredBefore: dateString,
+                occurredAfter: dateString,
             })
     }
 
