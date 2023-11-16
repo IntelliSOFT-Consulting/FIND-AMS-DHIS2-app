@@ -25,7 +25,8 @@ const useStyles = createUseStyles({
         color: "#1677FF",
         fontStyle: "italic",
         cursor: "pointer",
-        fontSize: "10px"
+        fontSize: "14px",
+        padding: ".5rem .5rem"
     },
     inputWrapper: {
         position: "relative",
@@ -133,14 +134,14 @@ export const AMSTableComponent = () => {
             title: 'DATE ADDED',
             dataIndex: 'createdAt',
             key: 'event',
-            render: (text, record) => new Date(record?.createdAt).toLocaleDateString()
+            render: (text, record) => (record?.dataValues.find(dataValue => dataValue.dataElement === "u4UlC8FpDCV"))?.value
         },
         {
             title: "Actions",
             dataIndex: "Actions",
             key: "event",
             render: (text, record) => (
-                <Space size="middle">
+                <Space size="large">
                     <div
                         onClick={() => navigate(`/charts/submitted-form/${record.event}`)}
                         className={styles.addLink}>View

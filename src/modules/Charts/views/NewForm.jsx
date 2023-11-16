@@ -4,7 +4,7 @@ import {Form, Input, notification, Spin} from "antd";
 import {useSelector} from "react-redux";
 import InputItem from "../../../shared/components/Fields/InputItem";
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useDataEngine} from "@dhis2/app-runtime";
 
 
@@ -88,6 +88,8 @@ export const NewForm = () => {
     const styles = useStyles()
     const [form] = Form.useForm()
 
+    const {eventId} = useParams()
+
     const engine = useDataEngine()
     const navigate = useNavigate()
 
@@ -103,7 +105,6 @@ export const NewForm = () => {
 
     const {stages, program} = useSelector(state => state.forms)
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
-
 
 
     /**
@@ -136,6 +137,7 @@ export const NewForm = () => {
                     program,
                     "programStage": stages[0].id,
                     orgUnit: orgUnitID,
+                    event: eventId,
                     dataValues: Object.keys(values).map(key => ({
                         dataElement: key,
                         value: values[key]
@@ -151,13 +153,13 @@ export const NewForm = () => {
                 type: "create",
                 data: payload,
                 params: {
-                    async: false
+                    async: false,
+                    importStrategy: "UPDATE"
                 }
             })
-            if (response?.httpStatusCode == 200) {
-                navigate(`/charts/submitted-form/${response.response?.id}`)
+            if (response?.status === "OK") {
+                navigate(`/charts`)
             }
-
         } catch (e) {
             notification.error({
                 message: "error",

@@ -92,6 +92,14 @@ export const MembersForm = () => {
 
 
     const onFinish = async () => {
+        let dataValues = []
+        members.forEach(member => {
+            const keys = Object.keys(member)
+            keys.forEach(key=>{
+                dataValues.push({"dataElement": key, value: member[key]})
+            })
+        })
+
         const payload = {
             events: [
                 {
@@ -100,10 +108,7 @@ export const MembersForm = () => {
                     program,
                     "programStage": stages[0].id,
                     orgUnit: orgUnitID,
-                    dataValues: Object.keys(members).map(key => ({
-                        dateElement: key,
-                        value: members[key]
-                    }))
+                    dataValues
                 }
             ]
         }
@@ -112,13 +117,16 @@ export const MembersForm = () => {
             if (members.length < 1)
                 return
             setLoading(true)
-            const {response} = await engine.mutate({
+            const response = await engine.mutate({
                 resource: "tracker",
                 type: "create",
-                data: payload
+                data: payload,
+                params: {
+                    async: false
+                }
             })
-            if (response?.id) {
-                navigate(`/charts/new-form/${response.id}`)
+            if (response?.status === "OK") {
+                navigate(`/charts/new-form/${response?.bundleReport?.typeReportMap?.EVENT.objectReports[0]?.uid}`)
             }
 
         } catch (e) {

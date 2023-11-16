@@ -21,3 +21,22 @@ export const orgUnitReducer = (state = {}, action) => {
             return state
     }
 }
+
+
+export const membersReducer = (state = [], action) => {
+    switch (action.type) {
+        case "ADD_MEMBER":
+            return {
+                ...state,
+                ...action.payload
+            }
+        case 'REMOVE_MEMBER':
+            const filtered = state.filter(member => member.id !== action.payload)
+            return {
+                ...filtered
+            }
+
+        default:
+            return state
+    }
+}
