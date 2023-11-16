@@ -143,7 +143,7 @@ export const AMSTableComponent = () => {
             render: (text, record) => (
                 <Space size="large">
                     <div
-                        onClick={() => navigate(`/charts/view-chart/${record.event}`)}
+                        onClick={() => navigate(`/charts/details/${record.event}`)}
                         className={styles.addLink}>View
                     </div>
                 </Space>
@@ -231,7 +231,7 @@ export const AMSTableComponent = () => {
                 </div>
             </div>
             <Table
-                rowKey={record => record?.name}
+                rowKey={record => record?.event}
                 loading={loading}
                 pagination={records?.length > 10 ? {pageSize: 10} : false}
                 dataSource={records}

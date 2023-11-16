@@ -1,11 +1,12 @@
-import {CardItem} from "../../../shared/components/cards/CardItem";
-import {useNavigate, useParams} from "react-router-dom";
-import {createUseStyles} from "react-jss";
-import {useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react";
-import {formatChartData} from "../../../shared/helpers/formatData";
-import {Spin} from "antd";
+import {useNavigate, useParams} from "react-router-dom";
+import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
+import {CardItem} from "../components/cards/CardItem";
+import {Spin} from "antd";
+import {formatChartData} from "../helpers/formatData";
+import {createUseStyles} from "react-jss";
+
 
 
 const useStyles = createUseStyles({
@@ -51,7 +52,13 @@ const query = {
 
     }
 }
-export const ViewChart = () => {
+
+
+
+
+
+
+export const EventDetails = () => {
     const [patientDetailsSection, setPatientDetailsSection] = useState({})
     const [questionSection, setQuestionSection] = useState({})
     const [recommendationSection, setRecommendationSection] = useState({})
