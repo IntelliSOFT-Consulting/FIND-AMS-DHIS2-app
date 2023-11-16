@@ -2,9 +2,9 @@ import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
-import {CardItem} from "../components/cards/CardItem";
+import {CardItem} from "../../../shared/components/cards/CardItem";
 import {Spin} from "antd";
-import {formatChartData} from "../helpers/formatData";
+import {formatChartData} from "../../../shared/helpers/formatData";
 import {createUseStyles} from "react-jss";
 
 

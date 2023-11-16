@@ -143,7 +143,7 @@ export const AMSTableComponent = () => {
             render: (text, record) => (
                 <Space size="large">
                     <div
-                        onClick={() => navigate(`/charts/details/${record.event}`)}
+                        onClick={() => navigate(`/details/event/${record.event}`)}
                         className={styles.addLink}>View
                     </div>
                 </Space>
@@ -185,7 +185,6 @@ export const AMSTableComponent = () => {
     }
 
 
-    console.log('records', records)
 
     return (
         <CardItem title={Header()}>
