@@ -111,7 +111,6 @@ export const EventDetails = () => {
         }
     }, [stages]);
 
-    console.log("questions", questionSection)
 
     return (
         <CardItem title={`AMS CHART REVIEW: FORM ${data?.events?.event}`}>

@@ -11,7 +11,7 @@ const useStyles = createUseStyles({
         flexDirection: "column",
         width: "100%",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "end",
         padding: "1rem 0rem",
         gap: "2rem",
         "@media (min-width: 1024px)": {
@@ -66,7 +66,7 @@ const useStyles = createUseStyles({
 const query = {
     events: {
         resource: "tracker/events",
-        params: {
+        params: ({filter}) => ({
             page: 1,
             pageSize: 15,
             program: "KqmTbzBTDVj",
@@ -74,7 +74,8 @@ const query = {
             fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
             ouMode: "SELECTED",
             order: "occurredAt:desc",
-        }
+            filter
+        })
     }
 }
 /**
@@ -164,8 +165,6 @@ export const AMSTableComponent = () => {
      * @returns {Promise<void>}
      */
     const filterByIp = async () => {
-        setDate(null)
-        setDateString(null)
         if (ip)
             await refetch({
                 filter: `qm3sLorGhAm:ILIKE:${ip}`
@@ -177,14 +176,18 @@ export const AMSTableComponent = () => {
      * @returns {Promise<void>}
      */
     const filterByDate = async () => {
-        setIp(null)
         if (dateString)
             await refetch({
                 filter: `xyfKcCPVDgv:ILIKE:${dateString}`
             })
     }
 
-
+    const clearFilters = async () => {
+        await refetch({filter: ""})
+        setDateString(null)
+        setDate(null)
+        setIp(null)
+    }
 
     return (
         <CardItem title={Header()}>
@@ -208,7 +211,6 @@ export const AMSTableComponent = () => {
                             onClick={filterByDate}
                             className={styles.inputButton}>Go</Button>
                     </div>
-
                 </div>
                 <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
                     <label style={{cursor: "pointer"}} htmlFor="ip/op">Search Specific Records</label>
@@ -226,8 +228,10 @@ export const AMSTableComponent = () => {
                             onClick={filterByIp}
                             className={styles.inputButton}>SEARCH</Button>
                     </div>
-
                 </div>
+                <Button
+                    onClick={clearFilters}
+                    danger={true}>Clear filters</Button>
             </div>
             <Table
                 rowKey={record => record?.event}
