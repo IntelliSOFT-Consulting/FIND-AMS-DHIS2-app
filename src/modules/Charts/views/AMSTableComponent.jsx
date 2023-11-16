@@ -119,29 +119,30 @@ export const AMSTableComponent = () => {
     const columns = [
         {
             title: 'IP/OP NO.',
-            dataIndex: 'address',
-            key: 'name',
-            render: item => Object.values(item)[3]
+            dataIndex: 'dataValues',
+            key: 'event',
+            render: (text, record) => (record?.dataValues.find(dataValue => dataValue.dataElement === "qm3sLorGhAm"))?.value
         },
         {
             title: 'WARD',
-            dataIndex: 'username',
-            key: 'name',
+            dataIndex: 'dataValues',
+            key: 'event',
+            render: (text, record) => (record?.dataValues.find(dataValue => dataValue.dataElement === "u4UlC8FpDCV"))?.value
         },
         {
             title: 'DATE ADDED',
-            dataIndex: 'address',
-            key: 'name',
-            render: () => new Date().toLocaleDateString()
+            dataIndex: 'createdAt',
+            key: 'event',
+            render: (text, record) => new Date(record?.createdAt).toLocaleDateString()
         },
         {
             title: "Actions",
             dataIndex: "Actions",
-            key: "name",
+            key: "event",
             render: (text, record) => (
                 <Space size="middle">
                     <div
-                        onClick={() => navigate("/charts/submitted-form")}
+                        onClick={() => navigate(`/charts/submitted-form/${record.event}`)}
                         className={styles.addLink}>View
                     </div>
                 </Space>
@@ -183,6 +184,8 @@ export const AMSTableComponent = () => {
     }
 
 
+    console.log('records', records)
+
     return (
         <CardItem title={Header()}>
             <div className={styles.searchContainer}>
@@ -190,7 +193,7 @@ export const AMSTableComponent = () => {
                     <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
                     <div className={styles.inputWrapper}>
                         <DatePicker
-                            onChange={(date, dateString) =>{
+                            onChange={(date, dateString) => {
                                 setDate(date)
                                 setDateString(dateString)
                             }}

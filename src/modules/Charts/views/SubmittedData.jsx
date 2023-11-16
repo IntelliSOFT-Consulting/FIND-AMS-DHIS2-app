@@ -1,6 +1,7 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {useNavigate} from "react-router-dom";
 import {createUseStyles} from "react-jss";
+import {useDataQuery} from "@dhis2/app-runtime";
 
 
 const useStyles = createUseStyles({
@@ -34,10 +35,26 @@ const useStyles = createUseStyles({
     }
 })
 
+const query = {
+    events: {
+        resource: `tracker/events/dMPjYXF0wAb`,
+        params: {
+            fields: ["trackedEntityInstance", "trackedEntityType", "attributes[attribute,value]", "enrollments[*]"],
+            order: "created:desc",
+            ouMode: "ALL",
+            program: "KqmTbzBTDVj",
+            pageSize: 500
+        }
+    }
+}
+
 
 export const SubmittedData = () => {
     const styles = useStyles()
     const navigate = useNavigate()
+
+    const {loading, data, refetch, error} = useDataQuery(query)
+
 
     return (
         <CardItem title="AMS CHART REVIEW: FORM XYZZY">

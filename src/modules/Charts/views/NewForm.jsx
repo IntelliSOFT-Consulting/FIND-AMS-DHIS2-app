@@ -102,7 +102,8 @@ export const NewForm = () => {
 
 
     const {stages, program} = useSelector(state => state.forms)
-    const { id: orgUnitID} = useSelector(state => state.orgUnit)
+    const {id: orgUnitID} = useSelector(state => state.orgUnit)
+
 
 
     /**
@@ -126,7 +127,6 @@ export const NewForm = () => {
     }, [stages]);
 
 
-
     const onFinish = async (values) => {
         const payload = {
             events: [
@@ -137,22 +137,24 @@ export const NewForm = () => {
                     "programStage": stages[0].id,
                     orgUnit: orgUnitID,
                     dataValues: Object.keys(values).map(key => ({
-                        dateElement: key,
+                        dataElement: key,
                         value: values[key]
-                    }))
+                    })),
                 }
             ]
         }
 
         try {
-
             setLoading(true)
             const response = await engine.mutate({
                 resource: "tracker",
                 type: "create",
-                data: payload
+                data: payload,
+                params: {
+                    async: false
+                }
             })
-            if (response?.httpStatusCode==200) {
+            if (response?.httpStatusCode == 200) {
                 navigate(`/charts/submitted-form/${response.response?.id}`)
             }
 
@@ -169,7 +171,7 @@ export const NewForm = () => {
 
     return (
         <Form onFinish={onFinish} form={form} layout="vertical" style={{position: "relative"}}>
-            <CardItem title="AMS CHART REVIEW: NEW FORM"  >
+            <CardItem title="AMS CHART REVIEW: NEW FORM">
                 <div className={styles.parentContainer}>
                     <div className={styles.detailsContainer}>
                         <div className={styles.title}>PATIENT DETAILS</div>
@@ -293,7 +295,8 @@ export const NewForm = () => {
                         </div>
                         <div className={styles.inputContainer} style={{gap: "2px", marginBottom: "10rem"}}>
                             <label htmlFor="comments">Additional Comments (if any):</label>
-                            <Input.TextArea id="comments" placeholder="Additional Comments (if any)" style={{gridColumn: "1/3"}} />
+                            <Input.TextArea id="comments" placeholder="Additional Comments (if any)"
+                                            style={{gridColumn: "1/3"}}/>
                         </div>
                     </div>
 
@@ -303,7 +306,8 @@ export const NewForm = () => {
                         <Spin style={{gridColumn: "1", marginLeft: "auto",}}/>
                     ) : (
                         <>
-                            <button type="button" onClick={()=> navigate(-1)} className={styles.backButton}>BACK</button>
+                            <button type="button" onClick={() => navigate(-1)} className={styles.backButton}>BACK
+                            </button>
                             <button type="submit" className={styles.successButton}>SUBMIT</button>
                         </>
                     )}
