@@ -100,7 +100,7 @@ export const EventDetails = () => {
 
             <div className={styles.parentContainer}>
 
-                {/*....patient senction*/}
+                {/*....patient section*/}
                 <div className={styles.headerContainer}>
                     <div className={styles.headerComponent}>
                         <div className={styles.headerItem}>IP/OP NO. :</div>
@@ -111,7 +111,17 @@ export const EventDetails = () => {
                             })}
                         </div>
                     </div>
+                        <div className={styles.headerComponent}>
+                            <div className={styles.headerItem}>Ward(specialty) :</div>
+                            <div className={styles.headerItem}>
+                                {formatChartData({
+                                    dataElement: "u4UlC8FpDCV",
+                                    dataValues: data?.events?.dataValues
+                                })}
+                            </div>
+                        </div>
                 </div>
+
 
 
 
