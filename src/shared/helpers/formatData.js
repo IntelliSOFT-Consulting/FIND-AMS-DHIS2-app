@@ -1,4 +1,3 @@
-
 const formatAttributeValues = (attributes) => {
     const attributeValues = attributes.map((attributeValue) => {
         return {
@@ -36,7 +35,7 @@ export const formatMembersForm = (program) => program?.programStages?.map((stage
 });
 
 
-export const formatStages = (program)=> {
+export const formatStages = (program) => {
     return program?.programStages?.map((stage) => {
         return {
             title: stage.name,
@@ -63,4 +62,10 @@ export const formatStages = (program)=> {
             }),
         };
     });
+}
+
+
+export const formatChartData = ({dataElement, dataValues}) => {
+    const object =  dataValues?.find(item => item?.dataElement === dataElement)
+    return object?.value
 }

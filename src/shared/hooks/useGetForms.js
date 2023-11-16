@@ -28,8 +28,6 @@ export const useGetForms = () => {
             })
             const program = programs?.programs[0];
 
-            console.log('program', program)
-
 
             const stages = formatStages(program)
 

@@ -143,7 +143,7 @@ export const AMSTableComponent = () => {
             render: (text, record) => (
                 <Space size="large">
                     <div
-                        onClick={() => navigate(`/charts/submitted-form/${record.event}`)}
+                        onClick={() => navigate(`/charts/view-chart/${record.event}`)}
                         className={styles.addLink}>View
                     </div>
                 </Space>

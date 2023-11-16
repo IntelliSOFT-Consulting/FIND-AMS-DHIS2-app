@@ -1,7 +1,7 @@
 import {AMSTableComponent} from "../views/AMSTableComponent";
 import {MembersForm} from "../views/MembersForm";
-import {SubmittedData} from "../views/SubmittedData";
 import {NewForm} from "../views/NewForm";
+import {ViewChart} from "../views/ViewChart.jsx";
 
 export const chartRoutes = [
     {
@@ -13,8 +13,8 @@ export const chartRoutes = [
         component: MembersForm
     },
     {
-        path: "/submitted-form/:eventId",
-        component: SubmittedData
+        path: "/view-chart/:eventId",
+        component: ViewChart
     },
     {
         path: "/new-form/:eventId",
