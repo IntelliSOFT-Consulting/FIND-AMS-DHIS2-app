@@ -11,7 +11,7 @@ const useStyles = createUseStyles({
     parentContainer: {
         display: "flex",
         flexDirection: "column",
-        gap: "2rem",
+        gap: "8rem",
         position: "relative"
     },
     header: {
@@ -41,6 +41,19 @@ const useStyles = createUseStyles({
     headerItem: {
         borderRight: ".5px solid",
         padding: ".5rem .5rem",
+    },
+    questionBox: {
+        display: "grid",
+        gridTemplateColumns: "4fr 1fr",
+        borderBottom: "1px solid",
+        gap: "1rem",
+        alignItems: "center",
+        "@media (min-width: 768px)": {
+            gap: "2rem"
+        }
+    },
+    questionItem: {
+        padding: "1rem"
     }
 })
 
@@ -94,6 +107,8 @@ export const EventDetails = () => {
         }
     }, [stages]);
 
+    console.log("questions", questionSection)
+
     return (
         <CardItem title="AMS CHART REVIEW: FORM XYZZY">
             <div className={styles.header}>PATIENT DETAILS</div>
@@ -111,19 +126,77 @@ export const EventDetails = () => {
                             })}
                         </div>
                     </div>
-                        <div className={styles.headerComponent}>
-                            <div className={styles.headerItem}>Ward(specialty) :</div>
-                            <div className={styles.headerItem}>
+                    <div className={styles.headerComponent}>
+                        <div className={styles.headerItem}>Ward(specialty) :</div>
+                        <div className={styles.headerItem}>
+                            {formatChartData({
+                                dataElement: "u4UlC8FpDCV",
+                                dataValues: data?.events?.dataValues
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                {/*Question section.......................................*/}
+                <div style={{width: "100%", border: "1px solid"}}>
+                    {questionSection?.dataElements?.map((dataElement, index) => (
+                        <div key={dataElement?.id} className={styles.questionBox}>
+                            <div className={styles.questionItem}
+                                 style={{borderRight: "1px solid"}}>
+                                <span style={{fontWeight: 700}}>{`Question ${index + 1}:`}</span>
+                                &nbsp;&nbsp;{dataElement?.name}
+                            </div>
+                            <div className={styles.questionItem}>
                                 {formatChartData({
-                                    dataElement: "u4UlC8FpDCV",
+                                    dataElement: dataElement?.id,
                                     dataValues: data?.events?.dataValues
                                 })}
                             </div>
                         </div>
+                    ))}
                 </div>
 
 
+                {/*Recommendation section.......................................*/}
+                <div style={{width: "100%", border: "1px solid"}}>
+                    {recommendationSection?.dataElements?.map((dataElement, index) => (
+                        <div key={dataElement?.id} className={styles.questionBox}>
+                            <div className={styles.questionItem}
+                                 style={{borderRight: "1px solid"}}>
+                                <span
+                                    style={{fontWeight: 700}}>{`Question ${questionSection?.dataElements.length + index + 1}:`}</span>
+                                &nbsp;&nbsp;{dataElement?.name}
+                            </div>
+                            <div className={styles.questionItem}>
+                                {formatChartData({
+                                    dataElement: dataElement?.id,
+                                    dataValues: data?.events?.dataValues
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
 
+
+                {/*Red Flags section.......................................*/}
+                <div style={{width: "100%", border: "1px solid"}}>
+                    {redFlagsSection?.dataElements?.map((dataElement, index) => (
+                        <div key={dataElement?.id} className={styles.questionBox}>
+                            <div className={styles.questionItem}
+                                 style={{borderRight: "1px solid"}}>
+                                <span
+                                    style={{fontWeight: 700}}>{`Question ${recommendationSection?.dataElements.length + questionSection?.dataElements.length + index + 1}:`}</span>
+                                &nbsp;&nbsp;{dataElement?.name}
+                            </div>
+                            <div className={styles.questionItem}>
+                                {formatChartData({
+                                    dataElement: dataElement?.id,
+                                    dataValues: data?.events?.dataValues
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
 
 
             </div>
