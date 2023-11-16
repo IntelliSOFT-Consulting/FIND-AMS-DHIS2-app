@@ -11,7 +11,7 @@ const useStyles = createUseStyles({
     parentContainer: {
         display: "flex",
         flexDirection: "column",
-        gap: "8rem",
+        gap: "4rem",
         position: "relative"
     },
     header: {
@@ -41,6 +41,10 @@ const useStyles = createUseStyles({
     headerItem: {
         borderRight: ".5px solid",
         padding: ".5rem .5rem",
+    },
+    sectionWrapper: {
+        width: "100%",
+        padding: "1rem 3rem",
     },
     questionBox: {
         display: "grid",
@@ -110,7 +114,7 @@ export const EventDetails = () => {
     console.log("questions", questionSection)
 
     return (
-        <CardItem title="AMS CHART REVIEW: FORM XYZZY">
+        <CardItem title={`AMS CHART REVIEW: FORM ${data?.events?.event}`}>
             <div className={styles.header}>PATIENT DETAILS</div>
 
             <div className={styles.parentContainer}>
@@ -138,64 +142,71 @@ export const EventDetails = () => {
                 </div>
 
                 {/*Question section.......................................*/}
-                <div style={{width: "100%", border: "1px solid"}}>
-                    {questionSection?.dataElements?.map((dataElement, index) => (
-                        <div key={dataElement?.id} className={styles.questionBox}>
-                            <div className={styles.questionItem}
-                                 style={{borderRight: "1px solid"}}>
-                                <span style={{fontWeight: 700}}>{`Question ${index + 1}:`}</span>
-                                &nbsp;&nbsp;{dataElement?.name}
+                <div className={styles.sectionWrapper}>
+                    <div style={{width: "100%", border: "1px solid"}}>
+                        {questionSection?.dataElements?.map((dataElement, index) => (
+                            <div key={dataElement?.id} className={styles.questionBox}>
+                                <div className={styles.questionItem}
+                                     style={{borderRight: "1px solid"}}>
+                                    <span style={{fontWeight: 700}}>{`Question ${index + 1}:`}</span>
+                                    &nbsp;&nbsp;{dataElement?.name}
+                                </div>
+                                <div className={styles.questionItem}>
+                                    {formatChartData({
+                                        dataElement: dataElement?.id,
+                                        dataValues: data?.events?.dataValues
+                                    })}
+                                </div>
                             </div>
-                            <div className={styles.questionItem}>
-                                {formatChartData({
-                                    dataElement: dataElement?.id,
-                                    dataValues: data?.events?.dataValues
-                                })}
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
 
                 {/*Recommendation section.......................................*/}
-                <div style={{width: "100%", border: "1px solid"}}>
-                    {recommendationSection?.dataElements?.map((dataElement, index) => (
-                        <div key={dataElement?.id} className={styles.questionBox}>
-                            <div className={styles.questionItem}
-                                 style={{borderRight: "1px solid"}}>
+                <div className={styles.sectionWrapper}>
+                    <div style={{width: "100%", border: "1px solid"}}>
+                        {recommendationSection?.dataElements?.map((dataElement, index) => (
+                            <div key={dataElement?.id} className={styles.questionBox}>
+                                <div className={styles.questionItem}
+                                     style={{borderRight: "1px solid"}}>
                                 <span
                                     style={{fontWeight: 700}}>{`Question ${questionSection?.dataElements.length + index + 1}:`}</span>
-                                &nbsp;&nbsp;{dataElement?.name}
+                                    &nbsp;&nbsp;{dataElement?.name}
+                                </div>
+                                <div className={styles.questionItem}>
+                                    {formatChartData({
+                                        dataElement: dataElement?.id,
+                                        dataValues: data?.events?.dataValues
+                                    })}
+                                </div>
                             </div>
-                            <div className={styles.questionItem}>
-                                {formatChartData({
-                                    dataElement: dataElement?.id,
-                                    dataValues: data?.events?.dataValues
-                                })}
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
 
                 {/*Red Flags section.......................................*/}
-                <div style={{width: "100%", border: "1px solid"}}>
-                    {redFlagsSection?.dataElements?.map((dataElement, index) => (
-                        <div key={dataElement?.id} className={styles.questionBox}>
-                            <div className={styles.questionItem}
-                                 style={{borderRight: "1px solid"}}>
+
+                <div className={styles.sectionWrapper}>
+                    <div style={{width: "100%", border: "1px solid"}}>
+                        {redFlagsSection?.dataElements?.map((dataElement, index) => (
+                            <div key={dataElement?.id} className={styles.questionBox}>
+                                <div className={styles.questionItem}
+                                     style={{borderRight: "1px solid"}}>
                                 <span
                                     style={{fontWeight: 700}}>{`Question ${recommendationSection?.dataElements.length + questionSection?.dataElements.length + index + 1}:`}</span>
-                                &nbsp;&nbsp;{dataElement?.name}
+                                    &nbsp;&nbsp;{dataElement?.name}
+                                </div>
+                                <div className={styles.questionItem}>
+                                    {formatChartData({
+                                        dataElement: dataElement?.id,
+                                        dataValues: data?.events?.dataValues
+                                    })}
+                                </div>
                             </div>
-                            <div className={styles.questionItem}>
-                                {formatChartData({
-                                    dataElement: dataElement?.id,
-                                    dataValues: data?.events?.dataValues
-                                })}
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
 
