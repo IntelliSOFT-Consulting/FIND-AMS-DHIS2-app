@@ -1,6 +1,7 @@
 import {AMSTableComponent} from "../views/AMSTableComponent";
 import {MembersForm} from "../views/MembersForm";
 import {NewForm} from "../views/NewForm";
+import {ChartDetails} from "../../../shared/pages/ChartDetails";
 
 export const chartRoutes = [
     {
@@ -14,6 +15,10 @@ export const chartRoutes = [
     {
         path: "/new-form/:eventId",
         component: NewForm
+    },
+    {
+        path: "/event/:eventID",
+        component: ChartDetails
     },
 
 
