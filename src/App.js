@@ -1,7 +1,7 @@
 import React from 'react'
 import {DataQuery} from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import { HashRouter, Route, Routes} from "react-router-dom";
 import {ConfigProvider} from "antd";
 import NavigationLayout from "./shared/layouts/navigationLayout";
 import Home from "./shared/pages/Home";
@@ -52,7 +52,7 @@ const MyApp = () => (
         }}
     >
         <Provider store={store}>
-            <BrowserRouter>
+            <HashRouter>
                 <DataQuery query={query}>
                     {({error, loading, data}) => {
                         if (error) return <span>ERROR</span>
@@ -76,7 +76,7 @@ const MyApp = () => (
                         )
                     }}
                 </DataQuery>
-            </BrowserRouter>
+            </HashRouter>
         </Provider>
     </ConfigProvider>
 )

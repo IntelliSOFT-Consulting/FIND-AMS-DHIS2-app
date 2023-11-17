@@ -46,17 +46,29 @@ export const MembersForm = () => {
 
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
-    const membersSection = stages && stages[0].sections[0]
 
     const [members, setMembers] = useState([])
     const [nameElementID, setNameElementID] = useState("")
     const [loading, setLoading] = useState(false)
+    const [membersSection, setMembersSection] = useState({})
+
+
+    /**
+     * Init respective form sections once stages are fetched
+     */
+    useEffect(() => {
+        if (stages?.length > 0) {
+            const membersObject = stages[0].sections.find(section => section.title.includes("Members"))
+            setMembersSection(membersObject)
+
+        }
+    }, [stages]);
 
 
     useEffect(() => {
         if (membersSection?.dataElements) {
             const fullNamesObject = membersSection.dataElements.find(element => element.name.includes("Full"))
-            setNameElementID(fullNamesObject.id)
+            setNameElementID(fullNamesObject?.id)
 
         }
     }, [membersSection]);
@@ -95,7 +107,7 @@ export const MembersForm = () => {
         let dataValues = []
         members.forEach(member => {
             const keys = Object.keys(member)
-            keys.forEach(key=>{
+            keys.forEach(key => {
                 dataValues.push({"dataElement": key, value: member[key]})
             })
         })
@@ -106,7 +118,7 @@ export const MembersForm = () => {
                     "occurredAt": new Date().toJSON().slice(0, 10),
                     "notes": [],
                     program,
-                    "programStage": stages[0].id,
+                    "programStage": stages[0]?.id,
                     orgUnit: orgUnitID,
                     dataValues
                 }
@@ -154,68 +166,72 @@ export const MembersForm = () => {
 
     return (
         <CardItem title={Header()}>
-            <Form
-                className={styles.formContainer} form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
-                {membersSection?.dataElements.map(dataElement => (
-                    <Form.Item
-                        key={dataElement.id}
-                        label={dataElement.name}
-                        name={dataElement.id}
-                        rules={[
-                            {
-                                required: dataElement.required,
-                                message: `Please input ${dataElement.displayName}!`,
-                            },
-                            dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
-                        ]}
-                    >
-                        <InputItem
-                            type={dataElement.optionSet ? "SELECT" : dataElement.valueType}
-                            options={dataElement.optionSet?.options?.map((option) => ({
-                                label: option.name,
-                                value: option.code,
-                            }))}
-                            placeholder={`Enter ${dataElement.name}`}
+            {membersSection?.dataElements?.length > 0 && (
+                <Form
+                    className={styles.formContainer} form={form} layout="vertical" onFinish={onFinish}
+                    autoComplete="off">
+                    {membersSection?.dataElements?.map(dataElement => (
+                        <Form.Item
+                            key={dataElement.id}
+                            label={dataElement.name}
                             name={dataElement.id}
-                        />
-                    </Form.Item>
-                ))}
-                {loading ? (
-                    <Spin style={{gridColumn: "1", marginLeft: "auto",}}/>
-                ) : (
-                    <button
-                        onClick={addMembers}
-                        style={{
-                            gridColumn: "1",
-                            width: "fit-content",
-                            fontWeight: "700",
-                            fontSize: "16px",
-                            backgroundColor: "#E3EEF7",
-                            marginLeft: "auto",
-                            padding: ".8rem 4rem"
+                            rules={[
+                                {
+                                    required: dataElement.required,
+                                    message: `Please input ${dataElement.displayName}!`,
+                                },
+                                dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
+                            ]}
+                        >
+                            <InputItem
+                                type={dataElement.optionSet ? "SELECT" : dataElement.valueType}
+                                options={dataElement.optionSet?.options?.map((option) => ({
+                                    label: option.name,
+                                    value: option.code,
+                                }))}
+                                placeholder={`Enter ${dataElement.name}`}
+                                name={dataElement.id}
+                            />
+                        </Form.Item>
+                    ))}
+                    {loading ? (
+                        <Spin style={{gridColumn: "1", marginLeft: "auto",}}/>
+                    ) : (
+                        <button
+                            onClick={addMembers}
+                            style={{
+                                gridColumn: "1",
+                                width: "fit-content",
+                                fontWeight: "700",
+                                fontSize: "16px",
+                                backgroundColor: "#E3EEF7",
+                                marginLeft: "auto",
+                                padding: ".8rem 4rem"
+                            }}
+                            type="button"
+                            className="primary-btn">ADD
+                        </button>
+                    )}
+
+                    <Table
+                        style={{gridColumn: "1"}}
+                        pagination={members?.length > 10 ? {pageSize: 10} : false}
+                        bordered
+                        rowKey={record => record[nameElementID]}
+                        columns={columns}
+                        dataSource={members}
+                        locale={{
+                            emptyText: (
+                                <div>
+                                    <p>No Results.</p>
+                                </div>
+                            ),
                         }}
-                        type="button"
-                        className="primary-btn">ADD
-                    </button>
-                )}
+                    />
 
-                <Table
-                    style={{gridColumn: "1"}}
-                    pagination={members?.length > 10 ? {pageSize: 10} : false}
-                    bordered
-                    rowKey={record => record[nameElementID]}
-                    columns={columns}
-                    dataSource={members}
-                    locale={{
-                        emptyText: (
-                            <div>
-                                <p>No Results.</p>
-                            </div>
-                        ),
-                    }}
-                />
+                </Form>
+            )}
 
-            </Form>
         </CardItem>
     )
 }
