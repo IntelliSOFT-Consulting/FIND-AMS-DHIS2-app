@@ -59,6 +59,21 @@ const useStyles = createUseStyles({
             width: "6rem",
             fontSize: "14px"
         }
+    },
+    primaryBtn: {
+        padding: ".2rem 2rem",
+        borderRadius: "6px",
+        color: "#1d5288",
+        fontWeight: "600",
+        border: "0",
+        cursor: "pointer",
+        fontSize: "8px",
+        "@media(min-width: 768px)": {
+            alignSelf: "center",
+            padding: "0.7rem 3.5rem",
+            "fontSize": "14px",
+            fontWeight: 600,
+        }
     }
 
 })
@@ -66,7 +81,7 @@ const useStyles = createUseStyles({
 const query = {
     events: {
         resource: "tracker/events",
-        params: ({filter="", date=""}) => ({
+        params: ({filter = "", date = ""}) => ({
             page: 1,
             pageSize: 15,
             program: "KqmTbzBTDVj",
@@ -85,14 +100,14 @@ const query = {
  * @returns {JSX.Element}
  */
 const Header = () => {
-
+    const styles = useStyles()
     const navigate = useNavigate()
     return (
         <div className="card-header">
             <p className="card-header-text">AMS CHART REVIEW</p>
             <button
                 onClick={() => navigate("/charts/members-present-form")}
-                className="primary-btn">ADD NEW
+                className={styles.primaryBtn}>ADD NEW
             </button>
         </div>
     )

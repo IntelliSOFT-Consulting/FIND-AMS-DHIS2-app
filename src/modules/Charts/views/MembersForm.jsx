@@ -31,6 +31,21 @@ const useStyles = createUseStyles({
         fontStyle: "italic",
         cursor: "pointer"
     },
+    primaryBtn: {
+        padding: ".2rem 2rem",
+        borderRadius: "6px",
+        color: "#1d5288",
+        fontWeight: "600",
+        border: "0",
+        cursor: "pointer",
+        fontSize: "8px",
+        "@media(min-width: 768px)": {
+            alignSelf: "center",
+            padding: "0.7rem 3.5rem",
+            "fontSize": "14px",
+            fontWeight: 600,
+        }
+    }
 })
 
 
@@ -158,7 +173,7 @@ export const MembersForm = () => {
             <p className="card-header-text">MEMBERS PRESENT</p>
             <button
                 onClick={onFinish}
-                className="primary-btn">START
+                className={styles.primaryBtn}>START
             </button>
         </div>
     )
