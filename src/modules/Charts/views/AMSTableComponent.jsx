@@ -66,7 +66,7 @@ const useStyles = createUseStyles({
 const query = {
     events: {
         resource: "tracker/events",
-        params: ({filter="", occurredAt="", occurredAfter= ""}) => ({
+        params: ({filter="", date=""}) => ({
             page: 1,
             pageSize: 15,
             program: "KqmTbzBTDVj",
@@ -74,8 +74,8 @@ const query = {
             fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
             ouMode: "SELECTED",
             order: "occurredAt:desc",
-            occurredAt,
-            occurredAfter,
+            occurredBefore: date,
+            occurredAfter: date,
             filter
         })
     }
@@ -180,13 +180,12 @@ export const AMSTableComponent = () => {
     const filterByDate = async () => {
         if (dateString)
             await refetch({
-                occurredBefore: dateString,
-                occurredAfter: dateString,
+                date: dateString,
             })
     }
 
     const clearFilters = async () => {
-        await refetch({filter: ""})
+        await refetch({filter: "", date: ""})
         setDateString(null)
         setDate(null)
         setIp(null)
