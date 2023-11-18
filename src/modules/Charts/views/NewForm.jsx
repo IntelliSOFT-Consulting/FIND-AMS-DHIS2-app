@@ -1,5 +1,4 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
-import {createUseStyles} from "react-jss";
 import {Form, notification, Spin} from "antd";
 import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
@@ -7,85 +6,10 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useDataEngine} from "@dhis2/app-runtime";
 import {FormSection} from "../Components/FormSection";
 import styles from "../styles/FormSection.module.css"
+import {MultiSelectSection} from "../Components/MultiSelectSection";
 
-const useStyles = createUseStyles({
-    parentContainer: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "2rem",
-        position: "relative"
-    },
-    detailsContainer: {
-        display: "flex",
-        flexDirection: "column",
-        border: "1px solid",
-        gap: "1rem",
-    },
-    title: {
-        justifySelf: "start",
-        backgroundColor: "rgb(234, 238, 240)",
-        color: "#1d5288",
-        padding: ".5rem 1rem",
-        fontWeight: "500",
-        height: "fit-content",
-        width: "100%",
-        gridColumn: "1 / 3"
-    },
-    inputContainer: {
-        display: "grid",
-        gridTemplateColumns: "1fr",
-        gap: "4rem",
-        padding: "1rem 1rem",
-        width: "100%",
-        "@media (min-width: 768px)": {
-            gridTemplateColumns: "1fr 1fr",
-            gap: "3rem 12rem",
-            padding: "1.5rem 3rem"
-        }
-    },
-    formContainer: {
-        display: "grid",
-        minHeight: "65vh",
-    },
-    actionContainer: {
-        display: "flex",
-        justifyContent: "end",
-        gap: "2rem",
-        width: "100%",
-        backgroundColor: "#E3EEF7",
-        height: "fit-content",
-        marginTop: "auto",
-        padding: "4rem .5rem",
-        position: "absolute",
-        bottom: "0px",
-        left: "0px",
-        "@media (min-width: 768px)": {
-            padding: "4rem 2rem",
-        }
-    },
-    successButton: {
-        color: "white",
-        backgroundColor: "green",
-        padding: ".5rem 2rem",
-        borderRadius: "4px",
-        outline: "none",
-        border: "none",
-        fontSize: "12px"
-    },
-    backButton: {
-        color: "white",
-        backgroundColor: "#1d5288",
-        padding: ".5rem 2rem",
-        borderRadius: "4px",
-        outline: "none",
-        border: "none",
-        fontSize: "12px"
-    },
-
-})
 
 export const NewForm = () => {
-    // const styles = useStyles()
     const [form] = Form.useForm()
 
     const {eventId} = useParams()
@@ -143,7 +67,6 @@ export const NewForm = () => {
         }
     }, [stages]);
 
-
     const onFinish = async (values) => {
         const payload = {
             events: [
@@ -192,19 +115,56 @@ export const NewForm = () => {
                 <div className={styles.parentContainer}>
                     <div className={styles.patientDetailsWrapper}>
                         <div className={styles.title}>PATIENT DETAILS</div>
-                        <FormSection containerStyles={styles.patientDetailsSection} section={formSections.patients} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+                        <FormSection
+                            ordered={false}
+                            containerStyles={styles.patientDetailsSection}
+                            section={formSections.patients}
+                            layoutStyles={{width: "100%", gridColumn: "1/3"}}
+                        />
+                    </div>
+
+                    <div className={styles.twoColumnWrapper}>
+                        <FormSection
+                            section={formSections.antibiotics}
+                            layoutStyles={{width: "100%", gridColumn: "1/3"}}
+                        />
+                        <FormSection
+                            section={formSections.cultures}
+                            listStyle="a"
+                            placeholderNumber={formSections.antibiotics?.dataElements?.length + 1}
+                            containerStyles={styles.culturesSection}
+                        />
                     </div>
 
 
-                    <FormSection section={formSections.antibiotics} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
-                    <FormSection section={formSections.cultures} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
-                    <FormSection section={formSections.dosage} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+                    <FormSection
+                        containerStyles={styles.dosageSection}
+                        startingIndex={formSections.antibiotics?.dataElements?.length + 2}
+                        section={formSections.dosage}
+                    />
 
-                    <FormSection section={formSections.recommendation}
-                                 layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
-                    <FormSection section={formSections.redFlags} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
-                    <FormSection section={formSections.comments} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
-                    <FormSection section={formSections.signature} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+
+                    <MultiSelectSection
+                        number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
+                        section={formSections.recommendation}
+                    />
+
+                    <MultiSelectSection
+                        number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
+                        section={formSections.redFlags}
+                    />
+
+
+                    <FormSection
+                        ordered={false}
+                        containerStyles={styles.commentsSection}
+                        section={formSections.comments}
+                    />
+                    <FormSection
+                        ordered={false}
+                        containerStyles={styles.commentsSection}
+                        section={formSections.signature}
+                    />
 
 
                 </div>
