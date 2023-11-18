@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Radio, Select, DatePicker } from "antd";
+import {Input, Radio, Select, DatePicker, Checkbox} from "antd";
 
 export default function InputItem({ type, name, ...props }) {
   const renderInput = () => {
@@ -26,6 +26,10 @@ export default function InputItem({ type, name, ...props }) {
             }}
           />
         );
+      case "MULTI_TEXT":
+        return (
+            <Checkbox.Group  style={{display: "grid", gridTemplateColumns: "1fr 1fr"}} name={name} {...props} />
+        )
       default:
         return <Input name={name} {...props} />;
     }
