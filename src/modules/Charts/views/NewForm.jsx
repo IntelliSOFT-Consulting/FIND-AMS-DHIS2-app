@@ -1,12 +1,12 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {createUseStyles} from "react-jss";
-import {Form, Input, notification, Spin} from "antd";
+import {Form, notification, Spin} from "antd";
 import {useSelector} from "react-redux";
-import InputItem from "../../../shared/components/Fields/InputItem";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {useDataEngine} from "@dhis2/app-runtime";
-
+import {FormSection} from "../Components/FormSection";
+import styles from "../styles/FormSection.module.css"
 
 const useStyles = createUseStyles({
     parentContainer: {
@@ -85,7 +85,7 @@ const useStyles = createUseStyles({
 })
 
 export const NewForm = () => {
-    const styles = useStyles()
+    // const styles = useStyles()
     const [form] = Form.useForm()
 
     const {eventId} = useParams()
@@ -94,12 +94,19 @@ export const NewForm = () => {
     const navigate = useNavigate()
 
     /**
-     * Form section State hooks
+     * Form section State hook
      */
-    const [patientDetailsSection, setPatientDetailsSection] = useState({})
-    const [questionSection, setQuestionSection] = useState({})
-    const [recommendationSection, setRecommendationSection] = useState({})
-    const [redFlagsSection, setRedFlagsSection] = useState({})
+    const [formSections, setFormSections] = useState({
+        patients: {},
+        antibiotics: {},
+        cultures: {},
+        dosage: {},
+        recommendation: {},
+        redFlags: {},
+        comments: {},
+        signature: {},
+    })
+
     const [loading, setLoading] = useState(false)
 
 
@@ -108,22 +115,31 @@ export const NewForm = () => {
 
 
     /**
+     * Finds a section object by searching through the stages for a specific title
+     * @param searchString
+     * @param sectionArray
+     * @returns {*}
+     */
+    const findSectionObject = ({searchString, sectionArray}) => {
+        return sectionArray.find(section => section.title.toLowerCase().includes(searchString.toLowerCase()))
+    }
+
+
+    /**
      * Init respective form sections once stages are fetched
      */
     useEffect(() => {
         if (stages?.length > 0) {
-            const patientObject = stages[0].sections.find(section => section.title.includes("Patients"))
-            setPatientDetailsSection(patientObject)
-
-            const questionObject = stages[0].sections.find(section => section.title.includes("Questions"))
-            setQuestionSection(questionObject)
-
-            const recommendationObject = stages[0].sections.find(section => section.title.includes("Recommendation"))
-            setRecommendationSection(recommendationObject)
-
-            const flagsObject = stages[0].sections.find(section => section.title.includes("Red"))
-            setRedFlagsSection(flagsObject)
-
+            setFormSections({
+                patients: findSectionObject({searchString: "Patients", sectionArray: stages[0].sections}),
+                antibiotics: findSectionObject({searchString: "Antibiotics", sectionArray: stages[0].sections}),
+                cultures: findSectionObject({searchString: "Cultures", sectionArray: stages[0].sections}),
+                dosage: findSectionObject({searchString: "Dosage", sectionArray: stages[0].sections}),
+                recommendation: findSectionObject({searchString: "Recommendation", sectionArray: stages[0].sections}),
+                redFlags: findSectionObject({searchString: "Flags", sectionArray: stages[0].sections}),
+                comments: findSectionObject({searchString: "Comments", sectionArray: stages[0].sections}),
+                signature: findSectionObject({searchString: "signature", sectionArray: stages[0].sections}),
+            })
         }
     }, [stages]);
 
@@ -165,7 +181,6 @@ export const NewForm = () => {
                 message: "error",
                 description: "Something went wrong"
             })
-            console.log("error", e)
         } finally {
             setLoading(false)
         }
@@ -175,132 +190,22 @@ export const NewForm = () => {
         <Form onFinish={onFinish} form={form} layout="vertical" style={{position: "relative"}}>
             <CardItem title="AMS CHART REVIEW: NEW FORM">
                 <div className={styles.parentContainer}>
-                    <div className={styles.detailsContainer}>
+                    <div className={styles.patientDetailsWrapper}>
                         <div className={styles.title}>PATIENT DETAILS</div>
-                        <div className={styles.inputContainer}>
-                            {/*............Patient IP/OP and ward section..................*/}
-                            {patientDetailsSection?.dataElements?.map(dataElement => (
-                                <Form.Item
-                                    key={dataElement.id}
-                                    label={dataElement.name}
-                                    name={dataElement.id}
-                                    rules={[
-                                        {
-                                            required: dataElement.required,
-                                            message: `Please input ${dataElement.displayName}!`,
-                                        },
-                                        dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
-                                    ]}
-                                >
-                                    <InputItem
-                                        type={dataElement.optionSet ? "SELECT" : dataElement.valueType}
-                                        options={dataElement.optionSet?.options?.map((option) => ({
-                                            label: option.name,
-                                            value: option.code,
-                                        }))}
-                                        placeholder={`Enter ${dataElement.name}`}
-                                        name={dataElement.id}
-                                    />
-                                </Form.Item>
-                            ))}
-                        </div>
+                        <FormSection containerStyles={styles.patientDetailsSection} section={formSections.patients} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
                     </div>
-                    {/*............Questions section section..................*/}
-                    <div style={{marginTop: "6rem"}}>
-                        <div className={styles.title}>QUESTIONS</div>
 
-                        <ol className={styles.inputContainer}>
-                            {questionSection?.dataElements?.map(dataElement => (
-                                <li key={dataElement.id} style={{width: "100%"}}>
-                                    <Form.Item
-                                        key={dataElement.id}
-                                        label={dataElement.name}
-                                        name={dataElement.id}
-                                        rules={[
-                                            {
-                                                required: dataElement.required,
-                                                message: `Please input ${dataElement.displayName}!`,
-                                            },
-                                            dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
-                                        ]}
-                                    >
-                                        <InputItem
-                                            type={dataElement.optionSet ? "SELECT" : dataElement.valueType}
-                                            options={dataElement.optionSet?.options?.map((option) => ({
-                                                label: option.name,
-                                                value: option.code,
-                                            }))}
-                                            placeholder={`Enter ${dataElement.name}`}
-                                            name={dataElement.id}
-                                        />
-                                    </Form.Item>
-                                </li>
-                            ))}
-                        </ol>
-                        {/*............Recommendation section..................*/}
-                        <div className={styles.inputContainer}>
-                            {recommendationSection?.dataElements?.map(dataElement => (
-                                <Form.Item
-                                    style={{color: "#1d5288 !important", width: "100%", gridColumn: "1/3"}}
-                                    key={dataElement.id}
-                                    label={dataElement.name}
-                                    name={dataElement.id}
-                                    rules={[
-                                        {
-                                            required: dataElement.required,
-                                            message: `Please input ${dataElement.displayName}!`,
-                                        },
-                                        dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
-                                    ]}
-                                >
-                                    <InputItem
-                                        type={dataElement.optionSet ? "SELECT" : dataElement.valueType}
-                                        options={dataElement.optionSet?.options?.map((option) => ({
-                                            label: option.name,
-                                            value: option.code,
-                                        }))}
-                                        placeholder={`Enter ${dataElement.name}`}
-                                        name={dataElement.id}
-                                    />
-                                </Form.Item>
-                            ))}
-                        </div>
 
-                        {/*............Red flags section..................*/}
-                        <div className={styles.inputContainer}>
-                            {redFlagsSection?.dataElements?.map(dataElement => (
-                                <Form.Item
-                                    style={{color: "#1d5288 !important", width: "100%", gridColumn: "1/3"}}
-                                    key={dataElement.id}
-                                    label={dataElement.name}
-                                    name={dataElement.id}
-                                    rules={[
-                                        {
-                                            required: dataElement.required,
-                                            message: `Please input ${dataElement.displayName}!`,
-                                        },
-                                        dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
-                                    ]}
-                                >
-                                    <InputItem
-                                        type={dataElement.optionSet ? "SELECT" : dataElement.valueType}
-                                        options={dataElement.optionSet?.options?.map((option) => ({
-                                            label: option.name,
-                                            value: option.code,
-                                        }))}
-                                        placeholder={`Enter ${dataElement.name}`}
-                                        name={dataElement.id}
-                                    />
-                                </Form.Item>
-                            ))}
+                    <FormSection section={formSections.antibiotics} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+                    <FormSection section={formSections.cultures} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+                    <FormSection section={formSections.dosage} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
 
-                        </div>
-                        <div className={styles.inputContainer} style={{gap: "2px", marginBottom: "10rem"}}>
-                            <label htmlFor="comments">Additional Comments (if any):</label>
-                            <Input.TextArea id="comments" placeholder="Additional Comments (if any)"
-                                            style={{gridColumn: "1/3"}}/>
-                        </div>
-                    </div>
+                    <FormSection section={formSections.recommendation}
+                                 layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+                    <FormSection section={formSections.redFlags} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+                    <FormSection section={formSections.comments} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+                    <FormSection section={formSections.signature} layoutStyles={{width: "100%", gridColumn: "1/3"}}/>
+
 
                 </div>
                 <div className={styles.actionContainer}>
