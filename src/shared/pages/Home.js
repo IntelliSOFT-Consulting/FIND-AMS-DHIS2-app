@@ -111,14 +111,6 @@ export default function Home() {
                             <span>{link.title}</span>
                         </div>
                     </Link>
-                    // <a href={link.path} key={link.title} className={classes.linkItem}>
-                    //     <div className={classes.iconSection}>
-                    //         <link.icon className={classes.icon} aria-hidden="true" />
-                    //     </div>
-                    //     <div className={classes.title}>
-                    //         <span>{link.title}</span>
-                    //     </div>
-                    // </a>
                 ))}
             </div>
         </div>

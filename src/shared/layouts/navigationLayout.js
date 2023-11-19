@@ -4,7 +4,8 @@ import {
     HomeOutlined as HomeIcon,
     PieChartOutlined as ChartPieIcon,
     PieChartOutlined as Pie,
-    SettingOutlined as Cog6ToothIcon
+    SettingOutlined as Cog6ToothIcon,
+    ArrowUpOutlined
 } from "@ant-design/icons";
 import {Layout, Menu} from "antd";
 import {createUseStyles} from "react-jss";
@@ -12,6 +13,7 @@ import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import routes from "../../routes";
 import {useGetForms} from "../hooks/useGetForms";
 import {useGetOrgUnit} from "../hooks/useGetOrgUnit";
+import {DocumentTextIcon} from "@heroicons/react/24/outline";
 
 const {Content, Sider} = Layout;
 
@@ -57,7 +59,8 @@ function getItem(label, key, icon, children, type) {
 const items = [
     getItem("Dashboard", "/", <HomeIcon/>, null, "item"),
     getItem("AMS Chart Review", "/charts", <Pie/>, null, "item"),
-    getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ChartPieIcon/>, null, "item"),
+    getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ArrowUpOutlined/>, null, "item"),
+    getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon style={{width: "16px", height: "16px"}}/>, null, "item"),
 
     getItem("Reports", "/reports", <ArrowDownRightIcon/>, null, "item"),
     getItem("Configurations", "/configurations", <Cog6ToothIcon/>, null, "item"),
@@ -84,6 +87,9 @@ const NavigationLayout = ({user, program, organisationUnits}) => {
         getForms()
         getOrgUnit()
     }, []);
+
+
+
 
     return (
         <Layout>
