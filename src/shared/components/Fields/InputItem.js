@@ -30,6 +30,8 @@ export default function InputItem({ type, name, ...props }) {
         return (
             <Checkbox.Group  style={{display: "grid", gridTemplateColumns: "1fr 1fr"}} name={name} {...props} />
         )
+      case "LONG_TEXT":
+        return <Input.TextArea name={name} {...props} />;
       default:
         return <Input name={name} {...props} />;
     }

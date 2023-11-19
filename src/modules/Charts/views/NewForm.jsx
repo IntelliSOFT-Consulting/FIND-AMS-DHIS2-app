@@ -7,6 +7,7 @@ import {useDataEngine} from "@dhis2/app-runtime";
 import {FormSection} from "../Components/FormSection";
 import styles from "../styles/FormSection.module.css"
 import {MultiSelectSection} from "../Components/MultiSelectSection";
+import {findSectionObject} from "../helpers";
 
 
 export const NewForm = () => {
@@ -31,6 +32,10 @@ export const NewForm = () => {
         signature: {},
     })
 
+    const [recommendationValues, setRecommendationValues] = useState([])
+    const [redFlagValues, setRedFlagValues] = useState([])
+
+
     const [loading, setLoading] = useState(false)
 
 
@@ -38,15 +43,8 @@ export const NewForm = () => {
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
 
-    /**
-     * Finds a section object by searching through the stages for a specific title
-     * @param searchString
-     * @param sectionArray
-     * @returns {*}
-     */
-    const findSectionObject = ({searchString, sectionArray}) => {
-        return sectionArray.find(section => section.title.toLowerCase().includes(searchString.toLowerCase()))
-    }
+
+
 
 
     /**
@@ -62,12 +60,40 @@ export const NewForm = () => {
                 recommendation: findSectionObject({searchString: "Recommendation", sectionArray: stages[0].sections}),
                 redFlags: findSectionObject({searchString: "Flags", sectionArray: stages[0].sections}),
                 comments: findSectionObject({searchString: "Comments", sectionArray: stages[0].sections}),
-                signature: findSectionObject({searchString: "signature", sectionArray: stages[0].sections}),
+                signature: findSectionObject({searchString: "Signature", sectionArray: stages[0].sections}),
             })
         }
     }, [stages]);
 
     const onFinish = async (values) => {
+
+        /**
+         * First add the single answer values
+         * @type {{dataElement: *, value: *}[]}
+         */
+        const dataValues =  Object.keys(values).map(key => ({
+            dataElement: key,
+            value: values[key]
+        }))
+
+        /**
+         * Add multi-select items to data values
+         */
+        recommendationValues.forEach(checkedValue => {
+            dataValues.push({
+                dataElement: checkedValue,
+                value: true
+            })
+        })
+
+       redFlagValues.forEach(checkedValue => {
+            dataValues.push({
+                dataElement: checkedValue,
+                value: true
+            })
+        })
+
+
         const payload = {
             events: [
                 {
@@ -77,10 +103,7 @@ export const NewForm = () => {
                     "programStage": stages[0].id,
                     orgUnit: orgUnitID,
                     event: eventId,
-                    dataValues: Object.keys(values).map(key => ({
-                        dataElement: key,
-                        value: values[key]
-                    })),
+                    dataValues
                 }
             ]
         }
@@ -145,11 +168,13 @@ export const NewForm = () => {
 
 
                     <MultiSelectSection
+                        setCheckedValues={setRecommendationValues}
                         number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
                         section={formSections.recommendation}
                     />
 
                     <MultiSelectSection
+                        setCheckedValues={setRedFlagValues}
                         number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
                         section={formSections.redFlags}
                     />

@@ -73,12 +73,12 @@ export const MembersForm = () => {
      */
     useEffect(() => {
         if (stages?.length > 0) {
+
             const membersObject = stages[0].sections.find(section => section.title.includes("Members"))
             setMembersSection(membersObject)
 
         }
     }, [stages]);
-
 
     useEffect(() => {
         if (membersSection?.dataElements) {
