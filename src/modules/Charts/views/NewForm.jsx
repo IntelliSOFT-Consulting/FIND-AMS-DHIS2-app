@@ -148,10 +148,12 @@ export const NewForm = () => {
 
                     <div className={styles.twoColumnWrapper}>
                         <FormSection
+                            overrideInputType="RADIO"
                             section={formSections.antibiotics}
                             layoutStyles={{width: "100%", gridColumn: "1/3"}}
                         />
                         <FormSection
+                            overrideInputType="RADIO"
                             section={formSections.cultures}
                             listStyle="a"
                             placeholderNumber={formSections.antibiotics?.dataElements?.length + 1}
@@ -161,6 +163,7 @@ export const NewForm = () => {
 
 
                     <FormSection
+                        overrideInputType="RADIO"
                         containerStyles={styles.dosageSection}
                         startingIndex={formSections.antibiotics?.dataElements?.length + 2}
                         section={formSections.dosage}

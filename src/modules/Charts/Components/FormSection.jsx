@@ -11,12 +11,13 @@ const Wrapper = ({ordered, children, listStyle, startingIndex, containerStyles})
 
 export const FormSection = ({
                                 section,
-                                startingIndex=1,
+                                startingIndex = 1,
                                 listStyle,
                                 containerStyles,
                                 childStyles,
                                 placeholderNumber,
-                                ordered = true
+                                ordered = true,
+                                overrideInputType
                             }) => {
 
     return (
@@ -39,7 +40,7 @@ export const FormSection = ({
                         ]}
                     >
                         <InputItem
-                            type={dataElement?.optionSet && dataElement?.valueType === "TEXT" ? "SELECT" : dataElement.valueType}
+                            type={overrideInputType ? overrideInputType : dataElement?.optionSet && dataElement?.valueType === "TEXT" ? "SELECT" : dataElement.valueType}
                             options={dataElement.optionSet?.options?.map((option) => ({
                                 label: option.name || option?.displayName,
                                 value: option.code,
