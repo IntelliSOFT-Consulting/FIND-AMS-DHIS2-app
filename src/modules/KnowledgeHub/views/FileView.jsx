@@ -5,6 +5,7 @@ import {Viewer, Worker} from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import pdf from "../../../shared/assets/sample.pdf"
+import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
 
 const Header = () => {
     const navigate = useNavigate()
@@ -32,6 +33,7 @@ const Header = () => {
 }
 
 export const FileView = () => {
+    const defaultLayoutPluginInstance = defaultLayoutPlugin();
     return (
         <CardItem title={Header()}>
             <div className={styles.parentWrapper}>
@@ -59,7 +61,9 @@ export const FileView = () => {
             </div>
 
             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                <Viewer fileUrl={pdf} />
+                <Viewer
+                    plugins={[defaultLayoutPluginInstance]}
+                    fileUrl={pdf} />
             </Worker>
 
         </CardItem>
