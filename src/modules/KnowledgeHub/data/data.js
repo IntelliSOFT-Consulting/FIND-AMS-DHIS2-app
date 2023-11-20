@@ -5,7 +5,7 @@ export const categoryItems = [
     {
         name: "Add New",
         icon: FolderAddOutlined,
-        path: "/knowledge-hub"
+        path: "/knowledge-hub/new-file"
     },
     {
         name: "Guidelines",

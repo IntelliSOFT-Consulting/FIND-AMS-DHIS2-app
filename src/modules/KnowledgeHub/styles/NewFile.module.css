@@ -1,0 +1,65 @@
+
+.twoColumnWrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 10rem;
+    @media (min-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+}
+
+
+.formLayout {
+    display: grid;
+    grid-template-areas:
+            "a b"
+            "c d"
+            "e e";
+    gap: 2rem 8rem;
+    margin-bottom: 10rem;
+}
+
+.inputWrapper {
+    width: 100%;
+}
+
+
+
+/*.......action buttons...........*/
+.actionContainer {
+    display: flex;
+    justify-content: end;
+    gap: 2rem;
+    width: 100%;
+    background-color: #e3eef7;
+    height: fit-content;
+    margin-top: auto;
+    padding: 1rem .5rem;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    @media (min-width: 768px) {
+        padding: 4rem 2rem;
+    }
+}
+
+.successButton {
+    color: white;
+    background-color: green;
+    padding: .5rem 2rem;
+    border-radius: 4px;
+    font-size: 12px;
+    border: none;
+}
+
+.backButton {
+    color: white;
+    background-color: #1d5288;
+    padding: .5rem 2rem;
+    border-radius: 4px;
+    font-size: 12px;
+    border: none;
+}
+

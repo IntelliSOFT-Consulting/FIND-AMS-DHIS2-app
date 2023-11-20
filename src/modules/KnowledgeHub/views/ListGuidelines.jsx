@@ -2,7 +2,7 @@ import {createUseStyles} from "react-jss";
 import {Button, Input, Space, Table} from "antd";
 import {useAxios} from "../../../shared/hooks/useAxios";
 import {useEffect} from "react";
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {categoryItems} from "../data/data";
 import moduleStyles from "../styles/ListGuidelines.module.css"
 
@@ -53,6 +53,7 @@ export const ListGuidelines = () => {
     const styles = useStyles()
 
     const {loading, makeRequest, error, data} = useAxios()
+    const navigate = useNavigate()
 
     useEffect(() => {
         makeRequest({
@@ -151,7 +152,9 @@ export const ListGuidelines = () => {
                     borderBottom: "1px solid #D3D3D3"
                 }}>
                     <p style={{fontSize: "14px", padding: "4px"}}>Guidelines</p>
-                    <button className="outline-btn">UPLOAD NEW FILE</button>
+                    <button
+                        onClick={()=>navigate("/knowledge-hub/new-file")}
+                        className="outline-btn">UPLOAD NEW FILE</button>
                 </div>
                 <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem"}}>
                     <Input
@@ -161,7 +164,8 @@ export const ListGuidelines = () => {
                         placeholder="Search using document name"
                         label="Filter by Date"
                     />
-                    <button className="outline-btn">SEARCH</button>
+                    <button
+                        className="outline-btn">SEARCH</button>
                 </div>
                 <Table
                     style={{width: '100%', border: "1px solid #d3d3d3", borderRadius: "6px"}}

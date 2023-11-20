@@ -40,3 +40,15 @@ export const membersReducer = (state = [], action) => {
             return state
     }
 }
+
+export const knowledgeHubReducer = (state={}, action)=>{
+    switch (action.type) {
+        case "KNOWLEDGE":
+            return {
+                ...state,
+                ...action.payload
+            }
+        default:
+            return state;
+    }
+}

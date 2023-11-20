@@ -1,6 +1,6 @@
 import {Form} from "antd";
-import InputItem from "../../../shared/components/Fields/InputItem";
-import styles from "../styles/FormSection.module.css"
+import InputItem from "../Fields/InputItem";
+import styles from "../../../modules/Charts/styles/FormSection.module.css"
 
 
 const Wrapper = ({ordered, children, listStyle, startingIndex, containerStyles}) => ordered ? (
@@ -17,7 +17,8 @@ export const FormSection = ({
                                 childStyles,
                                 placeholderNumber,
                                 ordered = true,
-                                overrideInputType
+                                overrideInputType,
+    fileUploadProps
                             }) => {
 
     return (
@@ -40,6 +41,7 @@ export const FormSection = ({
                         ]}
                     >
                         <InputItem
+                            fileUploadProps={fileUploadProps}
                             type={overrideInputType ? overrideInputType : dataElement?.optionSet && dataElement?.valueType === "TEXT" ? "SELECT" : dataElement.valueType}
                             options={dataElement.optionSet?.options?.map((option) => ({
                                 label: option.name || option?.displayName,

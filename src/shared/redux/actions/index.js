@@ -13,16 +13,9 @@ export const setOrgUnit = orgUnit => dispatch =>{
 }
 
 
-export const addMember = member => dispatch =>{
+export const setKnowledgeHub = forms => dispatch => {
     dispatch({
-        type: "ADD_MEMBER",
-        payload: member
-    })
-}
-
-export const removeMember = memberID => dispatch =>{
-    dispatch({
-        type: "REMOVE_MEMBER",
-        payload: memberID
+        type: "KNOWLEDGE",
+        payload: forms
     })
 }

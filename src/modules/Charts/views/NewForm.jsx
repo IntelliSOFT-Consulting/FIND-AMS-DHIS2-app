@@ -4,7 +4,7 @@ import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {useDataEngine} from "@dhis2/app-runtime";
-import {FormSection} from "../Components/FormSection";
+import {FormSection} from "../../../shared/components/Forms/FormSection";
 import styles from "../styles/FormSection.module.css"
 import {MultiSelectSection} from "../Components/MultiSelectSection";
 import {findSectionObject} from "../helpers";
@@ -203,7 +203,7 @@ export const NewForm = () => {
                         <>
                             <button type="button" onClick={() => navigate(-1)} className={styles.backButton}>BACK
                             </button>
-                            <button type="submit" className={styles.successButton}>SUBMIT</button>
+                            <button type="submit" className={styles.successButton}>SAVE</button>
                         </>
                     )}
 
