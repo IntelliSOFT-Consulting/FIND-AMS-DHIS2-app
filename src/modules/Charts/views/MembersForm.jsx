@@ -16,7 +16,7 @@ const useStyles = createUseStyles({
         alignContent: "center",
         "@media (min-width: 768px)": {
             gridTemplateColumns: "1fr 1fr",
-            gap: "2rem 4rem"
+            gap: "0rem 4rem"
         }
     },
     placeholderDiv: {
