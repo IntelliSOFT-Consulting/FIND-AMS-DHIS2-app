@@ -9,6 +9,7 @@ import {SectionDisplay} from "../Components/SectionDisplay";
 import {MultiSelectSectionDisplay} from "../Components/MultiSelectSectionDisplay";
 import {TextAreaDisplay} from "../Components/TextAreaDisplay";
 import {formatChartData} from "../../../shared/helpers/formatData";
+import {Spin} from "antd";
 
 
 const query = {
@@ -42,7 +43,7 @@ export const EventDetails = () => {
     }, [eventId]);
 
 
-    const {data} = useDataQuery(query)
+    const {data, loading} = useDataQuery(query)
 
     const {stages} = useSelector(state => state.forms)
 
@@ -95,6 +96,7 @@ export const EventDetails = () => {
             <div className={styles.header}>PATIENT DETAILS</div>
 
             <div className={styles.parent}>
+                {loading && (<Spin style={{margin: "auto", justifySelf: "center", alignSelf: "center"}}/>)}
                 <SectionDisplay
                     containerStyles={styles.basicInfoWrapper}
                     itemsContainerStyles={styles.basicInfoItemWrapper}
