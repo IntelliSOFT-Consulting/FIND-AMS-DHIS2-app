@@ -229,7 +229,7 @@ export const MembersForm = () => {
                     )}
 
                     <Table
-                        style={{gridColumn: "1"}}
+                        style={{gridColumn: "1", marginTop: "4rem"}}
                         pagination={members?.length > 10 ? {pageSize: 10} : false}
                         bordered
                         rowKey={record => record[nameElementID]}
