@@ -1,7 +1,7 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {useSelector} from "react-redux";
 import {Form, Input, Radio, Select, Spin, Upload} from "antd";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styles from "../styles/NewFile.module.css"
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useNavigate} from "react-router-dom";
@@ -27,15 +27,8 @@ export const NewFile = () => {
 
     const navigate = useNavigate()
 
-    const [formSection, setFileSection] = useState({})
-    const [documentFile, setDocumentFile] = useState({})
     const [loading, setLoading] = useState(false)
 
-
-    useEffect(() => {
-        if (stages)
-            setFileSection(stages[0]?.sections[0])
-    }, [stages]);
 
     const fetchAllDocuments = async () => {
         const response = await engine.query(query)
@@ -45,19 +38,46 @@ export const NewFile = () => {
     const onFinish = async (values) => {
         console.log("hit", values)
         const existingDocuments = await fetchAllDocuments()
-        console.log("existing", existingDocuments)
 
-        // await engine.mutate({
-        //     resource: query.dataStore.resource,
-        //     data
-        // })
+        const reader = new FileReader()
+
+        reader.onload = (evt) => {
+            return evt.target.result
+        }
+
+
+        const payload = {
+            ...existingDocuments,
+
+        }
+
+        payload[values.document_name] = {
+            ...values,
+            file: reader.readAsDataURL(values.file.fileList[0].originFileObj)
+        }
+
+        console.log("payload", payload)
+
+        await engine.mutate({
+            type: "update",
+            resource: query.dataStore.resource,
+            data: payload
+        })
 
     }
 
 
     const fileUploadProps = {
         name: "file",
-        onChange: async (file) => setDocumentFile(file?.file?.originFileObj)
+        onChange: async (options) => {
+            const reader = new FileReader()
+
+            reader.onload = (evt) => {
+                return evt.target.result
+            }
+
+            console.log("options", options.file.originFileObj)
+        }
     }
 
     const permissions = [
@@ -77,26 +97,26 @@ export const NewFile = () => {
             <CardItem title="AMS KNOWLEDGE HUB">
 
                 <div className={styles.formLayout}>
-                    <Form.Item label="Document name">
+                    <Form.Item name="document_name" label="Document name">
                         <Input name="document_name"/>
                     </Form.Item>
 
-                    <Form.Item label="Document permissions">
+                    <Form.Item name="document_permissions" label="Document permissions">
                         <Radio.Group options={permissions} name="document_permissions"/>
                     </Form.Item>
 
-                    <Form.Item label="Category Selection">
+                    <Form.Item name="category" label="Category Selection">
                         <Select options={permissions} name="category"/>
                     </Form.Item>
 
 
-                    <Form.Item label="Description">
+                    <Form.Item name="document_description" label="Description">
                         <Input.TextArea rows={5} name="document_description"/>
                     </Form.Item>
 
 
-                    <Form.Item label="Document" style={{gridColumn: "1/3", height: "250px"}}>
-                        <Upload.Dragger rows={5} name="file"/>
+                    <Form.Item name="file" label="Document">
+                        <Upload.Dragger maxCount={1} onChange={fileUploadProps.onChange} rows={5} name="file"/>
                     </Form.Item>
                 </div>
 
