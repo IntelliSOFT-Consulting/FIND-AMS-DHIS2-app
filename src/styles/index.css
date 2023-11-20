@@ -1,0 +1,61 @@
+.primary-btn {
+    padding: .2rem 2rem;
+    border-radius: 6px;
+    color: #1d5288;
+    fontWeight: 600;
+    border: 0;
+    cursor: pointer;
+    font-size: 8px;
+
+    @media (min-width: 768px) {
+        align-self: center;
+        padding: 0.7rem 3.5rem;
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+.outline-btn {
+    padding: .2rem 2rem;
+    border-radius: 6px;
+    color: #1d5288;
+    fontWeight: 600;
+    border: 0;
+    cursor: pointer;
+    font-size: 8px;
+    background-color: #E3EEF7;
+
+    @media (min-width: 768px) {
+        align-self: center;
+        padding: 0.7rem 3.5rem;
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+
+.card-header {
+    display: flex;
+    width: 100%;
+    font-weight: 400;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.card-header-text {
+    font-size: 10px;
+    @media (min-width: 768px) {
+        font-size: 14px
+    }
+}
+
+
+.form-control {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    grid-column: 1;
+    @media (min-width: 768px) {
+        grid-column: auto;
+    }
+}

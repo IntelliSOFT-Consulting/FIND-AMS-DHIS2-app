@@ -1,16 +1,21 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import {
+    ArrowDownOutlined as ArrowDownRightIcon,
     HomeOutlined as HomeIcon,
     PieChartOutlined as ChartPieIcon,
-    ArrowDownOutlined as ArrowDownRightIcon,
+    PieChartOutlined as Pie,
     SettingOutlined as Cog6ToothIcon,
+    ArrowUpOutlined
 } from "@ant-design/icons";
-import { Menu, Layout } from "antd";
-import { createUseStyles } from "react-jss";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import routes from "../routes";
+import {Layout, Menu} from "antd";
+import {createUseStyles} from "react-jss";
+import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import routes from "../../routes";
+import {useGetForms} from "../hooks/useGetForms";
+import {useGetOrgUnit} from "../hooks/useGetOrgUnit";
+import {DocumentTextIcon} from "@heroicons/react/24/outline";
 
-const { Content, Sider } = Layout;
+const {Content, Sider} = Layout;
 
 const styles = createUseStyles({
     "@global": {
@@ -50,16 +55,21 @@ function getItem(label, key, icon, children, type) {
         type,
     };
 }
-const items = [
-    getItem("Dashboard", "/", <HomeIcon />, null, "item"),
-    getItem("Surgeries", "/surgeries", <ChartPieIcon />, null, "item"),
 
-    getItem("Reports", "/reports", <ArrowDownRightIcon />, null, "item"),
-    getItem("Configurations", "/configurations", <Cog6ToothIcon />, null, "item"),
+const items = [
+    getItem("Dashboard", "/", <HomeIcon/>, null, "item"),
+    getItem("AMS Chart Review", "/charts", <Pie/>, null, "item"),
+    getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ArrowUpOutlined/>, null, "item"),
+    getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon style={{width: "16px", height: "16px"}}/>, null, "item"),
+
+    getItem("Reports", "/reports", <ArrowDownRightIcon/>, null, "item"),
+    getItem("Configurations", "/configurations", <Cog6ToothIcon/>, null, "item"),
 ];
-const NavigationLayout = ({ user, program, organisationUnits }) => {
+const NavigationLayout = ({user, program, organisationUnits}) => {
     const classes = styles();
 
+    const {getForms} = useGetForms()
+    const {getOrgUnit} = useGetOrgUnit()
 
     const navigate = useNavigate();
 
@@ -73,10 +83,19 @@ const NavigationLayout = ({ user, program, organisationUnits }) => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
+    useEffect(() => {
+        getForms()
+        getOrgUnit()
+    }, []);
+
+
+
+
     return (
         <Layout>
             <Sider breakpoint="lg" collapsedWidth="0">
-                <Menu onClick={onClick} defaultSelectedKeys={["1"]} defaultOpenKeys={["/"]} mode="inline" items={items} />
+                <Menu onClick={onClick} defaultSelectedKeys={["1"]} defaultOpenKeys={["/"]} mode="inline"
+                      items={items}/>
             </Sider>
 
             <Content className={classes.content}>
@@ -85,7 +104,7 @@ const NavigationLayout = ({ user, program, organisationUnits }) => {
                         <Route
                             key={route.path}
                             path={route.path}
-                            element={<route.component user={user} />}
+                            element={<route.component user={user}/>}
                         />
                     ))}
                 </Routes>

@@ -1,0 +1,18 @@
+
+.parentContainer{
+    padding: 2rem;
+}
+
+.sectionTitle{
+    color: #1d5288;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-style: italic;
+}
+
+.checkboxWrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 1rem;
+    gap: 1rem;
+}

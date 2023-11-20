@@ -1,7 +1,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { ChartPieIcon, ArrowTopRightOnSquareIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 const styles = createUseStyles({
     container: {
@@ -75,11 +75,10 @@ const styles = createUseStyles({
 });
 
 export default function Home() {
-    const domain = window.location.origin;
     const links = [
         {
             title: "AMS Chart Review",
-            path: `/chart-review`,
+            path: `/charts`,
             icon: ArrowTopRightOnSquareIcon,
         },
         {
@@ -104,14 +103,14 @@ export default function Home() {
         <div className={classes.container}>
             <div className={classes.links}>
                 {links.map((link) => (
-                    <a href={link.path} key={link.title} className={classes.linkItem}>
+                    <Link key={link.title} to={link.path} className={classes.linkItem}>
                         <div className={classes.iconSection}>
                             <link.icon className={classes.icon} aria-hidden="true" />
                         </div>
                         <div className={classes.title}>
                             <span>{link.title}</span>
                         </div>
-                    </a>
+                    </Link>
                 ))}
             </div>
         </div>
