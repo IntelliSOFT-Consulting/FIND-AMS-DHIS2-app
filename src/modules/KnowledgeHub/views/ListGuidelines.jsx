@@ -52,7 +52,7 @@ const useStyles = createUseStyles({
 export const ListGuidelines = () => {
     const styles = useStyles()
 
-    const {loading, makeRequest, error, data} = useAxios()
+    const {loading, makeRequest, data} = useAxios()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -84,10 +84,10 @@ export const ListGuidelines = () => {
             title: "Actions",
             dataIndex: "Actions",
             key: "name",
-            render: (text, record) => (
+            render: () => (
                 <Space size="middle">
                     <div
-                        onClick={() => navigate("/charts/submitted-form")}
+                        onClick={() => navigate("/knowledge-hub/file/1")}
                         className={styles.actionLink}>
                         View
                     </div>

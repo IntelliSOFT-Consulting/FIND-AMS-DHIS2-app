@@ -1,5 +1,6 @@
 import {ListGuidelines} from "../views/ListGuidelines";
 import {NewFile} from "../views/NewFile";
+import {FileView} from "../views/FileView";
 
 export const knowledgeRoutes = [
     {
@@ -9,5 +10,10 @@ export const knowledgeRoutes = [
     {
         path: "/new-file",
         component: NewFile
-    }
+    },
+        {
+        path: "/file/:fileId",
+        component: FileView
+    },
+
 ]
