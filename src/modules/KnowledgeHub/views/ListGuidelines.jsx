@@ -159,6 +159,7 @@ export const ListGuidelines = () => {
 
 
     const filterByCategory = async (categoryCode) => {
+        setSearchString("")
         if (categoryCode === "")
             await refetch({
                 filter: ""
