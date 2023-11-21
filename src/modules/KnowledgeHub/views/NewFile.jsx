@@ -11,7 +11,6 @@ import axios from "axios";
 
 
 export const NewFile = () => {
-
     const [formSections, setFormSections] = useState({
         createFile: {}
     })
@@ -48,10 +47,12 @@ export const NewFile = () => {
          * Add all data elements except the form field
          * @type {{dataElement: *, value: *}[]}
          */
-        const dataValues = Object.keys(values).map(key => ({
+        let dataValues = Object.keys(values).map(key => ({
             dataElement: key,
             value: values[key]
         }))
+
+        dataValues = dataValues.filter(dataValue=> dataValue.value !==undefined)
 
         /**
          * add the file resource id
@@ -68,20 +69,27 @@ export const NewFile = () => {
                     notes: [],
                     program,
                     programStage: stages[0].id,
-                    orgUnitID: orgUnitID,
-                    dataValues
+                    orgUnit: orgUnitID,
+                    dataValues,
+                    completedAt:  new Date().toJSON().slice(0, 10),
+                    status: "COMPLETED"
                 }
             ]
         }
 
 
         try {
+            console.log("payload", payload)
             setLoading(true)
             const response = await engine.mutate({
                 resource: "tracker",
                 type: "create",
                 data: payload,
+                params: {
+                    async: false,
+                }
             })
+            console.log("response", response)
             if (response?.status === "OK")
                 navigate(`/knowledge-hub`)
         } catch (e) {
