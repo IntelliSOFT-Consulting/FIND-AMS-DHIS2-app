@@ -69,3 +69,9 @@ export const formatChartData = ({dataElement, dataValues}) => {
     const object =  dataValues?.find(item => item?.dataElement === dataElement)
     return object?.value
 }
+
+
+export const getDataElementObjectByID =  ({elementId, dataElements})=>{
+  const object = dataElements?.find(dataElement => dataElement.id === elementId)
+    return object
+}

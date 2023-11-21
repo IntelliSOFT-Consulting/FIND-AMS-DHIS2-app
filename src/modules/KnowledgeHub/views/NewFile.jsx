@@ -79,7 +79,6 @@ export const NewFile = () => {
 
 
         try {
-            console.log("payload", payload)
             setLoading(true)
             const response = await engine.mutate({
                 resource: "tracker",
@@ -89,7 +88,6 @@ export const NewFile = () => {
                     async: false,
                 }
             })
-            console.log("response", response)
             if (response?.status === "OK")
                 navigate(`/knowledge-hub`)
         } catch (e) {

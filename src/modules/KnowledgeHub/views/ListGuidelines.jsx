@@ -1,89 +1,112 @@
-import {createUseStyles} from "react-jss";
 import {Button, Input, Space, Table} from "antd";
-import {useAxios} from "../../../shared/hooks/useAxios";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {NavLink, useNavigate} from "react-router-dom";
 import {categoryItems} from "../data/data";
 import moduleStyles from "../styles/ListGuidelines.module.css"
+import styles from "../styles/ListGuidelines.module.css"
+import {useDataQuery} from "@dhis2/app-runtime";
+import {useSelector} from "react-redux";
+import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
 
-const useStyles = createUseStyles({
-    parentContainer: {
-        display: "grid",
-        gridTemplateColumns: "1fr",
-        padding: "1rem",
-        gap: " 2rem",
-        "@media (min-width: 1024px)": {
-            gridTemplateColumns: "1fr 4fr"
-        }
-    },
-    categoryContainer: {
-        display: "flex",
-        backgroundColor: "white",
-        flexDirection: "row",
-        gap: "12px",
-        boxShadow: "4px 4px 4px #D3D3D3",
-        border: "1px solid #d3d3d3",
-        color: "#2C6693",
-        fontSize: "12px",
-        padding: "1rem .8rem",
-        borderRadius: "6px",
-        "@media (min-width: 1024px)": {
-            flexDirection: "column"
-        }
-    },
-    tableContainer: {
-        display: 'flex',
-        flexDirection: "column",
-        padding: "1rem 1rem",
-        gap: "2rem",
-        borderRadius: "6px",
-        boxShadow: "4px 4px 4px #D3D3D3",
-        border: "1px solid #d3d3d3",
-    },
-    actionLink: {
-        textDecoration: "underline",
-        fontStyle: "italic",
-        cursor: "pointer",
-        fontSize: "12px",
-        color: "#1677FF"
+const query = {
+    events: {
+        resource: "tracker/events",
+        params: ({filter = "", program, orgUnit}) => ({
+            page: 1,
+            pageSize: 15,
+            program,
+            orgUnit,
+            fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
+            order: "occurredAt:desc",
+            filter
+        })
     }
-})
+}
+
 
 export const ListGuidelines = () => {
-    const styles = useStyles()
 
-    const {loading, makeRequest, data} = useAxios()
+    const [records, setRecords] = useState([])
+    const [searchString, setSearchString] = useState("")
+    const [documentNameElementID, setDocumentNameElementID] = useState("")
     const navigate = useNavigate()
 
-    useEffect(() => {
-        makeRequest({
-            url: "/users"
-        })
-    }, []);
 
+    /**
+     * Query hook
+     */
+    const {loading, data, refetch} = useDataQuery(query)
+
+    const {program, stages} = useSelector(state => state.knowledgeHub)
+    const {id: orgUnitID} = useSelector(state => state.orgUnit)
+
+
+    useEffect(() => {
+        if (stages) {
+            const elementObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("name"))
+            console.log("elementObject", elementObject)
+            setDocumentNameElementID(elementObject.id)
+        }
+    }, [stages]);
+
+    useEffect(() => {
+        refetch({
+            orgUnit: orgUnitID,
+            program: program
+        })
+    }, [orgUnitID, program]);
+
+
+    const formatTableData = () => {
+        if (stages && data) {
+            data?.events?.instances.forEach(instance => {
+                let item = {
+                    createdAt: instance.createdAt
+                }
+                instance.dataValues.forEach(dataValue => {
+                    const dataElement = getDataElementObjectByID({
+                        elementId: dataValue.dataElement,
+                        dataElements: stages[0]?.sections[0]?.dataElements
+                    })
+                    item[dataElement?.name] = dataValue.value
+                })
+                setRecords(prev => [...prev, item])
+
+            })
+
+        }
+    }
+
+
+    useEffect(() => {
+        if (stages?.length > 0 && data?.events)
+            formatTableData()
+        return () => {
+            setRecords([])
+        }
+    }, [data]);
 
     const columns = [
         {
             title: 'DOCUMENT NAME',
-            dataIndex: 'address',
-            key: 'name',
-            render: item => Object.values(item)[3]
+            dataIndex: 'Document Name',
+            key: 'Document Name',
         },
         {
-            title: 'ADDED BY',
-            dataIndex: 'username',
-            key: 'name',
+            title: 'Permissions',
+            dataIndex: 'Document Permissions',
+            key: 'Document Permissions',
         },
         {
             title: 'DATE ADDED',
-            dataIndex: 'address',
-            key: 'name',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
             render: () => new Date().toLocaleDateString()
         },
         {
             title: "Actions",
             dataIndex: "Actions",
-            key: "name",
+            key: "Actions",
             render: () => (
                 <Space size="middle">
                     <div
@@ -111,6 +134,25 @@ export const ListGuidelines = () => {
             )
         }
     ];
+
+    const handleSearch = async () => {
+        if (searchString)
+            await refetch({
+                filter: `${documentNameElementID}:ILIKE:${searchString}`
+            })
+        else await refetch({
+            filter: ""
+        })
+    }
+
+    const handleChange = async (evt) => {
+        setSearchString(evt.target.value)
+        if (evt.target.value === "")
+            await refetch({
+                filter: ""
+            })
+    }
+
 
     return (
         <div className={styles.parentContainer}>
@@ -153,11 +195,14 @@ export const ListGuidelines = () => {
                 }}>
                     <p style={{fontSize: "14px", padding: "4px"}}>Guidelines</p>
                     <button
-                        onClick={()=>navigate("/knowledge-hub/new-file")}
-                        className="outline-btn">UPLOAD NEW FILE</button>
+                        onClick={() => navigate("/knowledge-hub/new-file")}
+                        className="outline-btn">UPLOAD NEW FILE
+                    </button>
                 </div>
                 <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem"}}>
                     <Input
+                        value={searchString}
+                        onChange={handleChange}
                         className={styles.inputs}
                         size="large"
                         id="ip/op"
@@ -165,14 +210,16 @@ export const ListGuidelines = () => {
                         label="Filter by Date"
                     />
                     <button
-                        className="outline-btn">SEARCH</button>
+                        onClick={handleSearch}
+                        className="outline-btn">SEARCH
+                    </button>
                 </div>
                 <Table
                     style={{width: '100%', border: "1px solid #d3d3d3", borderRadius: "6px"}}
-                    rowKey={record => record?.name}
+                    rowKey={record => record?.createdAt}
                     loading={loading}
                     pagination={data?.length > 10 ? {pageSize: 10} : false}
-                    dataSource={data}
+                    dataSource={records}
                     columns={columns}
                     bordered
                     locale={{
