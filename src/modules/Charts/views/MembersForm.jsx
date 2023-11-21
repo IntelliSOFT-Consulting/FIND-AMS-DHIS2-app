@@ -16,7 +16,7 @@ const useStyles = createUseStyles({
         alignContent: "center",
         "@media (min-width: 768px)": {
             gridTemplateColumns: "1fr 1fr",
-            gap: "2rem 4rem"
+            gap: "0rem 4rem"
         }
     },
     placeholderDiv: {
@@ -238,7 +238,7 @@ export const MembersForm = () => {
                     )}
 
                     <Table
-                        style={{gridColumn: "1"}}
+                        style={{gridColumn: "1", marginTop: "4rem"}}
                         pagination={members?.length > 10 ? {pageSize: 10} : false}
                         bordered
                         rowKey={record => record[nameElementID]}

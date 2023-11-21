@@ -2,12 +2,14 @@ import {CardItem} from "../../../shared/components/cards/CardItem";
 import {useEffect, useState} from "react";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {findSectionObject} from "../helpers";
 import styles from "../styles/ChartDetails.module.css"
 import {SectionDisplay} from "../Components/SectionDisplay";
 import {MultiSelectSectionDisplay} from "../Components/MultiSelectSectionDisplay";
 import {TextAreaDisplay} from "../Components/TextAreaDisplay";
+import {formatChartData} from "../../../shared/helpers/formatData";
+import {Spin} from "antd";
 
 
 const query = {
@@ -31,9 +33,8 @@ export const EventDetails = () => {
         comments: {},
         signature: {},
     })
+    const [patientIp, setPatientIp] = useState("")
 
-
-    const navigate = useNavigate()
 
     const {eventId} = useParams()
 
@@ -42,9 +43,25 @@ export const EventDetails = () => {
     }, [eventId]);
 
 
-    const {loading, data, refetch, error} = useDataQuery(query)
+    const {data, loading} = useDataQuery(query)
 
-    const {stages, program} = useSelector(state => state.forms)
+    const {stages} = useSelector(state => state.forms)
+
+    /**
+     * Get patient ip for use in form title
+     * First get the element id for the Ip from the data elements
+     * Then use that to find the data value in the event array
+     */
+    const getPatientIP = () => {
+        if (formSections.patients?.dataElements) {
+            const ipElement = formSections?.patients?.dataElements?.find(element => element?.name.includes("IP/OP"))
+            const value = formatChartData({
+                dataElement: ipElement.id,
+                dataValues: data?.events?.dataValues
+            })
+            setPatientIp(value)
+        }
+    }
 
 
     /**
@@ -67,11 +84,19 @@ export const EventDetails = () => {
     }, [stages]);
 
 
+    /**
+     * Set the patient Ip when the event object is fetched or when the data elements are fetched
+     */
+    useEffect(() => {
+        getPatientIP()
+    }, [formSections, data]);
+
     return (
-        <CardItem title={`AMS CHART REVIEW: FORM ${data?.events?.event}`}>
+        <CardItem title={`AMS CHART REVIEW: FORM ${patientIp}`}>
             <div className={styles.header}>PATIENT DETAILS</div>
 
             <div className={styles.parent}>
+                {loading && (<Spin style={{margin: "auto", justifySelf: "center", alignSelf: "center"}}/>)}
                 <SectionDisplay
                     containerStyles={styles.basicInfoWrapper}
                     itemsContainerStyles={styles.basicInfoItemWrapper}
