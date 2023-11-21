@@ -75,7 +75,8 @@ export const ListGuidelines = () => {
         if (stages && data) {
             data?.events?.instances.forEach(instance => {
                 let item = {
-                    createdAt: instance.createdAt
+                    createdAt: instance.createdAt,
+                    eventID: instance.event
                 }
                 instance.dataValues.forEach(dataValue => {
                     const dataElement = getDataElementObjectByID({
@@ -129,10 +130,10 @@ export const ListGuidelines = () => {
             title: "Actions",
             dataIndex: "Actions",
             key: "Actions",
-            render: () => (
+            render: (text, record) => (
                 <Space size="middle">
                     <div
-                        onClick={() => navigate("/knowledge-hub/file/1")}
+                        onClick={() => navigate(`/knowledge-hub/file/${record.eventID}`)}
                         className={styles.actionLink}>
                         View
                     </div>
@@ -237,7 +238,7 @@ export const ListGuidelines = () => {
                 </div>
                 <Table
                     style={{width: '100%', border: "1px solid #d3d3d3", borderRadius: "6px"}}
-                    rowKey={record => record?.createdAt}
+                    rowKey={record => record?.eventID}
                     loading={loading}
                     pagination={data?.length > 10 ? {pageSize: 10} : false}
                     dataSource={records}

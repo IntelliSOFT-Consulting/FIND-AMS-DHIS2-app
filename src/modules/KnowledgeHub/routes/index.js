@@ -12,7 +12,7 @@ export const knowledgeRoutes = [
         component: NewFile
     },
         {
-        path: "/file/:fileId",
+        path: "/file/:eventId",
         component: FileView
     },
 
