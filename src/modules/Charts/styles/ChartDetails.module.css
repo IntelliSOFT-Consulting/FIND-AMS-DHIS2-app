@@ -35,6 +35,7 @@ font-weight: 700;
     display: grid;
     grid-template-columns: 1fr 1fr;
     border: 1px solid;
+    align-items: center;
 }
 
 .basicInfoName {
@@ -63,6 +64,7 @@ font-weight: 700;
     grid-template-columns: 3fr 1fr;
     justify-content: center;
     border-bottom: 1px solid;
+    align-items: center;
 }
 
 .genericName {
