@@ -1,24 +1,25 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {useSelector} from "react-redux";
-import {Form, Input, Radio, Select, Spin, Upload} from "antd";
-import React, {useState} from "react";
+import {Form, notification, Spin} from "antd";
+import React, {useEffect, useState} from "react";
 import styles from "../styles/NewFile.module.css"
-import {useDataEngine} from "@dhis2/app-runtime";
+import {useConfig, useDataEngine} from "@dhis2/app-runtime";
 import {useNavigate} from "react-router-dom";
-
-
-const query = {
-    dataStore: {
-        resource: "dataStore/KnowledgeHub/files"
-    }
-}
+import {FormSection} from "../../../shared/components/Forms/FormSection";
+import {findSectionObject} from "../../Charts/helpers";
+import axios from "axios";
 
 
 export const NewFile = () => {
 
+    const [formSections, setFormSections] = useState({
+        createFile: {}
+    })
+    const [file, setFile] = useState({})
 
     const {stages, program} = useSelector(state => state.knowledgeHub)
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
+    const {baseUrl, apiVersion} = useConfig()
 
     const [form] = Form.useForm()
 
@@ -29,96 +30,130 @@ export const NewFile = () => {
 
     const [loading, setLoading] = useState(false)
 
-
-    console.log('stages', stages)
-
-    const fetchAllDocuments = async () => {
-        const response = await engine.query(query)
-        return response?.dataStore
+    /**
+     * Get form element id by looking for a data element with valueType "FILE_RESOURCE"
+     * @returns {*}
+     */
+    const getFormElementID = () => {
+        if (formSections.createFile?.dataElements) {
+            const formElement = formSections?.createFile?.dataElements?.find(element => element?.valueType.includes("FILE"))
+            return formElement?.id
+        }
     }
+
 
     const onFinish = async (values) => {
-        const existingDocuments = await fetchAllDocuments()
 
-        const reader = new FileReader()
+        /**
+         * Add all data elements except the form field
+         * @type {{dataElement: *, value: *}[]}
+         */
+        const dataValues = Object.keys(values).map(key => ({
+            dataElement: key,
+            value: values[key]
+        }))
 
-        reader.onload = (evt) => {
-            return evt.target.result
-        }
-
-
-        const payload = {
-            ...existingDocuments,
-
-        }
-
-        payload[values.document_name] = {
-            ...values,
-            file: reader.readAsDataURL(values.file.fileList[0].originFileObj)
-        }
-
-
-        await engine.mutate({
-            type: "update",
-            resource: query.dataStore.resource,
-            data: payload
+        /**
+         * add the file resource id
+         */
+        dataValues.push({
+            dataElement: getFormElementID(),
+            value: file
         })
 
+        const payload = {
+            events: [
+                {
+                    occurredAt: new Date().toJSON().slice(0, 10),
+                    notes: [],
+                    program,
+                    programStage: stages[0].id,
+                    orgUnitID: orgUnitID,
+                    dataValues
+                }
+            ]
+        }
+
+
+        try {
+            setLoading(true)
+            const response = await engine.mutate({
+                resource: "tracker",
+                type: "create",
+                data: payload,
+            })
+            if (response?.status === "OK")
+                navigate(`/knowledge-hub`)
+        } catch (e) {
+            notification.error({
+                message: "error",
+                description: "Something went wrong"
+            })
+        } finally {
+            setLoading(false)
+        }
+
     }
 
+    /**
+     * Init respective form sections once stages are fetched
+     */
+    useEffect(() => {
+        if (stages?.length > 0) {
+            setFormSections({
+                createFile: findSectionObject({searchString: "Create", sectionArray: stages[0].sections}),
+            })
+        }
+    }, [stages]);
 
+    /**
+     * Props for your form element
+     * This enables us to send a form to the fileResources url so that we get a resource id back
+     * @type {{maxCount: number, customRequest: ((function(*): Promise<void>)|*), accept: string}}
+     */
     const fileUploadProps = {
-        name: "file",
-        onChange: async (options) => {
-            const reader = new FileReader()
+        accept: ".pdf",
+        maxCount: 1,
+        customRequest: async (options) => {
+            const {onSuccess, onError, file, onProgress} = options;
+            const formData = new FormData()
 
-            reader.onload = (evt) => {
-                return evt.target.result
+            formData.append("file", file)
+            try {
+                const config = {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    auth: {
+                        username: "admin",
+                        password: "district"
+                    }
+                }
+
+                const response = await axios.post(`${baseUrl}/api/${apiVersion}/fileResources`, formData, config)
+
+                if (response.status === 202) {
+                    onSuccess(response.data.response.fileResource.id)
+                    setFile(response.data.response.fileResource.id)
+                }
+            } catch (e) {
+                onError(e)
             }
-
         }
     }
 
-    const permissions = [
-        {
-            label: "Public Document",
-            value: "public"
-        },
-        {
-            label: "AMS Committee Document",
-            value: "ams"
-        },
-
-    ]
 
     return (
         <Form onFinish={onFinish} form={form} layout="vertical" style={{position: "relative"}}>
             <CardItem title="AMS KNOWLEDGE HUB">
 
-                <div className={styles.formLayout}>
-                    <Form.Item name="document_name" label="Document name">
-                        <Input name="document_name"/>
-                    </Form.Item>
-
-                    <Form.Item name="document_permissions" label="Document permissions">
-                        <Radio.Group options={permissions} name="document_permissions"/>
-                    </Form.Item>
-
-                    <Form.Item name="category" label="Category Selection">
-                        <Select options={permissions} name="category"/>
-                    </Form.Item>
-
-
-                    <Form.Item name="document_description" label="Description">
-                        <Input.TextArea rows={5} name="document_description"/>
-                    </Form.Item>
-
-
-                    <Form.Item name="file" label="Document">
-                        <Upload.Dragger maxCount={1} onChange={fileUploadProps.onChange} rows={5} name="file"/>
-                    </Form.Item>
-                </div>
-
+                <FormSection
+                    fileUploadProps={fileUploadProps}
+                    ordered={false}
+                    containerStyles={styles.inputWrapper}
+                    section={formSections?.createFile}
+                    layoutStyles={{width: "100%", gridColumn: "1/3"}}
+                />
 
                 <div className={styles.actionContainer}>
                     {loading ? (
