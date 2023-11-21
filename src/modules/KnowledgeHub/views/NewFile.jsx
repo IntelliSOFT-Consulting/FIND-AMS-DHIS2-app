@@ -30,13 +30,14 @@ export const NewFile = () => {
     const [loading, setLoading] = useState(false)
 
 
+    console.log('stages', stages)
+
     const fetchAllDocuments = async () => {
         const response = await engine.query(query)
         return response?.dataStore
     }
 
     const onFinish = async (values) => {
-        console.log("hit", values)
         const existingDocuments = await fetchAllDocuments()
 
         const reader = new FileReader()
@@ -56,7 +57,6 @@ export const NewFile = () => {
             file: reader.readAsDataURL(values.file.fileList[0].originFileObj)
         }
 
-        console.log("payload", payload)
 
         await engine.mutate({
             type: "update",
@@ -76,7 +76,6 @@ export const NewFile = () => {
                 return evt.target.result
             }
 
-            console.log("options", options.file.originFileObj)
         }
     }
 

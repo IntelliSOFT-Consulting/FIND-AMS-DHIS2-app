@@ -64,6 +64,7 @@ export const MembersForm = () => {
 
     const [members, setMembers] = useState([])
     const [nameElementID, setNameElementID] = useState("")
+    const [designationElementID, setDesignationElementID] = useState("")
     const [loading, setLoading] = useState(false)
     const [membersSection, setMembersSection] = useState({})
 
@@ -85,6 +86,9 @@ export const MembersForm = () => {
             const fullNamesObject = membersSection.dataElements.find(element => element.name.includes("Full"))
             setNameElementID(fullNamesObject?.id)
 
+            const designationObject = membersSection.dataElements.find(element => element.name.includes("Designation"))
+            setDesignationElementID(designationObject?.id)
+
         }
     }, [membersSection]);
 
@@ -94,6 +98,11 @@ export const MembersForm = () => {
             title: 'Full Names',
             dataIndex: nameElementID,
             key: nameElementID,
+        },
+        {
+            title: 'Designation',
+            dataIndex: designationElementID,
+            key: designationElementID,
         },
         {
             title: "Action",
