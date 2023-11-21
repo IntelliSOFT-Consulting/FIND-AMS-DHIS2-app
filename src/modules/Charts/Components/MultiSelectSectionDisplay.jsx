@@ -12,7 +12,7 @@ export const MultiSelectSectionDisplay = ({sectionForms, data, number}) => {
 
     return (
         <div className={styles.multiSelectWrapper}>
-            <p className={styles.multiSelectTitle}>Question{number}.&nbsp;{sectionForms.title}</p>
+            <p className={styles.multiSelectTitle}>Question&nbsp;{number}.&nbsp;{sectionForms.title}</p>
             {
                 sectionValues?.map(item => (
                     <div key={item.id} className={styles.multiSelectItem}>{item.name}</div>

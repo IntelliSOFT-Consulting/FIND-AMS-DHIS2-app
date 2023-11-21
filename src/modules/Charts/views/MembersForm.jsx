@@ -120,8 +120,15 @@ export const MembersForm = () => {
         }
     ]
 
-    const addMembers = (values) => {
+    const addMembers = () => {
         const formValues = form.getFieldsValue({strict: false})
+        const keys = Object.keys(formValues)
+        for (const i of keys) {
+            if (formValues[i] === undefined){
+                return
+            }
+        }
+
         setMembers(prev => prev?.length > 0 ? [...prev, {...formValues}] : [{...formValues}])
         form.resetFields()
     }
@@ -187,6 +194,8 @@ export const MembersForm = () => {
         </div>
     )
 
+    console.log('members', stages)
+
 
     return (
         <CardItem title={Header()}>
@@ -201,7 +210,7 @@ export const MembersForm = () => {
                             name={dataElement.id}
                             rules={[
                                 {
-                                    required: dataElement.required,
+                                    required: true,
                                     message: `Please input ${dataElement.displayName}!`,
                                 },
                                 dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
