@@ -1,0 +1,56 @@
+.sideNavContainer {
+    display: flex;
+    box-shadow: 4px 4px 4px #D3D3D3;
+    border: 1px solid #d3d3d3;
+    padding: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    color: #1d5288;
+    border-radius: 6px;
+    flex-wrap: wrap;
+    gap: 4rem;
+    @media (min-width: 1024px) {
+        flex-direction: column;
+        align-items: start;
+    }
+}
+
+.title {
+    font-size: 20px;
+    width: 100%;
+    justify-self: center;
+    text-align: center;
+    text-decoration: underline;
+    @media (min-width: 1024px) {
+        text-align: left;
+    }
+}
+
+.navIcon{
+    font-size: 2rem;
+}
+
+.sideNavItem{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 1rem;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: .1rem 1rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+
+.addNewNavItem{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: .1rem 1rem;
+    cursor: pointer;
+    width: 100%;
+}

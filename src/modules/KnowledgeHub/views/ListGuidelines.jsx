@@ -1,12 +1,11 @@
 import {Button, Input, Space, Table} from "antd";
 import {useEffect, useState} from "react";
-import {NavLink, useNavigate} from "react-router-dom";
-import {categoryItems} from "../data/data";
-import moduleStyles from "../styles/ListGuidelines.module.css"
 import styles from "../styles/ListGuidelines.module.css"
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
 import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
+import {useNavigate} from "react-router-dom";
+import {SideNav} from "../components/SideNav";
 
 const query = {
     events: {
@@ -29,6 +28,8 @@ export const ListGuidelines = () => {
     const [records, setRecords] = useState([])
     const [searchString, setSearchString] = useState("")
     const [documentNameElementID, setDocumentNameElementID] = useState("")
+    const [documentCategoryElementID, setDocumentCategoryElementID] = useState("")
+    const [documentCategories, setDocumentCategories] = useState([])
     const navigate = useNavigate()
 
 
@@ -43,9 +44,12 @@ export const ListGuidelines = () => {
 
     useEffect(() => {
         if (stages) {
-            const elementObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("name"))
-            console.log("elementObject", elementObject)
-            setDocumentNameElementID(elementObject.id)
+            const documentNameObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("name"))
+            setDocumentNameElementID(documentNameObject.id)
+
+            const documentCategoryObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("category"))
+            setDocumentCategoryElementID(documentCategoryObject.id)
+            setDocumentCategories(documentCategoryObject.optionSet.options)
         }
     }, [stages]);
 
@@ -154,38 +158,22 @@ export const ListGuidelines = () => {
     }
 
 
+    const filterByCategory = async (categoryCode) => {
+        if (categoryCode === "")
+            await refetch({
+                filter: ""
+            })
+        else
+            await refetch({
+                filter: `${documentCategoryElementID}:ILIKE:${categoryCode}`
+            })
+    }
+
+
     return (
         <div className={styles.parentContainer}>
-            <div className={styles.categoryContainer}>
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    borderBottom: "1px solid #D3D3D3"
-                }}>
-                    <p style={{fontSize: "14px", padding: "4px"}}>Categories.</p>
-                </div>
-                {
-                    categoryItems.map((category, index) => (
-                        <NavLink
-                            to={category.path}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: index === 0 ? 'space-between' : 'start',
-                                gap: "1rem",
-                                border: "1px solid",
-                                borderRadius: '4px',
-                                padding: ".1rem 1rem",
-                                cursor: "pointer"
-                            }}
-                            key={index} className={moduleStyles.navItem}>
-                            <category.icon style={{order: index === 0 ? 2 : 1, width: "2rem", height: "2rem"}}/>
-                            <p style={{order: index === 0 ? 1 : 2}}>{category.name}</p>
-                        </NavLink>
-                    ))
-                }
-            </div>
+            <SideNav callbackHandler={filterByCategory} options={documentCategories}/>
+
             <div className={styles.tableContainer}>
                 <div style={{
                     display: "flex",
