@@ -14,7 +14,7 @@ export const NewFile = () => {
     const [formSections, setFormSections] = useState({
         createFile: {}
     })
-    const [file, setFile] = useState({})
+    const [file, setFile] = useState(null)
 
     const {stages, program} = useSelector(state => state.knowledgeHub)
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
@@ -42,6 +42,11 @@ export const NewFile = () => {
 
 
     const onFinish = async (values) => {
+        if (!file) {
+            return notification.error({
+                message: "Please upload a file"
+            })
+        }
 
         /**
          * Add all data elements except the form field
@@ -52,7 +57,7 @@ export const NewFile = () => {
             value: values[key]
         }))
 
-        dataValues = dataValues.filter(dataValue=> dataValue.value !==undefined)
+        dataValues = dataValues.filter(dataValue => dataValue.value !== undefined)
 
         /**
          * add the file resource id
@@ -71,7 +76,7 @@ export const NewFile = () => {
                     programStage: stages[0].id,
                     orgUnit: orgUnitID,
                     dataValues,
-                    completedAt:  new Date().toJSON().slice(0, 10),
+                    completedAt: new Date().toJSON().slice(0, 10),
                     status: "COMPLETED"
                 }
             ]
@@ -121,7 +126,7 @@ export const NewFile = () => {
         accept: ".pdf",
         maxCount: 1,
         customRequest: async (options) => {
-            const {onSuccess, onError, file, onProgress} = options;
+            const {onSuccess, onError, file} = options;
             const formData = new FormData()
 
             formData.append("file", file)
@@ -139,7 +144,7 @@ export const NewFile = () => {
                 const response = await axios.post(`${baseUrl}/api/${apiVersion}/fileResources`, formData, config)
 
                 if (response.status === 202) {
-                    onSuccess(response.data.response.fileResource.id)
+                    onSuccess("ok")
                     setFile(response.data.response.fileResource.id)
                 }
             } catch (e) {
@@ -150,13 +155,18 @@ export const NewFile = () => {
 
 
     return (
-        <Form onFinish={onFinish} form={form} layout="vertical" style={{position: "relative"}}>
+        <Form
+            initialValues={{
+                remember: true,
+            }}
+            onFinish={onFinish} form={form} layout="vertical" style={{position: "relative"}}>
             <CardItem title="AMS KNOWLEDGE HUB">
 
                 <FormSection
+                    overrideRequired={true}
                     fileUploadProps={fileUploadProps}
                     ordered={false}
-                    containerStyles={styles.inputWrapper}
+                    containerStyles={styles.twoColumnWrapper}
                     section={formSections?.createFile}
                     layoutStyles={{width: "100%", gridColumn: "1/3"}}
                 />
@@ -178,6 +188,7 @@ export const NewFile = () => {
                     )}
                 </div>
             </CardItem>
+
         </Form>
     )
 }

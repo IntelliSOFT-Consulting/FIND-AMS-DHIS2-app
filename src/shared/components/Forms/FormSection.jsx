@@ -18,7 +18,8 @@ export const FormSection = ({
                                 placeholderNumber,
                                 ordered = true,
                                 overrideInputType,
-    fileUploadProps
+                                fileUploadProps,
+                                overrideRequired
                             }) => {
 
     return (
@@ -34,10 +35,9 @@ export const FormSection = ({
                         name={dataElement.id}
                         rules={[
                             {
-                                required: dataElement.required,
-                                message: `Please input ${dataElement.displayName}!`,
+                                required: dataElement.required || (overrideRequired && dataElement?.valueType !== "FILE_RESOURCE"),
+                                message: `Please input ${dataElement.name}!`,
                             },
-                            dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
                         ]}
                     >
                         <InputItem
