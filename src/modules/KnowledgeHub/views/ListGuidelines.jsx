@@ -42,6 +42,10 @@ export const ListGuidelines = () => {
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
 
+    /**
+     * Load the state hooks that store the category data element ID and the document data element ID for filtering purposes
+     * Also loads the document categories array for use when mapping through side nav items
+     */
     useEffect(() => {
         if (stages) {
             const documentNameObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("name"))
@@ -53,6 +57,9 @@ export const ListGuidelines = () => {
         }
     }, [stages]);
 
+    /**
+     * Get the instances once the program and the organization unit and the program are present in the redux store
+     */
     useEffect(() => {
         refetch({
             orgUnit: orgUnitID,
@@ -61,6 +68,9 @@ export const ListGuidelines = () => {
     }, [orgUnitID, program]);
 
 
+    /**
+     * Formats table data by creating objects with the necessary fields
+     */
     const formatTableData = () => {
         if (stages && data) {
             data?.events?.instances.forEach(instance => {
@@ -82,6 +92,10 @@ export const ListGuidelines = () => {
     }
 
 
+    /**
+     * Populates the table state hook once the data is fetched
+     * Clears the table once the component is unmounted to ensure integrity
+     */
     useEffect(() => {
         if (stages?.length > 0 && data?.events)
             formatTableData()
@@ -90,6 +104,10 @@ export const ListGuidelines = () => {
         }
     }, [data]);
 
+    /**
+     * Datatable Columns
+     * @type {[{dataIndex: string, title: string, key: string},{dataIndex: string, title: string, key: string},{dataIndex: string, title: string, render: (function(): string), key: string},{dataIndex: string, title: string, render: (function(): *), key: string}]}
+     */
     const columns = [
         {
             title: 'DOCUMENT NAME',
@@ -119,18 +137,15 @@ export const ListGuidelines = () => {
                         View
                     </div>
                     <div
-                        onClick={() => navigate("/charts/submitted-form")}
                         className={styles.actionLink}>
                         Archive
                     </div>
                     <div
-                        onClick={() => navigate("/charts/submitted-form")}
                         className={styles.actionLink}>
                         Download
                     </div>
                     <div
                         style={{color: "#ff0000"}}
-                        onClick={() => navigate("/charts/submitted-form")}
                         className={styles.actionLink}>
                         Delete
                     </div>
@@ -139,6 +154,11 @@ export const ListGuidelines = () => {
         }
     ];
 
+    /**
+     * Search button click handler
+     * Filters all documents by name
+     * @returns {Promise<void>}
+     */
     const handleSearch = async () => {
         if (searchString)
             await refetch({
@@ -149,6 +169,12 @@ export const ListGuidelines = () => {
         })
     }
 
+    /**
+     * Change handler for search string input
+     * Fetched all documents if you delete all characters
+     * @param evt
+     * @returns {Promise<void>}
+     */
     const handleChange = async (evt) => {
         setSearchString(evt.target.value)
         if (evt.target.value === "")
@@ -158,6 +184,12 @@ export const ListGuidelines = () => {
     }
 
 
+    /**
+     * Handler for clicking on sidenav buttons
+     * It filters data according to the category
+     * @param categoryCode
+     * @returns {Promise<void>}
+     */
     const filterByCategory = async (categoryCode) => {
         setSearchString("")
         if (categoryCode === "")
