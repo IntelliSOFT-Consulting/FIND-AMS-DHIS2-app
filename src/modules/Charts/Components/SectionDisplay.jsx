@@ -1,4 +1,6 @@
 import {formatChartData} from "../../../shared/helpers/formatData";
+import styles from "../styles/ChartDetails.module.css"
+import {generateAlphaNumericList} from "../../../shared/helpers/numbering";
 
 export const SectionDisplay = ({
                                    itemsContainerStyles,
@@ -6,7 +8,10 @@ export const SectionDisplay = ({
                                    sectionForms,
                                    data,
                                    nameContainerStyles,
-                                   valueContainerStyles
+                                   valueContainerStyles,
+                                   startingIndex,
+                                   ordered = false,
+                                   alphabet = false
                                }) => {
     const sectionValues = sectionForms?.dataElements?.map(element => ({
         name: element?.name || element?.displayName,
@@ -19,7 +24,18 @@ export const SectionDisplay = ({
         <div className={containerStyles}>
             {sectionValues?.map((item, index) => (
                 <div className={itemsContainerStyles} key={index}>
-                    <div className={nameContainerStyles}>{item.name}</div>
+                    <div className={nameContainerStyles}>
+                        <p>
+                            {ordered && !alphabet &&  <span className={styles.number}>
+                                Question&nbsp;{startingIndex + index}.
+                            </span>}
+                            {ordered && alphabet &&  <span className={styles.number}>
+                                Question&nbsp;{startingIndex}{generateAlphaNumericList(index)}.
+                            </span>}
+
+                            {item.name}</p>
+
+                    </div>
                     <div className={valueContainerStyles}>{item.value}</div>
                 </div>
 

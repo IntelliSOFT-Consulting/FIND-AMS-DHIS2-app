@@ -108,6 +108,8 @@ export const EventDetails = () => {
 
 
                 <SectionDisplay
+                    ordered={true}
+                    startingIndex={1}
                     containerStyles={styles.genericWrapper}
                     itemsContainerStyles={styles.genericItemWrapper}
                     nameContainerStyles={styles.genericName}
@@ -118,6 +120,9 @@ export const EventDetails = () => {
 
 
                 <SectionDisplay
+                    ordered={true}
+                    startingIndex={formSections.antibiotics?.dataElements?.length + 1}
+                    alphabet={true}
                     containerStyles={styles.genericWrapper}
                     itemsContainerStyles={styles.genericItemWrapper}
                     nameContainerStyles={styles.genericName}
@@ -127,6 +132,8 @@ export const EventDetails = () => {
                 />
 
                 <SectionDisplay
+                    ordered={true}
+                    startingIndex={formSections.antibiotics?.dataElements?.length + 2}
                     containerStyles={styles.genericWrapper}
                     itemsContainerStyles={styles.genericItemWrapper}
                     nameContainerStyles={styles.genericName}
@@ -136,12 +143,14 @@ export const EventDetails = () => {
                 />
 
                 <MultiSelectSectionDisplay
+                    number={formSections.antibiotics?.dataElements?.length + 1 + formSections.dosage?.dataElements?.length + 1}
                     data={data?.events?.dataValues}
                     sectionForms={formSections.recommendation}
                 />
 
 
                 <MultiSelectSectionDisplay
+                    number={formSections.antibiotics?.dataElements?.length + 1 + formSections.dosage?.dataElements?.length + 2}
                     data={data?.events?.dataValues}
                     sectionForms={formSections.redFlags}
                 />

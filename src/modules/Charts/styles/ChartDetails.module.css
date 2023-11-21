@@ -23,13 +23,17 @@
     gap: 4rem;
     width: 100%;
     display: flex;
+
+}
+
+.number{
+font-weight: 700;
 }
 
 .basicInfoItemWrapper {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-
     border: 1px solid;
 }
 
@@ -45,6 +49,7 @@
 
 /*...........Other sections...............*/
 .genericWrapper {
+
     display: grid;
     border-top: 1px solid;
     border-right: 1px solid;
@@ -61,6 +66,7 @@
 }
 
 .genericName {
+    position: relative;
     border-right: 1px solid;
     padding: 1rem;
 }
