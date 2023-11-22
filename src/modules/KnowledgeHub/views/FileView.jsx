@@ -20,7 +20,7 @@ const query = {
 const pdfQuery = {
     events: {
         resource: `/events/files`,
-        params: ({dataElementUid = "R9RfiJPgvJq", eventUid = "DIbEK5xYffL"}) => ({
+        params: ({dataElementUid = "", eventUid = ""}) => ({
             dataElementUid,
             eventUid
         })
@@ -42,7 +42,7 @@ export const FileView = () => {
 
     const {data, loading} = useDataQuery(query)
 
-    const {data: pdfData, loading: pdfLoading, refetch: getPDF} = useDataQuery(pdfQuery)
+    const {data: pdfData, loading: pdfLoading, refetch} = useDataQuery(pdfQuery)
 
 
     useEffect(() => {
@@ -56,6 +56,10 @@ export const FileView = () => {
                     elementId: dataValue.dataElement, dataElements: stages[0]?.sections[0]?.dataElements
                 })
                 setDocument(prev => [...prev, {...dataElement, value: dataValue.value}])
+            })
+             refetch({
+                dataElementUid: getDocument("file")?.id,
+                eventUid: eventId
             })
         }
     }, [data]);
@@ -74,6 +78,8 @@ export const FileView = () => {
         window.document.body.appendChild(link)
         link.click()
     }
+
+
 
     useEffect(() => {
         setFileBlob(pdfData?.events)
@@ -140,8 +146,6 @@ export const FileView = () => {
                                         fileUrl={`${baseUrl}/api/${apiVersion}/events/files?dataElementUid=${getDocument("file")?.id}&eventUid=${eventId}`}
                                     />
                                 </Worker>
-
-
                         </>
                     )
             }
