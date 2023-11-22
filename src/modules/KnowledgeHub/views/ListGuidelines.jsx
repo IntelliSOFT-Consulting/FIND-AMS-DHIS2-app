@@ -1,4 +1,4 @@
-import {Button, Input, notification, Space, Table} from "antd";
+import {Button, Input, notification, Popconfirm, Space, Table} from "antd";
 import {useEffect, useState} from "react";
 import styles from "../styles/ListGuidelines.module.css"
 import {useDataEngine, useDataQuery} from "@dhis2/app-runtime";
@@ -151,11 +151,18 @@ export const ListGuidelines = () => {
                         className={styles.actionLink}>
                         Download
                     </div>
-                    <div
-                        style={{color: "#ff0000"}}
-                        className={styles.actionLink}>
-                        Delete
-                    </div>
+                    <Popconfirm
+                        description="Are you sure you want to delete this document?"
+                        onConfirm={() => handleDelete({eventUid: record.eventID})}
+                        okText="Yes"
+                        cancelText="No"
+                        title="Delete the event">
+                        <div
+                            style={{color: "#ff0000"}}
+                            className={styles.actionLink}>
+                            Delete
+                        </div>
+                    </Popconfirm>
                 </Space>
             )
         }
@@ -222,7 +229,6 @@ export const ListGuidelines = () => {
      */
     const handleDownload = async ({fileName, eventUid}) => {
         try {
-
             const response = await engine.query({
                 events: {
                     resource: "/events/files",
@@ -237,6 +243,40 @@ export const ListGuidelines = () => {
         } catch (e) {
             notification.error({
                 message: "Something went wrong"
+            })
+        }
+    }
+
+    const handleDelete = async ({eventUid}) => {
+        try {
+            const payload = {
+                events: [
+                    {
+                        event: eventUid,
+                    }
+                ]
+            }
+
+            const response = await engine.mutate({
+                resource: "tracker",
+                type: "create",
+                data: payload,
+                params: {
+                    async: false,
+                    importStrategy: "DELETE"
+                }
+            })
+            if (response.status === "OK"){
+                notification.success({
+                    message: "Success"
+                })
+                await refetch({})
+            }
+
+        } catch (e) {
+            console.log("error", e)
+            notification.error({
+                message: "Error deleting document"
             })
         }
     }
