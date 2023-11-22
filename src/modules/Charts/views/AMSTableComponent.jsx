@@ -4,6 +4,8 @@ import {createUseStyles} from "react-jss";
 import {useNavigate} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react"
+import {useSelector} from "react-redux";
+import {useDataElements} from "../../../shared/hooks/useGetDataElement";
 
 const useStyles = createUseStyles({
     searchContainer: {
@@ -123,7 +125,12 @@ export const AMSTableComponent = () => {
     const [date, setDate] = useState(null)
     const [dateString, setDateString] = useState(null)
     const [ip, setIp] = useState(null)
+    const [instances, setInstances] = useState(null)
 
+
+    const {program, stages, dataElements} = useSelector(state => state.forms)
+
+    const {getDataElementByID, getDataElementByName} = useDataElements()
 
     /**
      * Query hook
@@ -135,24 +142,22 @@ export const AMSTableComponent = () => {
      * Table columns
      * @type {[{dataIndex: string, title: string, render: (function(*): unknown), key: string},{dataIndex: string, title: string, key: string},{dataIndex: string, title: string, render: (function(): string), key: string},{dataIndex: string, title: string, render: (function(*, *): *), key: string}]}
      */
-    const columns = [
+    const chartTableColumns = [
         {
-            title: 'IP/OP NO.',
-            dataIndex: 'dataValues',
-            key: 'event',
-            render: (text, record) => (record?.dataValues.find(dataValue => dataValue.dataElement === "qm3sLorGhAm"))?.value
+            title: "Patient IP/OP NO.",
+            dataIndex: "Patient IP/OP No.",
+            key: "Patient IP/OP No.",
         },
         {
-            title: 'WARD',
-            dataIndex: 'dataValues',
-            key: 'event',
-            render: (text, record) => (record?.dataValues.find(dataValue => dataValue.dataElement === "u4UlC8FpDCV"))?.value
+            title: "Ward",
+            dataIndex: "Ward (specialty)",
+            key: "Ward (specialty)",
         },
         {
-            title: 'DATE ADDED',
-            dataIndex: 'occurredAt',
-            key: 'event',
-            render: (text, record) => new Date(record.occurredAt).toLocaleDateString()
+            title: "Date Added",
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (text, record) => new Date(record.createdAt).toLocaleDateString()
         },
         {
             title: "Actions",
@@ -161,18 +166,20 @@ export const AMSTableComponent = () => {
             render: (text, record) => (
                 <Space size="large">
                     <div
-                        onClick={() => navigate(`/charts/event/${record.event}`)}
+                        onClick={() => navigate(`/charts/event/${record.eventUid}`)}
                         className={styles.addLink}>View
                     </div>
                 </Space>
             )
         }
-    ];
+
+    ]
 
     /**
      * Load state on query execution
      */
     useEffect(() => {
+        setInstances(data?.events?.instances)
         setRecords(data?.events.instances)
     }, [data]);
 
@@ -184,7 +191,7 @@ export const AMSTableComponent = () => {
     const filterByIp = async () => {
         if (ip)
             await refetch({
-                filter: `qm3sLorGhAm:ILIKE:${ip}`
+                filter: `${getDataElementByName("ip/op").id}:ILIKE:${ip}`,
             })
     }
 
@@ -205,6 +212,7 @@ export const AMSTableComponent = () => {
         setDate(null)
         setIp(null)
     }
+
 
     return (
         <CardItem title={Header()}>
@@ -251,18 +259,32 @@ export const AMSTableComponent = () => {
                     danger={true}>Clear filters</Button>
             </div>
             <Table
-                rowKey={record => record?.event}
+                rowKey={record => record?.eventUid}
                 loading={loading}
                 pagination={records?.length > 10 ? {pageSize: 10} : false}
-                dataSource={records}
-                columns={columns}
+                dataSource={instances?.flatMap(instance => {
+                    const object = {
+                        createdAt: instance.createdAt,
+                        eventUid: instance.event
+                    }
+
+                    instance.dataValues.forEach(dataValue => {
+                        const dataElement = getDataElementByID(dataValue?.dataElement)
+                        object[dataElement?.displayName] = dataValue.value;
+                    })
+                    return object
+
+                })}
+                columns={chartTableColumns}
                 bordered
                 size="small"
                 locale={{
                     emptyText: (
                         <div>
                             <p>No Results. Add new chart</p>
-                            <Button type="primary">
+                            <Button
+                                onClick={() => navigate("/charts/members-present-form")}
+                                type="primary">
                                 New
                             </Button>
                         </div>

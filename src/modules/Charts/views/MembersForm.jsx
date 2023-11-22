@@ -194,8 +194,6 @@ export const MembersForm = () => {
         </div>
     )
 
-    console.log('members', stages)
-
 
     return (
         <CardItem title={Header()}>

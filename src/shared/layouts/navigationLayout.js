@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import {
     ArrowDownOutlined as ArrowDownRightIcon,
     HomeOutlined as HomeIcon,
-    PieChartOutlined as ChartPieIcon,
     PieChartOutlined as Pie,
     SettingOutlined as Cog6ToothIcon,
     ArrowUpOutlined

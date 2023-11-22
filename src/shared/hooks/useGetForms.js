@@ -1,7 +1,7 @@
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useDispatch} from "react-redux";
 import {setForms} from "../redux/actions";
-import { formatStages} from "../helpers/formatData";
+import {formatStages, getArrayOfDataElements} from "../helpers/formatData";
 import {notification} from "antd";
 
 
@@ -28,14 +28,15 @@ export const useGetForms = () => {
             })
             const program = programs?.programs[0];
 
-
             const stages = formatStages(program)
+
 
             dispatch(
                 setForms({
                     program: program?.id,
                     stages,
-                    trackedEntityType: program?.trackedEntityType
+                    trackedEntityType: program?.trackedEntityType,
+                    dataElements: getArrayOfDataElements(program?.programStages[0]?.programStageSections)
                 })
             )
 

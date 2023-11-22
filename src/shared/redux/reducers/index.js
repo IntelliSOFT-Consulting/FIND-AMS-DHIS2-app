@@ -23,25 +23,7 @@ export const orgUnitReducer = (state = {}, action) => {
 }
 
 
-export const membersReducer = (state = [], action) => {
-    switch (action.type) {
-        case "ADD_MEMBER":
-            return {
-                ...state,
-                ...action.payload
-            }
-        case 'REMOVE_MEMBER':
-            const filtered = state.filter(member => member.id !== action.payload)
-            return {
-                ...filtered
-            }
-
-        default:
-            return state
-    }
-}
-
-export const knowledgeHubReducer = (state={}, action)=>{
+export const knowledgeHubReducer = (state = {}, action) => {
     switch (action.type) {
         case "KNOWLEDGE":
             return {
@@ -50,5 +32,17 @@ export const knowledgeHubReducer = (state={}, action)=>{
             }
         default:
             return state;
+    }
+}
+
+export const dataElementReducer = (state = [], action) => {
+    switch (action.type) {
+        case "DATA_ELEMENTS":
+            return [
+                ...state,
+                ...action.payload
+            ]
+        default:
+            return state
     }
 }
