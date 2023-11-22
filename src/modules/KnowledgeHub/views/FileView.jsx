@@ -5,11 +5,11 @@ import {Viewer, Worker} from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
-import {useConfig, useDataQuery} from "@dhis2/app-runtime";
+import {useConfig, useDataEngine, useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react";
 import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
 import {useSelector} from "react-redux";
-import {Spin} from "antd";
+import {notification, Spin} from "antd";
 import {downloadPDF} from "../helpers";
 
 const query = {
@@ -18,22 +18,13 @@ const query = {
     }
 }
 
-const pdfQuery = {
-    events: {
-        resource: `/events/files`,
-        params: ({dataElementUid = "", eventUid = ""}) => ({
-            dataElementUid,
-            eventUid
-        })
-    }
-}
+
 
 
 export const FileView = () => {
     const [document, setDocument] = useState([])
 
     const {baseUrl, apiVersion} = useConfig()
-    const [fileBlob, setFileBlob] = useState(null)
 
     const {stages} = useSelector(state => state.knowledgeHub)
 
@@ -43,7 +34,6 @@ export const FileView = () => {
 
     const {data, loading} = useDataQuery(query)
 
-    const {data: pdfData, refetch} = useDataQuery(pdfQuery)
 
 
     useEffect(() => {
@@ -58,24 +48,39 @@ export const FileView = () => {
                 })
                 setDocument(prev => [...prev, {...dataElement, value: dataValue.value}])
             })
-            refetch({
-                dataElementUid: getDocument("file")?.id,
-                eventUid: eventId
-            })
         }
     }, [data]);
+
+
 
     const getDocument = (name) => {
         const item = document.find(doc => doc.name.toLowerCase().includes(name.toLowerCase()))
         return item
     }
 
+    const engine = useDataEngine()
 
+    const handleDownload = async () => {
+        const fileName = getDocument("Name")?.value
+        try {
+            const response = await engine.query({
+                events: {
+                    resource: "/events/files",
+                    params: {
+                        dataElementUid: getDocument("file")?.id,
+                        eventUid: eventId
+                    }
+                }
+            })
 
+            await downloadPDF({fileBlob: response.events, documentName: fileName})
 
-    useEffect(() => {
-        setFileBlob(pdfData?.events)
-    }, [pdfData]);
+        } catch (e) {
+            notification.error({
+                message: "Download failed"
+            })
+        }
+    }
 
 
     const Header = () => {
@@ -85,7 +90,7 @@ export const FileView = () => {
             <p className="card-header-text">AMS KNOWLEDGE HUB</p>
             <div className={styles.headerButtonsWrapper}>
                 <button
-                    onClick={() => downloadPDF({fileBlob, documentName: getDocument("Name")?.value})}
+                    onClick={handleDownload}
                     className={styles.successButton}
                 >
                     DOWNLOAD
