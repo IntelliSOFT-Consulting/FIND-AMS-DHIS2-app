@@ -247,6 +247,13 @@ export const ListGuidelines = () => {
         }
     }
 
+    /**
+     * Deletes an event
+     * Sends a payload with the event Uid and an import strategy of DELETE to achieve this
+     * After successfully deleting we re-fetch the data to update the table
+     * @param eventUid
+     * @returns {Promise<void>}
+     */
     const handleDelete = async ({eventUid}) => {
         try {
             const payload = {
