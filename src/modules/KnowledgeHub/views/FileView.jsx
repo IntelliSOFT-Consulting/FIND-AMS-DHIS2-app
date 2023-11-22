@@ -19,36 +19,20 @@ const query = {
 
 const pdfQuery = {
     events: {
-        resource: ``
+        resource: `/events/files`,
+        params: ({dataElementUid = "R9RfiJPgvJq", eventUid = "DIbEK5xYffL"}) => ({
+            dataElementUid,
+            eventUid
+        })
     }
 }
 
-const Header = () => {
-    const navigate = useNavigate()
-
-    return (<div className="card-header">
-        <p className="card-header-text">AMS KNOWLEDGE HUB</p>
-        <div className={styles.headerButtonsWrapper}>
-            <button
-                className={styles.successButton}
-            >
-                DOWNLOAD
-            </button>
-            <button
-                onClick={() => navigate(-1)}
-                className={styles.backButton}
-            >
-                BACK
-            </button>
-        </div>
-
-    </div>)
-}
 
 export const FileView = () => {
     const [document, setDocument] = useState([])
 
     const {baseUrl, apiVersion} = useConfig()
+    const [fileBlob, setFileBlob] = useState(null)
 
     const {stages} = useSelector(state => state.knowledgeHub)
 
@@ -57,6 +41,9 @@ export const FileView = () => {
     const {eventId} = useParams()
 
     const {data, loading} = useDataQuery(query)
+
+    const {data: pdfData, loading: pdfLoading, refetch: getPDF} = useDataQuery(pdfQuery)
+
 
     useEffect(() => {
         query.events.resource = `tracker/events/${eventId}`
@@ -79,18 +66,42 @@ export const FileView = () => {
     }
 
 
+    const downloadPDF = async () => {
+        const downloadUrl = window.URL.createObjectURL(fileBlob)
+        const link = window.document.createElement("a")
+        link.href = downloadUrl
+        link.setAttribute('download', `${getDocument("Name")?.value}.pdf`)
+        window.document.body.appendChild(link)
+        link.click()
+    }
+
     useEffect(() => {
-        if (document.length > 0) {
-            const item = document.find(doc => doc.name.toLowerCase().includes("file"))
-            pdfQuery.events.resource = `fileResources/${item.value}`
-        }
-
-    }, [document]);
+        setFileBlob(pdfData?.events)
+    }, [pdfData]);
 
 
-    getDocument("file")
+    const Header = () => {
+        const navigate = useNavigate()
 
+        return (<div className="card-header">
+            <p className="card-header-text">AMS KNOWLEDGE HUB</p>
+            <div className={styles.headerButtonsWrapper}>
+                <button
+                    onClick={downloadPDF}
+                    className={styles.successButton}
+                >
+                    DOWNLOAD
+                </button>
+                <button
+                    onClick={() => navigate(-1)}
+                    className={styles.backButton}
+                >
+                    BACK
+                </button>
+            </div>
 
+        </div>)
+    }
 
 
     return (
@@ -118,16 +129,18 @@ export const FileView = () => {
                                 </div>
                             </div>
 
-                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                                <Viewer
-                                    id="viewer"
-                                    withCredentials={true}
-                                    httpHeaders={{
-                                        Authorization: `Basic ` + btoa("admin"+":"+"district")
-                                    }}
-                                    plugins={[defaultLayoutPluginInstance]}
-                                    fileUrl={`${baseUrl}/api/${apiVersion}/events/files?dataElementUid=${getDocument("file")?.id}&eventUid=${eventId}`}/>
-                            </Worker>
+                                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.6.172/build/pdf.worker.min.js">
+                                    <Viewer
+                                        id="viewer"
+                                        withCredentials={true}
+                                        httpHeaders={{
+                                            Authorization: `Basic ` + btoa("admin" + ":" + "district")
+                                        }}
+                                        plugins={[defaultLayoutPluginInstance]}
+                                        fileUrl={`${baseUrl}/api/${apiVersion}/events/files?dataElementUid=${getDocument("file")?.id}&eventUid=${eventId}`}
+                                    />
+                                </Worker>
+
 
                         </>
                     )
