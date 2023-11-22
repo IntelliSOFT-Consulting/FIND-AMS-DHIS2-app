@@ -1,11 +1,12 @@
-import {Button, Input, Space, Table} from "antd";
+import {Button, Input, notification, Space, Table} from "antd";
 import {useEffect, useState} from "react";
 import styles from "../styles/ListGuidelines.module.css"
-import {useDataQuery} from "@dhis2/app-runtime";
+import {useDataEngine, useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
 import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
 import {useNavigate} from "react-router-dom";
 import {SideNav} from "../components/SideNav";
+import {downloadPDF} from "../helpers";
 
 const query = {
     events: {
@@ -29,6 +30,7 @@ export const ListGuidelines = () => {
     const [searchString, setSearchString] = useState("")
     const [documentNameElementID, setDocumentNameElementID] = useState("")
     const [documentCategoryElementID, setDocumentCategoryElementID] = useState("")
+    const [documentFileElementID, setDocumentFileElementID] = useState("")
     const [documentCategories, setDocumentCategories] = useState([])
     const navigate = useNavigate()
 
@@ -50,6 +52,9 @@ export const ListGuidelines = () => {
         if (stages) {
             const documentNameObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("name"))
             setDocumentNameElementID(documentNameObject.id)
+
+            const documentFileObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("file"))
+            setDocumentFileElementID(documentFileObject.id)
 
             const documentCategoryObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("category"))
             setDocumentCategoryElementID(documentCategoryObject.id)
@@ -142,6 +147,7 @@ export const ListGuidelines = () => {
                         Archive
                     </div>
                     <div
+                        onClick={() => handleDownload({fileName: record['Document Name'], eventUid: record.eventID})}
                         className={styles.actionLink}>
                         Download
                     </div>
@@ -201,6 +207,38 @@ export const ListGuidelines = () => {
             await refetch({
                 filter: `${documentCategoryElementID}:ILIKE:${categoryCode}`
             })
+    }
+
+    const engine = useDataEngine()
+
+    /**
+     * Event handler that downloads a pdf doc
+     * First fetch the Blob from the DHIS2 instance
+     * Then send that blob to the helper function that creates an anchor tag dynamically and..
+     * clicks on it to download the file
+     * @param fileName
+     * @param eventUid
+     * @returns {Promise<void>}
+     */
+    const handleDownload = async ({fileName, eventUid}) => {
+        try {
+
+            const response = await engine.query({
+                events: {
+                    resource: "/events/files",
+                    params: {
+                        dataElementUid: documentFileElementID,
+                        eventUid
+                    }
+                }
+            })
+            await downloadPDF({fileBlob: response?.events, documentName: fileName})
+
+        } catch (e) {
+            notification.error({
+                message: "Something went wrong"
+            })
+        }
     }
 
 

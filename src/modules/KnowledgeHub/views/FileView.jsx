@@ -43,7 +43,7 @@ export const FileView = () => {
 
     const {data, loading} = useDataQuery(query)
 
-    const {data: pdfData, loading: pdfLoading, refetch} = useDataQuery(pdfQuery)
+    const {data: pdfData, refetch} = useDataQuery(pdfQuery)
 
 
     useEffect(() => {
