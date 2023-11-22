@@ -273,7 +273,7 @@ export const ListGuidelines = () => {
                     importStrategy: "DELETE"
                 }
             })
-            if (response.status === "OK"){
+            if (response.status === "OK") {
                 notification.success({
                     message: "Success"
                 })
@@ -332,9 +332,11 @@ export const ListGuidelines = () => {
                     locale={{
                         emptyText: (
                             <div>
-                                <p>No Results. Add new chart</p>
-                                <Button type="primary">
-                                    View
+                                <p>No Results. Add new document?</p>
+                                <Button
+                                    onClick={() => navigate("/knowledge-hub/new-file")}
+                                    type="primary">
+                                    New
                                 </Button>
                             </div>
                         ),
