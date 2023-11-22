@@ -35,14 +35,3 @@ export const knowledgeHubReducer = (state = {}, action) => {
     }
 }
 
-export const dataElementReducer = (state = [], action) => {
-    switch (action.type) {
-        case "DATA_ELEMENTS":
-            return [
-                ...state,
-                ...action.payload
-            ]
-        default:
-            return state
-    }
-}

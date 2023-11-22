@@ -19,11 +19,3 @@ export const setKnowledgeHub = forms => dispatch => {
         payload: forms
     })
 }
-
-
-export const setDataElements = dataElement => dispatch => {
-    dispatch({
-        type: "DATA_ELEMENTS",
-        payload: dataElement
-    })
-}
