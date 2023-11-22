@@ -10,6 +10,7 @@ import {useEffect, useState} from "react";
 import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
 import {useSelector} from "react-redux";
 import {Spin} from "antd";
+import {downloadPDF} from "../helpers";
 
 const query = {
     events: {
@@ -57,7 +58,7 @@ export const FileView = () => {
                 })
                 setDocument(prev => [...prev, {...dataElement, value: dataValue.value}])
             })
-             refetch({
+            refetch({
                 dataElementUid: getDocument("file")?.id,
                 eventUid: eventId
             })
@@ -69,15 +70,6 @@ export const FileView = () => {
         return item
     }
 
-
-    const downloadPDF = async () => {
-        const downloadUrl = window.URL.createObjectURL(fileBlob)
-        const link = window.document.createElement("a")
-        link.href = downloadUrl
-        link.setAttribute('download', `${getDocument("Name")?.value}.pdf`)
-        window.document.body.appendChild(link)
-        link.click()
-    }
 
 
 
@@ -93,7 +85,7 @@ export const FileView = () => {
             <p className="card-header-text">AMS KNOWLEDGE HUB</p>
             <div className={styles.headerButtonsWrapper}>
                 <button
-                    onClick={downloadPDF}
+                    onClick={() => downloadPDF({fileBlob, documentName: getDocument("Name")?.value})}
                     className={styles.successButton}
                 >
                     DOWNLOAD
@@ -135,17 +127,17 @@ export const FileView = () => {
                                 </div>
                             </div>
 
-                                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.6.172/build/pdf.worker.min.js">
-                                    <Viewer
-                                        id="viewer"
-                                        withCredentials={true}
-                                        httpHeaders={{
-                                            Authorization: `Basic ` + btoa("admin" + ":" + "district")
-                                        }}
-                                        plugins={[defaultLayoutPluginInstance]}
-                                        fileUrl={`${baseUrl}/api/${apiVersion}/events/files?dataElementUid=${getDocument("file")?.id}&eventUid=${eventId}`}
-                                    />
-                                </Worker>
+                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.6.172/build/pdf.worker.min.js">
+                                <Viewer
+                                    id="viewer"
+                                    withCredentials={true}
+                                    httpHeaders={{
+                                        Authorization: `Basic ` + btoa("admin" + ":" + "district")
+                                    }}
+                                    plugins={[defaultLayoutPluginInstance]}
+                                    fileUrl={`${baseUrl}/api/${apiVersion}/events/files?dataElementUid=${getDocument("file")?.id}&eventUid=${eventId}`}
+                                />
+                            </Worker>
                         </>
                     )
             }
