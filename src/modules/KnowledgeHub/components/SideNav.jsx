@@ -8,17 +8,11 @@ export const SideNav = ({callbackHandler, options, categoryOptionSetID}) => {
     return (
         <div className={styles.sideNavContainer}>
             <div className={styles.title}>Categories.</div>
-            <div
-                onClick={() => navigate("/knowledge-hub/new-file")}
-                className={styles.addNewNavItem}>
-                <p>Add New Document</p>
-                <FolderAddOutlined className={styles.navIcon}/>
-            </div>
 
             <div
                 onClick={() => navigate(`/knowledge-hub/new-category/${categoryOptionSetID}`)}
                 className={styles.addNewNavItem}>
-                <p>Add New Category</p>
+                <p>Add New </p>
                 <FolderAddOutlined className={styles.navIcon}/>
             </div>
             {
