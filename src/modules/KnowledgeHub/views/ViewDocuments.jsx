@@ -7,6 +7,7 @@ import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
 import {useNavigate} from "react-router-dom";
 import {SideNav} from "../components/SideNav";
 import {downloadPDF} from "../helpers";
+import {useKnowledgeHub} from "../../../shared/hooks/useKnowledgeHub";
 
 const query = {
     events: {
@@ -24,7 +25,7 @@ const query = {
 }
 
 
-export const ListGuidelines = () => {
+export const ViewDocuments = () => {
 
     const [records, setRecords] = useState([])
     const [searchString, setSearchString] = useState("")
@@ -32,6 +33,8 @@ export const ListGuidelines = () => {
     const [documentCategoryElementID, setDocumentCategoryElementID] = useState("")
     const [documentFileElementID, setDocumentFileElementID] = useState("")
     const [documentCategories, setDocumentCategories] = useState([])
+    const [categoryOptionSetID, setCategoryOptionSetID] = useState("")
+    const [dataElements, setDataElements] = useState([])
     const navigate = useNavigate()
 
 
@@ -43,24 +46,47 @@ export const ListGuidelines = () => {
     const {program, stages} = useSelector(state => state.knowledgeHub)
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
+    const {getKnowledgeForm} = useKnowledgeHub()
+
+
+    /**
+     * Set a data element state hook that stores all data elements for this knowledge hub section
+     */
+    useEffect(() => {
+        if (stages)
+            setDataElements(stages[0]?.sections[0]?.dataElements)
+        return () => {
+            setDataElements([])
+        }
+    }, [stages]);
+
+
+    /**
+     * Refresh the redux store on mount
+     * This ensures integrity after updates like adding options
+     */
+    useEffect(() => {
+        getKnowledgeForm()
+    }, [])
 
     /**
      * Load the state hooks that store the category data element ID and the document data element ID for filtering purposes
      * Also loads the document categories array for use when mapping through side nav items
      */
     useEffect(() => {
-        if (stages) {
-            const documentNameObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("name"))
+        if (dataElements.length > 0) {
+            const documentNameObject = dataElements.find(element => element.name.toLowerCase().includes("name"))
             setDocumentNameElementID(documentNameObject.id)
 
-            const documentFileObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("file"))
+            const documentFileObject = dataElements.find(element => element.name.toLowerCase().includes("file"))
             setDocumentFileElementID(documentFileObject.id)
 
-            const documentCategoryObject = stages[0]?.sections[0]?.dataElements.find(element => element.name.toLowerCase().includes("category"))
+            const documentCategoryObject = dataElements.find(element => element.name.toLowerCase().includes("category"))
             setDocumentCategoryElementID(documentCategoryObject.id)
+            setCategoryOptionSetID(documentCategoryObject.optionSet.id)
             setDocumentCategories(documentCategoryObject.optionSet.options)
         }
-    }, [stages]);
+    }, [dataElements]);
 
     /**
      * Get the instances once the program and the organization unit and the program are present in the redux store
@@ -70,6 +96,7 @@ export const ListGuidelines = () => {
             orgUnit: orgUnitID,
             program: program
         })
+
     }, [orgUnitID, program]);
 
 
@@ -91,7 +118,6 @@ export const ListGuidelines = () => {
                     item[dataElement?.name] = dataValue.value
                 })
                 setRecords(prev => [...prev, item])
-
             })
 
         }
@@ -281,7 +307,6 @@ export const ListGuidelines = () => {
             }
 
         } catch (e) {
-            console.log("error", e)
             notification.error({
                 message: "Error deleting document"
             })
@@ -291,7 +316,10 @@ export const ListGuidelines = () => {
 
     return (
         <div className={styles.parentContainer}>
-            <SideNav callbackHandler={filterByCategory} options={documentCategories}/>
+            <SideNav
+                categoryOptionSetID={categoryOptionSetID}
+                callbackHandler={filterByCategory}
+                options={documentCategories}/>
 
             <div className={styles.tableContainer}>
                 <div style={{

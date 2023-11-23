@@ -128,8 +128,6 @@ export const AMSTableComponent = () => {
     const [instances, setInstances] = useState(null)
 
 
-    const {program, stages, dataElements} = useSelector(state => state.forms)
-
     const {getDataElementByID, getDataElementByName} = useDataElements()
 
     /**

@@ -2,7 +2,7 @@ import styles from "../styles/SideNav.module.css"
 import {FolderAddOutlined, FolderOutlined} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 
-export const SideNav = ({callbackHandler, options}) => {
+export const SideNav = ({callbackHandler, options, categoryOptionSetID}) => {
     const navigate = useNavigate()
 
     return (
@@ -11,7 +11,14 @@ export const SideNav = ({callbackHandler, options}) => {
             <div
                 onClick={() => navigate("/knowledge-hub/new-file")}
                 className={styles.addNewNavItem}>
-                <p>Add New</p>
+                <p>Add New Document</p>
+                <FolderAddOutlined className={styles.navIcon}/>
+            </div>
+
+            <div
+                onClick={() => navigate(`/knowledge-hub/new-category/${categoryOptionSetID}`)}
+                className={styles.addNewNavItem}>
+                <p>Add New Category</p>
                 <FolderAddOutlined className={styles.navIcon}/>
             </div>
             {
