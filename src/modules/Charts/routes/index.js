@@ -1,4 +1,4 @@
-import {AMSTableComponent} from "../views/AMSTableComponent";
+import {ViewCharts} from "../views/ViewCharts";
 import {MembersForm} from "../views/MembersForm";
 import {NewForm} from "../views/NewForm";
 import {EventDetails} from "../views/EventDetails";
@@ -7,7 +7,7 @@ import {EventDetails} from "../views/EventDetails";
 export const chartRoutes = [
     {
         path: "/",
-        component: AMSTableComponent
+        component: ViewCharts
     },
     {
         path: "/members-present-form",

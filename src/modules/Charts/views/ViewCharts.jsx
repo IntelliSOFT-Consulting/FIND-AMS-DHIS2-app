@@ -4,8 +4,8 @@ import {createUseStyles} from "react-jss";
 import {useNavigate} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react"
-import {useSelector} from "react-redux";
 import {useDataElements} from "../../../shared/hooks/useGetDataElement";
+import {useSelector} from "react-redux";
 
 const useStyles = createUseStyles({
     searchContainer: {
@@ -83,11 +83,11 @@ const useStyles = createUseStyles({
 const query = {
     events: {
         resource: "tracker/events",
-        params: ({filter = "", date = ""}) => ({
+        params: ({filter = "", date = "", program, orgUnit}) => ({
             page: 1,
             pageSize: 15,
-            program: "KqmTbzBTDVj",
-            orgUnit: "p3FIxnPMytB",
+            program,
+            orgUnit,
             fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
             ouMode: "SELECTED",
             order: "occurredAt:desc",
@@ -116,9 +116,12 @@ const Header = () => {
 }
 
 
-export const AMSTableComponent = () => {
+export const ViewCharts = () => {
     const styles = useStyles()
     const navigate = useNavigate()
+
+    const {program} = useSelector(state=>state.forms)
+    const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
     //state hooks
     const [records, setRecords] = useState([])
@@ -134,6 +137,14 @@ export const AMSTableComponent = () => {
      * Query hook
      */
     const {loading, data, refetch} = useDataQuery(query)
+
+
+    useEffect(() => {
+        refetch({
+            orgUnit: orgUnitID,
+            program
+        })
+    }, [orgUnitID, program]);
 
 
     /**
