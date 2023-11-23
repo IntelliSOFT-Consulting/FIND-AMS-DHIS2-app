@@ -6,6 +6,7 @@ import {useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react"
 import {useDataElements} from "../../../shared/hooks/useGetDataElement";
 import {useSelector} from "react-redux";
+import {SideNav} from "../../KnowledgeHub/components/SideNav";
 
 const useStyles = createUseStyles({
     searchContainer: {
@@ -120,7 +121,7 @@ export const ViewCharts = () => {
     const styles = useStyles()
     const navigate = useNavigate()
 
-    const {program} = useSelector(state=>state.forms)
+    const {program, stages} = useSelector(state => state.forms)
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
     //state hooks
@@ -129,6 +130,8 @@ export const ViewCharts = () => {
     const [dateString, setDateString] = useState(null)
     const [ip, setIp] = useState(null)
     const [instances, setInstances] = useState(null)
+    const [wardElementID, setWardElementId] = useState("")
+    const [wards, setWards] = useState([])
 
 
     const {getDataElementByID, getDataElementByName} = useDataElements()
@@ -139,6 +142,16 @@ export const ViewCharts = () => {
     const {loading, data, refetch} = useDataQuery(query)
 
 
+    useEffect(() => {
+        const wardElement = getDataElementByName("Ward (specialty)")
+        setWards(wardElement?.optionSet?.options)
+        setWardElementId(wardElement?.id)
+    }, [stages]);
+
+
+    /**
+     * Fetch data once org unit and program are loaded from redux store
+     */
     useEffect(() => {
         refetch({
             orgUnit: orgUnitID,
@@ -222,84 +235,107 @@ export const ViewCharts = () => {
         setIp(null)
     }
 
+    const filterByWards = async (wardCode) => {
+        setIp("")
+        setDate("")
+        setDateString("")
+        if (wardCode === "")
+            await refetch({
+                filter: ""
+            })
+        else
+            await refetch({
+                filter: `${wardElementID}:ILIKE:${wardCode}`
+            })
+    }
+
 
     return (
         <CardItem title={Header()}>
-            <div className={styles.searchContainer}>
-                <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
-                    <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
-                    <div className={styles.inputWrapper}>
-                        <DatePicker
-                            onChange={(date, dateString) => {
-                                setDate(date)
-                                setDateString(dateString)
-                            }}
-                            value={date}
-                            className={styles.inputs}
-                            size="large"
-                            id="date"
-                            placeholder="Select date"
-                            label="Filter by Date"
-                        />
-                        <Button
-                            onClick={filterByDate}
-                            className={styles.inputButton}>Go</Button>
-                    </div>
-                </div>
-                <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
-                    <label style={{cursor: "pointer"}} htmlFor="ip/op">Search Specific Records</label>
-                    <div className={styles.inputWrapper}>
-                        <Input
-                            value={ip}
-                            onChange={evt => setIp(evt.target.value)}
-                            className={styles.inputs}
-                            size="large"
-                            id="ip/op"
-                            placeholder="Search using IP/OP NO."
-                            label="Filter by Date"
-                        />
-                        <Button
-                            onClick={filterByIp}
-                            className={styles.inputButton}>SEARCH</Button>
-                    </div>
-                </div>
-                <Button
-                    onClick={clearFilters}
-                    danger={true}>Clear filters</Button>
-            </div>
-            <Table
-                rowKey={record => record?.eventUid}
-                loading={loading}
-                pagination={records?.length > 10 ? {pageSize: 10} : false}
-                dataSource={instances?.flatMap(instance => {
-                    const object = {
-                        createdAt: instance.createdAt,
-                        eventUid: instance.event
-                    }
-
-                    instance.dataValues.forEach(dataValue => {
-                        const dataElement = getDataElementByID(dataValue?.dataElement)
-                        object[dataElement?.displayName] = dataValue.value;
-                    })
-                    return object
-
-                })}
-                columns={chartTableColumns}
-                bordered
-                size="small"
-                locale={{
-                    emptyText: (
-                        <div>
-                            <p>No Results. Add new chart</p>
-                            <Button
-                                onClick={() => navigate("/charts/members-present-form")}
-                                type="primary">
-                                New
-                            </Button>
+            <div style={{display: "grid", gridTemplateColumns: "1fr 3fr", gap: "2rem"}}>
+                <SideNav
+                    callbackHandler={filterByWards}
+                    options={wards}/>
+                <div className="">
+                    <div className={styles.searchContainer}>
+                        <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
+                            <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
+                            <div className={styles.inputWrapper}>
+                                <DatePicker
+                                    onChange={(date, dateString) => {
+                                        setDate(date)
+                                        setDateString(dateString)
+                                    }}
+                                    value={date}
+                                    className={styles.inputs}
+                                    size="large"
+                                    id="date"
+                                    placeholder="Select date"
+                                    label="Filter by Date"
+                                />
+                                <Button
+                                    onClick={filterByDate}
+                                    className={styles.inputButton}>Go</Button>
+                            </div>
                         </div>
-                    ),
-                }}
-            />
+                        <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
+                            <label style={{cursor: "pointer"}} htmlFor="ip/op">Search Specific Records</label>
+                            <div className={styles.inputWrapper}>
+                                <Input
+                                    value={ip}
+                                    onChange={evt => setIp(evt.target.value)}
+                                    className={styles.inputs}
+                                    size="large"
+                                    id="ip/op"
+                                    placeholder="Search using IP/OP NO."
+                                    label="Filter by Date"
+                                />
+                                <Button
+                                    onClick={filterByIp}
+                                    className={styles.inputButton}>SEARCH</Button>
+                            </div>
+                        </div>
+                        <Button
+                            onClick={clearFilters}
+                            danger={true}>Clear filters</Button>
+                    </div>
+                    <Table
+                        rowKey={record => record?.eventUid}
+                        loading={loading}
+                        pagination={records?.length > 10 ? {pageSize: 10} : false}
+                        dataSource={instances?.flatMap(instance => {
+                            const object = {
+                                createdAt: instance.createdAt,
+                                eventUid: instance.event
+                            }
+
+                            instance.dataValues.forEach(dataValue => {
+                                const dataElement = getDataElementByID(dataValue?.dataElement)
+                                object[dataElement?.displayName] = dataValue.value;
+                            })
+                            return object
+
+                        })}
+                        columns={chartTableColumns}
+                        bordered
+                        size="small"
+                        locale={{
+                            emptyText: (
+                                <div>
+                                    <p>No Results. Add new chart</p>
+                                    <Button
+                                        onClick={() => navigate("/charts/members-present-form")}
+                                        type="primary">
+                                        New
+                                    </Button>
+                                </div>
+                            ),
+                        }}
+                    />
+                </div>
+            </div>
+
+
         </CardItem>
     )
 }
