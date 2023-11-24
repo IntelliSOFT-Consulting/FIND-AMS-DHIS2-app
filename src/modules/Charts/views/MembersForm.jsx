@@ -1,74 +1,36 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
-import {createUseStyles} from "react-jss";
 import {Form, notification, Space, Spin, Table} from "antd";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import InputItem from "../../../shared/components/Fields/InputItem";
-import {useConfig, useDataEngine} from "@dhis2/app-runtime";
+import {useDataEngine} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react";
+import {useDataElements} from "../../../shared/hooks/useGetDataElement";
+import styles from "../styles/Members.module.css"
 
 
-const useStyles = createUseStyles({
-    formContainer: {
-        display: "grid",
-        gridTemplateColumns: "1fr",
-        gap: "2rem",
-        alignContent: "center",
-        "@media (min-width: 768px)": {
-            gridTemplateColumns: "1fr 1fr",
-            gap: "0rem 4rem"
-        }
-    },
-    placeholderDiv: {
-        display: "hidden",
-        "@media (min-width: 768px)": {
-            display: "flex"
-        }
-    },
-    removeLink: {
-        textDecoration: "underline",
-        color: "#ff0000",
-        fontStyle: "italic",
-        cursor: "pointer"
-    },
-    primaryBtn: {
-        padding: ".2rem 2rem",
-        borderRadius: "6px",
-        color: "#1d5288",
-        fontWeight: "600",
-        border: "0",
-        cursor: "pointer",
-        fontSize: "8px",
-        "@media(min-width: 768px)": {
-            alignSelf: "center",
-            padding: "0.7rem 3.5rem",
-            "fontSize": "14px",
-            fontWeight: 600,
-        }
-    }
-})
-
-
-export const MembersForm = ({user}) => {
-    const styles = useStyles()
+export const MembersForm = () => {
 
     const navigate = useNavigate()
     const [form] = Form.useForm();
 
     const engine = useDataEngine()
+    const {getDataElementByName} = useDataElements()
 
     const {stages, program} = useSelector(state => state.forms)
 
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
-    const config = useConfig()
-
+    const user = useSelector(state => state.user)
 
     const [members, setMembers] = useState([])
     const [nameElementID, setNameElementID] = useState("")
     const [designationElementID, setDesignationElementID] = useState("")
     const [loading, setLoading] = useState(false)
     const [membersSection, setMembersSection] = useState({})
+    const [initialFormValues, setInitialFormValues] = useState({
+        "Full Names": user?.name
+    })
 
 
     /**
@@ -88,9 +50,6 @@ export const MembersForm = ({user}) => {
             const fullNamesObject = membersSection.dataElements.find(element => element.name.includes("Full"))
             setNameElementID(fullNamesObject?.id)
 
-            const designationObject = membersSection.dataElements.find(element => element.name.includes("Designation"))
-            setDesignationElementID(designationObject?.id)
-
         }
     }, [membersSection]);
 
@@ -98,18 +57,18 @@ export const MembersForm = ({user}) => {
     const columns = [
         {
             title: 'Full Names',
-            dataIndex: nameElementID,
-            key: nameElementID,
+            dataIndex: 'Full Names',
+            key: 'Full Names',
         },
         {
             title: 'Designation',
-            dataIndex: designationElementID,
-            key: designationElementID,
+            dataIndex: 'Designation',
+            key: 'Designation',
         },
         {
             title: "Action",
-            dataIndex: nameElementID,
-            key: nameElementID,
+            dataIndex: 'Designation',
+            key: 'Designation',
             render: (text, record) => (
                 <Space size="middle">
                     <div
@@ -124,7 +83,6 @@ export const MembersForm = ({user}) => {
 
     const addMembers = () => {
         const formValues = form.getFieldsValue({strict: false})
-        console.log("form Values", form.getFieldsValue())
         const keys = Object.keys(formValues)
         for (const i of keys) {
             if (formValues[i] === undefined) {
@@ -135,6 +93,13 @@ export const MembersForm = ({user}) => {
         setMembers(prev => prev?.length > 0 ? [...prev, {...formValues}] : [{...formValues}])
         form.resetFields()
     }
+    useEffect(() => {
+        if (members.length > 0) {
+            setInitialFormValues({
+                "Full Names": ""
+            })
+        }
+    }, [members.length]);
 
 
     const onFinish = async () => {
@@ -142,7 +107,7 @@ export const MembersForm = ({user}) => {
         members.forEach(member => {
             const keys = Object.keys(member)
             keys.forEach(key => {
-                dataValues.push({"dataElement": key, value: member[key]})
+                dataValues.push({"dataElement": getDataElementByName(key).id, value: member[key]})
             })
         })
 
@@ -180,7 +145,6 @@ export const MembersForm = ({user}) => {
                 message: "error",
                 description: "Something went wrong"
             })
-            console.log("error", e)
         } finally {
             setLoading(false)
         }
@@ -197,23 +161,19 @@ export const MembersForm = ({user}) => {
         </div>
     )
 
-    useEffect(() => {
-        console.log("user", user)
-
-        // console.log("setValues",form.setFieldsValue)
-    }, [form.getFieldsValue])
 
     return (
         <CardItem title={Header()}>
             {membersSection?.dataElements?.length > 0 && (
                 <Form
+                    initialValues={initialFormValues}
                     className={styles.formContainer} form={form} layout="vertical" onFinish={onFinish}
                     autoComplete="off">
                     {membersSection?.dataElements?.map(dataElement => (
                         <Form.Item
                             key={dataElement.id}
                             label={dataElement.name}
-                            name={dataElement.id}
+                            name={dataElement.name}
                             rules={[
                                 {
                                     required: true,
@@ -229,7 +189,6 @@ export const MembersForm = ({user}) => {
                                     value: option.code,
                                 }))}
                                 placeholder={`Enter ${dataElement.name}`}
-                                name={dataElement.id}
                             />
                         </Form.Item>
                     ))}
@@ -238,17 +197,9 @@ export const MembersForm = ({user}) => {
                     ) : (
                         <button
                             onClick={addMembers}
-                            style={{
-                                gridColumn: "1",
-                                width: "fit-content",
-                                fontWeight: "700",
-                                fontSize: "16px",
-                                backgroundColor: "#E3EEF7",
-                                marginLeft: "auto",
-                                padding: ".8rem 4rem"
-                            }}
+
                             type="button"
-                            className="primary-btn">ADD
+                            className={styles.addButton}>ADD
                         </button>
                     )}
 
@@ -256,7 +207,7 @@ export const MembersForm = ({user}) => {
                         style={{gridColumn: "1", marginTop: "4rem"}}
                         pagination={members?.length > 10 ? {pageSize: 10} : false}
                         bordered
-                        rowKey={record => record[nameElementID]}
+                        rowKey={record => record["Full Names"]}
                         columns={columns}
                         dataSource={members}
                         locale={{
