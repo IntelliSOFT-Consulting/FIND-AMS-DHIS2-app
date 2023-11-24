@@ -44,7 +44,6 @@ const Header = () => {
 
 
 export const ViewCharts = () => {
-    const styles = useStyles()
     const navigate = useNavigate()
 
     const {program, stages} = useSelector(state => state.forms)
