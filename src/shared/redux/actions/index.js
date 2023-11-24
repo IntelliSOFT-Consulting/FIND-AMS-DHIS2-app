@@ -19,3 +19,10 @@ export const setKnowledgeHub = forms => dispatch => {
         payload: forms
     })
 }
+
+export const setUser = user => dispatch => {
+    dispatch({
+        type: "USER",
+        payload: user
+    })
+}

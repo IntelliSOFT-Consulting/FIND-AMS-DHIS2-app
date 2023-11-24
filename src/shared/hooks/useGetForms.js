@@ -45,7 +45,7 @@ export const useGetForms = () => {
                 message: "error",
                 description: "Something went wrong"
             })
-            console.log('error', e)
+
         }
     }
 

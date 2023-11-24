@@ -4,7 +4,7 @@ import {Form, notification, Space, Spin, Table} from "antd";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import InputItem from "../../../shared/components/Fields/InputItem";
-import {useDataEngine} from "@dhis2/app-runtime";
+import {useConfig, useDataEngine} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react";
 
 
@@ -49,7 +49,7 @@ const useStyles = createUseStyles({
 })
 
 
-export const MembersForm = () => {
+export const MembersForm = ({user}) => {
     const styles = useStyles()
 
     const navigate = useNavigate()
@@ -60,6 +60,8 @@ export const MembersForm = () => {
     const {stages, program} = useSelector(state => state.forms)
 
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
+
+    const config = useConfig()
 
 
     const [members, setMembers] = useState([])
@@ -122,9 +124,10 @@ export const MembersForm = () => {
 
     const addMembers = () => {
         const formValues = form.getFieldsValue({strict: false})
+        console.log("form Values", form.getFieldsValue())
         const keys = Object.keys(formValues)
         for (const i of keys) {
-            if (formValues[i] === undefined){
+            if (formValues[i] === undefined) {
                 return
             }
         }
@@ -194,6 +197,11 @@ export const MembersForm = () => {
         </div>
     )
 
+    useEffect(() => {
+        console.log("user", user)
+
+        // console.log("setValues",form.setFieldsValue)
+    }, [form.getFieldsValue])
 
     return (
         <CardItem title={Header()}>

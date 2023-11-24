@@ -1,5 +1,5 @@
 import {applyMiddleware, combineReducers, compose, createStore} from "redux";
-import { formsReducer, knowledgeHubReducer, orgUnitReducer} from "../reducers";
+import {formsReducer, knowledgeHubReducer, orgUnitReducer, userReducer} from "../reducers";
 import thunk from "redux-thunk";
 
 
@@ -11,6 +11,7 @@ const reducer = combineReducers({
     forms: formsReducer,
     orgUnit: orgUnitReducer,
     knowledgeHub: knowledgeHubReducer,
+    user: userReducer
 })
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
