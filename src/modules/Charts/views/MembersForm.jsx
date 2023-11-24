@@ -72,7 +72,7 @@ export const MembersForm = () => {
             render: (text, record) => (
                 <Space size="middle">
                     <div
-                        onClick={() => setMembers(prev => prev.filter(item => item[nameElementID] !== record[nameElementID]))}
+                        onClick={() => setMembers(prev => prev.filter(item => item['Full Names'] !== record['Full Names']))}
                         className={styles.removeLink}>
                         Remove
                     </div>
