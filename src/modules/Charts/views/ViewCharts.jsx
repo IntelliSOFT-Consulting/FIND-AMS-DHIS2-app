@@ -1,85 +1,12 @@
 import {Button, DatePicker, Input, Space, Table} from "antd";
 import {CardItem} from "../../../shared/components/cards/CardItem";
-import {createUseStyles} from "react-jss";
 import {useNavigate} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react"
 import {useDataElements} from "../../../shared/hooks/useGetDataElement";
 import {useSelector} from "react-redux";
 import {WardsNav} from "../Components/WardsNav";
-
-const useStyles = createUseStyles({
-    searchContainer: {
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        justifyContent: "space-between",
-        alignItems: "end",
-        padding: "1rem 0rem",
-        gap: "2rem",
-        "@media (min-width: 1024px)": {
-            flexDirection: "row",
-            gap: "10rem",
-        },
-        marginBottom: "2rem"
-    },
-    addLink: {
-        textDecoration: "underline",
-        color: "#1677FF",
-        fontStyle: "italic",
-        cursor: "pointer",
-        fontSize: "14px",
-        padding: ".5rem .5rem"
-    },
-    inputWrapper: {
-        position: "relative",
-        width: "85%",
-        "@media (min-width: 1024px)": {
-            width: "80%"
-        }
-    },
-    inputs: {
-        borderBottomRightRadius: "0px !important",
-        borderTopRightRadius: "0px !important",
-        width: "90%",
-        borderRight: "0px"
-    },
-    inputButton: {
-        position: "absolute",
-        top: "50%",
-        transform: "translateY(-50%)",
-        height: "100%",
-        width: "4rem",
-        borderLeft: "0px",
-        borderTopLeftRadius: "0px",
-        borderBottomLeftRadius: "0px",
-        backgroundColor: "#EDF7FF",
-        color: "#1677FF",
-        textTransform: "uppercase",
-        fontWeight: "600",
-        fontSize: "10px",
-        "@media (min-width: 768px)": {
-            width: "6rem",
-            fontSize: "14px"
-        }
-    },
-    primaryBtn: {
-        padding: ".2rem 2rem",
-        borderRadius: "6px",
-        color: "#1d5288",
-        fontWeight: "600",
-        border: "0",
-        cursor: "pointer",
-        fontSize: "8px",
-        "@media(min-width: 768px)": {
-            alignSelf: "center",
-            padding: "0.7rem 3.5rem",
-            "fontSize": "14px",
-            fontWeight: 600,
-        }
-    }
-
-})
+import styles from "../styles/ViewCharts.module.css"
 
 const query = {
     events: {
@@ -103,7 +30,6 @@ const query = {
  * @returns {JSX.Element}
  */
 const Header = () => {
-    const styles = useStyles()
     const navigate = useNavigate()
     return (
         <div className="card-header">
