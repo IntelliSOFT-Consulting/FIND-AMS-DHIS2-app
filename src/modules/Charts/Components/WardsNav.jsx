@@ -1,20 +1,13 @@
-import styles from "../styles/SideNav.module.css"
-import {FolderAddOutlined, FolderOutlined} from "@ant-design/icons";
-import {useNavigate} from "react-router-dom";
+import styles from "../../KnowledgeHub/styles/SideNav.module.css"
+import { FolderOutlined} from "@ant-design/icons";
 
-export const SideNav = ({callbackHandler, options, categoryOptionSetID}) => {
-    const navigate = useNavigate()
+export const WardsNav = ({callbackHandler, options, }) => {
 
     return (
         <div className={styles.sideNavContainer}>
-            <div className={styles.title}>Categories.</div>
+            <div className={styles.title}>Wards.</div>
 
-            <div
-                onClick={() => navigate(`/knowledge-hub/new-category/${categoryOptionSetID}`)}
-                className={styles.addNewNavItem}>
-                <p>Add New </p>
-                <FolderAddOutlined className={styles.navIcon}/>
-            </div>
+
             {
                 options?.map((category, index) => (
                     <div

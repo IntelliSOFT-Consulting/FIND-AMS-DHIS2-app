@@ -6,7 +6,7 @@ import {useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react"
 import {useDataElements} from "../../../shared/hooks/useGetDataElement";
 import {useSelector} from "react-redux";
-import {SideNav} from "../../KnowledgeHub/components/SideNav";
+import {WardsNav} from "../Components/WardsNav";
 
 const useStyles = createUseStyles({
     searchContainer: {
@@ -253,7 +253,7 @@ export const ViewCharts = () => {
     return (
         <CardItem title={Header()}>
             <div style={{display: "grid", gridTemplateColumns: "1fr 3fr", gap: "2rem"}}>
-                <SideNav
+                <WardsNav
                     callbackHandler={filterByWards}
                     options={wards}/>
                 <div className="">

@@ -5,9 +5,9 @@ import {useDataEngine, useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
 import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
 import {useNavigate} from "react-router-dom";
-import {SideNav} from "../components/SideNav";
 import {downloadPDF} from "../helpers";
 import {useKnowledgeHub} from "../../../shared/hooks/useKnowledgeHub";
+import {CategoriesNav} from "../components/CategoriesNav";
 
 const query = {
     events: {
@@ -316,7 +316,7 @@ export const ViewDocuments = () => {
 
     return (
         <div className={styles.parentContainer}>
-            <SideNav
+            <CategoriesNav
                 categoryOptionSetID={categoryOptionSetID}
                 callbackHandler={filterByCategory}
                 options={documentCategories}/>
