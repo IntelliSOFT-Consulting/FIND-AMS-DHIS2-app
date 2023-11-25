@@ -331,7 +331,7 @@ export const ViewDocuments = () => {
                     <p style={{fontSize: "14px", padding: "4px"}}>Guidelines</p>
                     <button
                         onClick={() => navigate("/knowledge-hub/new-file")}
-                        className="outline-btn">UPLOAD NEW FILE
+                        className="outline-btn">UPLOAD NEW RESOURCE
                     </button>
                 </div>
                 <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem"}}>
