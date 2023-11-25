@@ -125,6 +125,14 @@ export const NewFile = () => {
     const fileUploadProps = {
         accept: ".pdf",
         maxCount: 1,
+        beforeUpload: file => {
+            const isLt5M = file.size / 1024 / 1024 < 5
+            if (!isLt5M)
+                notification.error({
+                    message: "Document is too large"
+                })
+            return isLt5M
+        },
         customRequest: async (options) => {
             const {onSuccess, onError, file} = options;
             const formData = new FormData()
