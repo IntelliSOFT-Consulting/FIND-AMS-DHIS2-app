@@ -7,6 +7,7 @@ import {useDataElements} from "../../../shared/hooks/useGetDataElement";
 import {useSelector} from "react-redux";
 import styles from "../styles/ViewCharts.module.css"
 import {SideNav} from "../../../shared/components/Nav/SideNav";
+import {FolderOutlined} from "@ant-design/icons";
 
 const query = {
     events: {
@@ -71,11 +72,17 @@ export const ViewCharts = () => {
 
         const wardFolders = wardElement?.optionSet?.options?.map(option => ({
             ...option,
+            icon: FolderOutlined,
             handler: () => filterByWards(option.code)
         }))
 
         if(wardFolders?.length>0 ){
-            setWards([...wardFolders, {displayName: "All Charts", code: "", handler: () => filterByWards("")}])
+            setWards([...wardFolders, {
+                displayName: "All Charts",
+                code: "",
+                icon: FolderOutlined,
+                handler: () => filterByWards("")}
+            ])
         }
     }, [reduxElements]);
 
@@ -185,6 +192,7 @@ export const ViewCharts = () => {
         <CardItem title={Header()}>
             <div style={{display: "grid", gridTemplateColumns: "1fr 3fr", gap: "2rem"}}>
                 <SideNav
+                    title="Wards"
                     options={wards}
                 />
                 <div className="">

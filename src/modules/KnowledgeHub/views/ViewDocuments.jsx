@@ -7,7 +7,8 @@ import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
 import {useNavigate} from "react-router-dom";
 import {downloadPDF} from "../helpers";
 import {useKnowledgeHub} from "../../../shared/hooks/useKnowledgeHub";
-import {CategoriesNav} from "../components/CategoriesNav";
+import {FolderAddOutlined, FolderOutlined} from "@ant-design/icons";
+import {SideNav} from "../../../shared/components/Nav/SideNav";
 
 const query = {
     events: {
@@ -84,7 +85,27 @@ export const ViewDocuments = () => {
             const documentCategoryObject = dataElements.find(element => element.name.toLowerCase().includes("category"))
             setDocumentCategoryElementID(documentCategoryObject.id)
             setCategoryOptionSetID(documentCategoryObject.optionSet.id)
-            setDocumentCategories(documentCategoryObject.optionSet.options)
+
+            const documentFolders = documentCategoryObject?.optionSet?.options?.map(option => ({
+                ...option,
+                icon: FolderOutlined,
+                handler: () => filterByCategory(option.code)
+            }))
+
+            setDocumentCategories([{
+                displayName: "Add New",
+                code: "",
+                icon: FolderAddOutlined,
+                handler: () => navigate(`/knowledge-hub/new-category/${categoryOptionSetID}`)
+            },
+                ...documentFolders,
+                {
+                    displayName: "All  Documents",
+                    code: "",
+                    icon: FolderOutlined,
+                    handler: () => filterByCategory("")
+                }])
+
         }
     }, [dataElements]);
 
@@ -316,10 +337,7 @@ export const ViewDocuments = () => {
 
     return (
         <div className={styles.parentContainer}>
-            <CategoriesNav
-                categoryOptionSetID={categoryOptionSetID}
-                callbackHandler={filterByCategory}
-                options={documentCategories}/>
+            <SideNav title="Categories" options={documentCategories}/>
 
             <div className={styles.tableContainer}>
                 <div style={{
