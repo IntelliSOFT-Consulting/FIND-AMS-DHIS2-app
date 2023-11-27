@@ -8,6 +8,7 @@ import {useSelector} from "react-redux";
 import styles from "../styles/ViewCharts.module.css"
 import {SideNav} from "../../../shared/components/Nav/SideNav";
 import {FolderOutlined} from "@ant-design/icons";
+import {ViewChartsCardHeader} from "../Components/Headers/ViewChartsCardHeader";
 
 const query = {
     events: {
@@ -26,22 +27,7 @@ const query = {
         })
     }
 }
-/**
- * Card header component
- * @returns {JSX.Element}
- */
-const Header = () => {
-    const navigate = useNavigate()
-    return (
-        <div className="card-header">
-            <p className="card-header-text">AMS CHART REVIEW</p>
-            <button
-                onClick={() => navigate("/charts/members-present-form")}
-                className={styles.primaryBtn}>ADD NEW
-            </button>
-        </div>
-    )
-}
+
 
 
 export const ViewCharts = () => {
@@ -189,7 +175,7 @@ export const ViewCharts = () => {
 
 
     return (
-        <CardItem title={Header()}>
+        <CardItem CardHeader={ViewChartsCardHeader}>
             <div style={{display: "grid", gridTemplateColumns: "1fr 3fr", gap: "2rem"}}>
                 <SideNav
                     title="Wards"

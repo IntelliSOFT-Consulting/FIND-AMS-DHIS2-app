@@ -163,7 +163,7 @@ export const MembersForm = () => {
 
 
     return (
-        <CardItem title={Header()}>
+        <CardItem CardHeader={Header}>
             {membersSection?.dataElements?.length > 0 && (
                 <Form
                     initialValues={initialFormValues}
