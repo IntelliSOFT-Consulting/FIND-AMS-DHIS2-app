@@ -7,7 +7,6 @@ import {useConfig, useDataEngine} from "@dhis2/app-runtime";
 import {useNavigate} from "react-router-dom";
 import {FormSection} from "../../../shared/components/Forms/FormSection";
 import {findSectionObject} from "../../Charts/helpers";
-import axios from "axios";
 
 
 export const NewFile = () => {
@@ -137,25 +136,23 @@ export const NewFile = () => {
             const {onSuccess, onError, file} = options;
             const formData = new FormData()
 
-            formData.append("file", file)
+            await formData.append("file", file)
             try {
-                const config = {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
+                const response = await engine.mutate({
+                    resource: "fileResources",
+                    type: "create",
+                    data: {
+                        file,
                     },
-                    auth: {
-                        username: "admin",
-                        password: "district"
-                    }
-                }
-
-                const response = await axios.post(`${baseUrl}/api/${apiVersion}/fileResources`, formData, config)
-
-                if (response.status === 202) {
+                })
+                if (response.httpStatusCode === 202) {
                     onSuccess("ok")
-                    setFile(response.data.response.fileResource.id)
+                    setFile(response.response.fileResource.id)
                 }
+
             } catch (e) {
+                console.log("error", e)
+
                 onError(e)
             }
         }
