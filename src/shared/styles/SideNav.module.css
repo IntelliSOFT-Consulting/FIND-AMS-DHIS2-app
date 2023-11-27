@@ -43,6 +43,11 @@
     width: 100%;
 }
 
+.activeSideNavItem{
+    color: #e3eef7;
+    background-color: #1d5288;
+}
+
 
 .addNewNavItem{
     display: flex;

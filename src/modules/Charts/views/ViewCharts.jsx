@@ -5,8 +5,8 @@ import {useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react"
 import {useDataElements} from "../../../shared/hooks/useGetDataElement";
 import {useSelector} from "react-redux";
-import {WardsNav} from "../Components/WardsNav";
 import styles from "../styles/ViewCharts.module.css"
+import {SideNav} from "../../../shared/components/Nav/SideNav";
 
 const query = {
     events: {
@@ -46,7 +46,7 @@ const Header = () => {
 export const ViewCharts = () => {
     const navigate = useNavigate()
 
-    const {program, stages} = useSelector(state => state.forms)
+    const {program, dataElements: reduxElements} = useSelector(state => state.forms)
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
     //state hooks
@@ -55,7 +55,6 @@ export const ViewCharts = () => {
     const [dateString, setDateString] = useState(null)
     const [ip, setIp] = useState(null)
     const [instances, setInstances] = useState(null)
-    const [wardElementID, setWardElementId] = useState("")
     const [wards, setWards] = useState([])
 
 
@@ -69,9 +68,16 @@ export const ViewCharts = () => {
 
     useEffect(() => {
         const wardElement = getDataElementByName("Ward (specialty)")
-        setWards(wardElement?.optionSet?.options)
-        setWardElementId(wardElement?.id)
-    }, [stages]);
+
+        const wardFolders = wardElement?.optionSet?.options?.map(option => ({
+            ...option,
+            handler: () => filterByWards(option.code)
+        }))
+
+        if(wardFolders?.length>0 ){
+            setWards([...wardFolders, {displayName: "All Charts", code: "", handler: () => filterByWards("")}])
+        }
+    }, [reduxElements]);
 
 
     /**
@@ -170,7 +176,7 @@ export const ViewCharts = () => {
             })
         else
             await refetch({
-                filter: `${wardElementID}:ILIKE:${wardCode}`
+                filter: `${getDataElementByName("Ward (specialty)").id}:ILIKE:${wardCode}`
             })
     }
 
@@ -178,9 +184,9 @@ export const ViewCharts = () => {
     return (
         <CardItem title={Header()}>
             <div style={{display: "grid", gridTemplateColumns: "1fr 3fr", gap: "2rem"}}>
-                <WardsNav
-                    callbackHandler={filterByWards}
-                    options={wards}/>
+                <SideNav
+                    options={wards}
+                />
                 <div className="">
                     <div className={styles.searchContainer}>
                         <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
