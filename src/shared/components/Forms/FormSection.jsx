@@ -4,7 +4,7 @@ import styles from "../../../modules/Charts/styles/FormSection.module.css"
 
 
 const Wrapper = ({ordered, children, listStyle, startingIndex, containerStyles}) => ordered ? (
-    <ol type={listStyle} start={startingIndex} className={containerStyles}>{children}</ol>
+    <ol type={listStyle} start={String(startingIndex)} className={containerStyles}>{children}</ol>
 ) : (
     <div className={containerStyles}>{children}</div>
 )
@@ -19,8 +19,10 @@ export const FormSection = ({
                                 ordered = true,
                                 overrideInputType,
                                 fileUploadProps,
-                                overrideRequired
+                                overrideRequired,
+                                checkIfValid = () => ({validity: true}),
                             }) => {
+
 
     return (
         <Wrapper ordered={ordered} listStyle={listStyle} containerStyles={containerStyles}
@@ -41,6 +43,7 @@ export const FormSection = ({
                         ]}
                     >
                         <InputItem
+                            disabled={!checkIfValid(dataElement.id).validity}
                             fileUploadProps={fileUploadProps}
                             type={overrideInputType ? overrideInputType : dataElement?.optionSet && dataElement?.valueType === "TEXT" ? "SELECT" : dataElement.valueType}
                             options={dataElement.optionSet?.options?.map((option) => ({

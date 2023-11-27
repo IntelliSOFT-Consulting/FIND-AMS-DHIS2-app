@@ -31,6 +31,7 @@ export const NewForm = () => {
         comments: {},
         signature: {},
     })
+    const [formValues, setFormValues] = useState([])
 
     const [recommendationValues, setRecommendationValues] = useState([])
     const [redFlagValues, setRedFlagValues] = useState([])
@@ -39,12 +40,8 @@ export const NewForm = () => {
     const [loading, setLoading] = useState(false)
 
 
-    const {stages, program} = useSelector(state => state.forms)
+    const {stages, program, dataElements} = useSelector(state => state.forms)
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
-
-
-
-
 
 
     /**
@@ -71,7 +68,7 @@ export const NewForm = () => {
          * First add the single answer values
          * @type {{dataElement: *, value: *}[]}
          */
-        const dataValues =  Object.keys(values).map(key => ({
+        const dataValues = Object.keys(values).map(key => ({
             dataElement: key,
             value: values[key]
         }))
@@ -86,7 +83,7 @@ export const NewForm = () => {
             })
         })
 
-       redFlagValues.forEach(checkedValue => {
+        redFlagValues.forEach(checkedValue => {
             dataValues.push({
                 dataElement: checkedValue,
                 value: true
@@ -132,8 +129,66 @@ export const NewForm = () => {
         }
     }
 
+    /**
+     *
+     * @param changedFields
+     * @param allFields
+     */
+    const onFieldsChange = (changedFields, allFields) => {
+        setFormValues(allFields.map(field => ({name: field.name[0], value: field.value})))
+    }
+
+
+    /**
+     * check for form validity
+     * @param dataElementID
+     * @returns {validity:boolean}
+     */
+    const checkIfValid = (dataElementID) => {
+        const formValues = form.getFieldsValue()
+        if (formValues === {})
+            return {
+                validity: true
+            }
+
+        const dataElementObject = dataElements.find(item => item.id === dataElementID)
+
+        if (dataElementObject.attributeValues.length === 0)
+            return {
+                validity: true
+            }
+
+        let validity = true
+
+        dataElementObject.attributeValues.forEach(attribute => {
+            const attributeElementId = attribute.value.split(",")[0]
+            const attributeValue = attribute.value.split(",")[1]
+
+            const conditionalCheck = form.getFieldValue(attributeElementId)
+            if (conditionalCheck === undefined)
+                validity = validity
+            else
+                validity = validity && (conditionalCheck == attributeValue)
+
+        })
+
+        if (validity === false) {
+            form.setFieldValue(dataElementID, "N/A")
+        }
+
+
+        return {
+            validity,
+        }
+    }
+
     return (
-        <Form onFinish={onFinish} form={form} layout="vertical" style={{position: "relative"}}>
+        <Form
+            onFieldsChange={onFieldsChange}
+            onFinish={onFinish}
+            form={form}
+            layout="vertical"
+            style={{position: "relative"}}>
             <CardItem title="AMS CHART REVIEW: NEW FORM">
                 <div className={styles.parentContainer}>
                     <div className={styles.patientDetailsWrapper}>
@@ -148,11 +203,17 @@ export const NewForm = () => {
 
                     <div className={styles.twoColumnWrapper}>
                         <FormSection
+                            checkIfValid={checkIfValid}
+                            setCurrentState={setFormValues}
+                            currentState={formValues}
                             overrideInputType="RADIO"
                             section={formSections.antibiotics}
                             layoutStyles={{width: "100%", gridColumn: "1/3"}}
                         />
                         <FormSection
+                            checkIfValid={checkIfValid}
+                            setCurrentState={setFormValues}
+                            currentState={formValues}
                             overrideInputType="RADIO"
                             section={formSections.cultures}
                             listStyle="a"
