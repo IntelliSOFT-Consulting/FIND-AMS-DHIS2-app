@@ -151,8 +151,6 @@ export const NewFile = () => {
                 }
 
             } catch (e) {
-                console.log("error", e)
-
                 onError(e)
             }
         }
