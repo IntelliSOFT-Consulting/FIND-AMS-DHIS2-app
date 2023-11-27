@@ -71,7 +71,7 @@ export const FileView = () => {
      * @returns {*}
      */
     const getFormElement = (name) => {
-        const item = formElements.find(doc => doc.name.toLowerCase().includes(name.toLowerCase()))
+        const item = formElements?.find(doc => doc?.name?.toLowerCase()?.includes(name?.toLowerCase()))
         return item
     }
 
