@@ -44,8 +44,17 @@
 }
 
 .activeSideNavItem{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 1rem;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: .1rem 1rem;
+    cursor: pointer;
+    width: 100%;
     color: #e3eef7;
-    background-color: #1d5288;
+    background-color: #2C6693;
 }
 
 
