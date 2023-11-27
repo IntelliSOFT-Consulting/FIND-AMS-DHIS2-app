@@ -140,7 +140,7 @@ export const FileView = () => {
 
 
     return (
-        <CardItem title={Header()}>
+        <CardItem CardHeader={Header}>
             {
                 loading ?
                     <div style={{width: "100%", display: "flex", justifyContent: "center", padding: "2rem"}}>
