@@ -1,16 +1,17 @@
 import {CardItem} from "../../../shared/components/cards/CardItem";
 import {useNavigate, useParams} from "react-router-dom";
 import styles from "../styles/FileView.module.css"
-import {Viewer, Worker} from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
-import {useConfig, useDataEngine, useDataQuery} from "@dhis2/app-runtime";
+import {useDataEngine, useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react";
 import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
 import {useSelector} from "react-redux";
 import {notification, Spin} from "antd";
 import {downloadPDF} from "../helpers";
+import {Viewer, Worker} from "@react-pdf-viewer/core";
+import {useBase64} from "../../../shared/helpers/fileOperations";
 
 const query = {
     events: {
@@ -25,7 +26,7 @@ export const FileView = () => {
      */
     const [formElements, setFormElements] = useState([])
 
-    const {baseUrl, apiVersion} = useConfig()
+    const {base64String, convertBlobToBase64} = useBase64()
 
     const {stages} = useSelector(state => state.knowledgeHub)
 
@@ -81,14 +82,8 @@ export const FileView = () => {
      */
     const engine = useDataEngine()
 
-    /**
-     * Download handler
-     * First fetch the blob from DHis2
-     * Then send that blob to the helper function that created an anchor tag dynamically and clicks on it
-     * @returns {Promise<void>}
-     */
-    const handleDownload = async () => {
-        const fileName = getFormElement("Name")?.value
+
+    const fetchFile = async () => {
         try {
             const response = await engine.query({
                 events: {
@@ -99,8 +94,24 @@ export const FileView = () => {
                     }
                 }
             })
+            convertBlobToBase64(response.events)
+            return response.events
+        } catch (e) {
+            return e
+        }
+    }
 
-            await downloadPDF({fileBlob: response.events, documentName: fileName})
+    /**
+     * Download handler
+     * First fetch the blob from DHis2
+     * Then send that blob to the helper function that created an anchor tag dynamically and clicks on it
+     * @returns {Promise<void>}
+     */
+    const handleDownload = async () => {
+        const fileName = getFormElement("Name")?.value
+        try {
+            const blob = await fetchFile()
+            await downloadPDF({fileBlob: blob, documentName: fileName})
 
         } catch (e) {
             notification.error({
@@ -138,6 +149,10 @@ export const FileView = () => {
         </div>)
     }
 
+    useEffect(() => {
+        fetchFile()
+    }, [formElements, eventId]);
+
 
     return (
         <CardItem CardHeader={Header}>
@@ -164,17 +179,17 @@ export const FileView = () => {
                                 </div>
                             </div>
 
-                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.6.172/build/pdf.worker.min.js">
-                                <Viewer
-                                    id="viewer"
-                                    withCredentials={true}
-                                    httpHeaders={{
-                                        Authorization: `Basic ` + btoa("admin" + ":" + "district")
-                                    }}
-                                    plugins={[defaultLayoutPluginInstance]}
-                                    fileUrl={`${baseUrl}/api/${apiVersion}/events/files?dataElementUid=${getFormElement("file")?.id}&eventUid=${eventId}`}
-                                />
-                            </Worker>
+                            {base64String.length > 0 && (
+                                <Worker
+                                    workerUrl="https://unpkg.com/pdfjs-dist@3.6.172/build/pdf.worker.min.js">
+                                    <Viewer
+
+                                        plugins={[defaultLayoutPluginInstance]}
+                                        fileUrl={`data:application/pdf;base64,${base64String}`}
+                                    />
+                                </Worker>
+                            )}
+
                         </>
                     )
             }
