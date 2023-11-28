@@ -52,7 +52,6 @@ export const FormSection = ({
                                 value: option.code,
                             }))}
                             placeholder={`Enter ${dataElement.name}`}
-                            name={dataElement.id}
                         />
                     </Form.Item>
                 </li>

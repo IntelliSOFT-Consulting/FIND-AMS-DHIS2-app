@@ -25,7 +25,6 @@ export const MembersForm = () => {
 
     const [members, setMembers] = useState([])
     const [nameElementID, setNameElementID] = useState("")
-    const [designationElementID, setDesignationElementID] = useState("")
     const [loading, setLoading] = useState(false)
     const [membersSection, setMembersSection] = useState({})
     const [initialFormValues, setInitialFormValues] = useState({

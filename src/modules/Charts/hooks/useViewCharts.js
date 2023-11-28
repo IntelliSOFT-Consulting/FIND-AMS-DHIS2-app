@@ -100,6 +100,10 @@ export const useViewCharts = () => {
             render: (text, record) => (
                 <Space size="large">
                     <div
+                        onClick={() => navigate(`/charts/new-form/${record.eventUid}`)}
+                        className={styles.addLink}>edit
+                    </div>
+                    <div
                         onClick={() => navigate(`/charts/event/${record.eventUid}`)}
                         className={styles.addLink}>View
                     </div>
