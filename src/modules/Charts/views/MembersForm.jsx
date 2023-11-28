@@ -5,7 +5,7 @@ import {useSelector} from "react-redux";
 import InputItem from "../../../shared/components/Fields/InputItem";
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react";
-import {useDataElements} from "../../../shared/hooks/useGetDataElement";
+import {useDataElements} from "../hooks/useGetDataElement";
 import styles from "../styles/Members.module.css"
 
 

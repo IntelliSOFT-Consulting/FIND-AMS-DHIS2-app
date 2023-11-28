@@ -5,7 +5,7 @@ import {formatStages, getArrayOfDataElements} from "../helpers/formatData";
 import {notification} from "antd";
 
 
-export const useGetForms = () => {
+export const useGetChartReview = () => {
     const engine = useDataEngine()
     const dispatch = useDispatch()
 

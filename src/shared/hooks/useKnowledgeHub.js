@@ -3,7 +3,7 @@
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useDispatch} from "react-redux";
 import { setKnowledgeHub} from "../redux/actions";
-import { formatStages} from "../helpers/formatData";
+import {formatStages, getArrayOfDataElements} from "../helpers/formatData";
 import {notification} from "antd";
 
 
@@ -37,7 +37,8 @@ export const useKnowledgeHub = () => {
                 setKnowledgeHub({
                     program: program?.id,
                     stages,
-                    trackedEntityType: program?.trackedEntityType
+                    trackedEntityType: program?.trackedEntityType,
+                    dataElements: getArrayOfDataElements(program?.programStages[0]?.programStageSections)
                 })
             )
 

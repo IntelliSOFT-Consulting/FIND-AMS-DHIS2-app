@@ -3,10 +3,11 @@ import {useSelector} from "react-redux";
 import {Form, notification, Spin} from "antd";
 import React, {useEffect, useState} from "react";
 import styles from "../styles/NewFile.module.css"
-import {useConfig, useDataEngine} from "@dhis2/app-runtime";
+import {useDataEngine} from "@dhis2/app-runtime";
 import {useNavigate} from "react-router-dom";
 import {FormSection} from "../../../shared/components/Forms/FormSection";
 import {findSectionObject} from "../../Charts/helpers";
+import {useDataElements} from "../hooks/useDataElements";
 
 
 export const NewFile = () => {
@@ -17,7 +18,8 @@ export const NewFile = () => {
 
     const {stages, program} = useSelector(state => state.knowledgeHub)
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
-    const {baseUrl, apiVersion} = useConfig()
+    const user = useSelector(state => state.user)
+    const {getDataElementByID, getDataElementByName} = useDataElements()
 
     const [form] = Form.useForm()
 
@@ -65,6 +67,12 @@ export const NewFile = () => {
             dataElement: getFormElementID(),
             value: file
         })
+
+        dataValues.push({
+            dataElement: getDataElementByName("createdBy").id,
+            value: `${user.surname} ${user.firstName}`
+        })
+
 
         const payload = {
             events: [
@@ -157,6 +165,16 @@ export const NewFile = () => {
     }
 
 
+    const isHidden = (dataElementId) => {
+        const dataElementObject = getDataElementByID(dataElementId)
+        const hiddenAttributeIndex = dataElementObject.attributeValues.findIndex(attribute => attribute.attribute.name.toLowerCase().includes("hide"))
+        if (hiddenAttributeIndex === -1)
+            return false
+        else {
+            return true
+        }
+    }
+
     return (
         <Form
             initialValues={{
@@ -166,6 +184,7 @@ export const NewFile = () => {
             <CardItem title="AMS KNOWLEDGE HUB">
 
                 <FormSection
+                    checkIfHidden={isHidden}
                     overrideRequired={true}
                     fileUploadProps={fileUploadProps}
                     ordered={false}
@@ -191,7 +210,6 @@ export const NewFile = () => {
                     )}
                 </div>
             </CardItem>
-
         </Form>
     )
 }

@@ -21,13 +21,14 @@ export const FormSection = ({
                                 fileUploadProps,
                                 overrideRequired,
                                 checkIfValid = () => ({validity: true}),
+                                checkIfHidden = () => false,
                             }) => {
 
 
     return (
         <Wrapper ordered={ordered} listStyle={listStyle} containerStyles={containerStyles}
                  startingIndex={startingIndex}>
-            {section?.dataElements?.map(dataElement => (
+            {section?.dataElements?.map(dataElement => !checkIfHidden(dataElement.id) && (
                 <li key={dataElement.id} className={styles.listStyle}>
                     <p className={styles.placeholderNumber}>{placeholderNumber}</p>
                     <Form.Item

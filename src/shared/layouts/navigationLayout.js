@@ -10,7 +10,7 @@ import {Layout, Menu} from "antd";
 import {createUseStyles} from "react-jss";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import routes from "../../routes";
-import {useGetForms} from "../hooks/useGetForms";
+import {useGetChartReview} from "../hooks/useGetChartReview";
 import {useGetOrgUnit} from "../hooks/useGetOrgUnit";
 import {DocumentTextIcon} from "@heroicons/react/24/outline";
 import {useUser} from "../hooks/useUser";
@@ -69,7 +69,7 @@ const items = [
 const NavigationLayout = ({user, program, organisationUnits}) => {
     const classes = styles();
 
-    const {getForms} = useGetForms()
+    const {getForms} = useGetChartReview()
     const {getOrgUnit} = useGetOrgUnit()
     const {getUser} = useUser()
 
