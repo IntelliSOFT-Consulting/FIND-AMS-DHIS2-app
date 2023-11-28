@@ -24,7 +24,6 @@ export const ViewCharts = () => {
         clearFilters,
         handleIpNoChange,
         handleDateChange
-
     } = useViewCharts()
 
 
