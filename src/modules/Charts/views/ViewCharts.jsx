@@ -35,7 +35,7 @@ export const ViewCharts = () => {
                     title="Wards"
                     options={wards}
                 />
-                <div className="">
+                <div>
                     <div className={styles.searchContainer}>
                         <div className={styles.inputContainer}>
                             <label  htmlFor="date">Filter by Date</label>
