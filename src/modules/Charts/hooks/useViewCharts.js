@@ -160,7 +160,7 @@ export const useViewCharts = () => {
     }
 
     const clearFilters = async () => {
-        await refetch({filter: ""})
+        await refetch({filter: "", date: ""})
         setDateString(null)
         setDate(null)
         setIp(null)
