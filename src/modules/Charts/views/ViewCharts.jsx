@@ -38,7 +38,7 @@ export const ViewCharts = () => {
                 <div className="">
                     <div className={styles.searchContainer}>
                         <div className={styles.inputContainer}>
-                            <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
+                            <label  htmlFor="date">Filter by Date</label>
                             <div className={styles.inputWrapper}>
                                 <DatePicker
                                     onChange={handleDateChange}
@@ -55,7 +55,7 @@ export const ViewCharts = () => {
                             </div>
                         </div>
                         <div className={styles.inputContainer}>
-                            <label style={{cursor: "pointer"}} htmlFor="ip/op">Search Specific Records</label>
+                            <label  htmlFor="ip/op">Search Specific Records</label>
                             <div className={styles.inputWrapper}>
                                 <Input
                                     value={ip}
