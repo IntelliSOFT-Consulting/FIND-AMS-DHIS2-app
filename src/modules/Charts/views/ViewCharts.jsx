@@ -1,5 +1,5 @@
 import {Button, DatePicker, Input, Space, Table} from "antd";
-import {CardItem} from "../../../shared/components/cards/CardItem";
+import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {useNavigate} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react"

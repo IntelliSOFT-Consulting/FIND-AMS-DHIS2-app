@@ -1,4 +1,4 @@
-import {CardItem} from "../../../shared/components/cards/CardItem";
+import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {Form, Input, notification, Spin} from "antd";
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useNavigate, useParams} from "react-router-dom";

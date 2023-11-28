@@ -1,4 +1,4 @@
-import {CardItem} from "../../../shared/components/cards/CardItem";
+import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {useEffect, useState} from "react";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";

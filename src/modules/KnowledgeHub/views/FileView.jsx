@@ -1,4 +1,4 @@
-import {CardItem} from "../../../shared/components/cards/CardItem";
+import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {useNavigate, useParams} from "react-router-dom";
 import styles from "../styles/FileView.module.css"
 import '@react-pdf-viewer/core/lib/styles/index.css';

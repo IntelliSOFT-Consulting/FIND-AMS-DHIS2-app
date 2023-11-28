@@ -1,4 +1,4 @@
-import {CardItem} from "../../../shared/components/cards/CardItem";
+import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {Form, notification, Space, Spin, Table} from "antd";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";

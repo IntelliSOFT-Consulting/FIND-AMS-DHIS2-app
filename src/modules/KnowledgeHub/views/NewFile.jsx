@@ -1,4 +1,4 @@
-import {CardItem} from "../../../shared/components/cards/CardItem";
+import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {useSelector} from "react-redux";
 import {Form, notification, Spin} from "antd";
 import React, {useEffect, useState} from "react";
