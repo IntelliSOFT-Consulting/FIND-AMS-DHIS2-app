@@ -77,7 +77,6 @@ export const useNewForm = () => {
 
 
         } catch (e) {
-            console.log("error", e)
             notification.error({
                 message: "error",
                 description: "Error getting chart data"
