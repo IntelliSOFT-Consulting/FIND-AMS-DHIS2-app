@@ -171,6 +171,11 @@ export const ViewDocuments = () => {
             key: 'Document Permissions',
         },
         {
+            title: 'Created By',
+            dataIndex: 'createdBy',
+            key: 'createdBy',
+        },
+        {
             title: 'DATE ADDED',
             dataIndex: 'createdAt',
             key: 'createdAt',
