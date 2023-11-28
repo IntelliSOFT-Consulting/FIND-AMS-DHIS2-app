@@ -30,14 +30,14 @@ export const ViewCharts = () => {
 
     return (
         <CardItem CardHeader={ViewChartsCardHeader}>
-            <div style={{display: "grid", gridTemplateColumns: "1fr 3fr", gap: "2rem"}}>
+            <div className={styles.parentDiv}>
                 <SideNav
                     title="Wards"
                     options={wards}
                 />
                 <div className="">
                     <div className={styles.searchContainer}>
-                        <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
+                        <div className={styles.inputContainer}>
                             <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
                             <div className={styles.inputWrapper}>
                                 <DatePicker
@@ -54,7 +54,7 @@ export const ViewCharts = () => {
                                     className={styles.inputButton}>Go</Button>
                             </div>
                         </div>
-                        <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%"}}>
+                        <div className={styles.inputContainer}>
                             <label style={{cursor: "pointer"}} htmlFor="ip/op">Search Specific Records</label>
                             <div className={styles.inputWrapper}>
                                 <Input
