@@ -1,188 +1,32 @@
-import {Button, DatePicker, Input, Space, Table} from "antd";
+import {Button, DatePicker, Input} from "antd";
 import {CardItem} from "../../../shared/components/Cards/CardItem";
-import {useNavigate} from "react-router-dom";
-import {useDataQuery} from "@dhis2/app-runtime";
-import {useEffect, useState} from "react"
-import {useDataElements} from "../../../shared/hooks/useGetDataElement";
-import {useSelector} from "react-redux";
+
 import styles from "../styles/ViewCharts.module.css"
 import {SideNav} from "../../../shared/components/Nav/SideNav";
-import {FolderOutlined} from "@ant-design/icons";
 import {ViewChartsCardHeader} from "../Components/Headers/ViewChartsCardHeader";
 import {MyTable} from "../../../shared/components/Tables/Table";
+import {useViewCharts} from "../hooks/useViewCharts";
 
-const query = {
-    events: {
-        resource: "tracker/events",
-        params: ({filter = "", date = "", program, orgUnit}) => ({
-            page: 1,
-            pageSize: 15,
-            program,
-            orgUnit,
-            fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
-            ouMode: "SELECTED",
-            order: "createdAt:desc",
-            occurredBefore: date,
-            occurredAfter: date,
-            filter
-        })
-    }
-}
+
 
 
 export const ViewCharts = () => {
-    const navigate = useNavigate()
 
-    const {program, dataElements: reduxElements} = useSelector(state => state.forms)
-    const {id: orgUnitID} = useSelector(state => state.orgUnit)
+    const {
+        records,
+        date,
+        ip,
+        wards,
+        loading,
+        chartTableColumns,
+        filterByIp,
+        filterByDate,
+        clearFilters,
+        handleIpNoChange,
+        handleDateChange
 
-    //state hooks
-    const [records, setRecords] = useState([])
-    const [date, setDate] = useState(null)
-    const [dateString, setDateString] = useState(null)
-    const [ip, setIp] = useState(null)
-    const [wards, setWards] = useState([])
+    } = useViewCharts()
 
-
-    const {getDataElementByID, getDataElementByName} = useDataElements()
-
-    /**
-     * Query hook
-     */
-    const {loading, data, refetch} = useDataQuery(query)
-
-
-    useEffect(() => {
-        const wardElement = getDataElementByName("Ward (specialty)")
-
-        const wardFolders = wardElement?.optionSet?.options?.map(option => ({
-            ...option,
-            icon: FolderOutlined,
-            handler: () => filterByWards(option.code)
-        }))
-
-        if (wardFolders?.length > 0) {
-            setWards([...wardFolders, {
-                displayName: "All Charts",
-                code: "",
-                icon: FolderOutlined,
-                handler: () => filterByWards("")
-            }
-            ])
-        }
-    }, [reduxElements]);
-
-
-    /**
-     * Fetch data once org unit and program are loaded from redux store
-     */
-    useEffect(() => {
-        refetch({
-            orgUnit: orgUnitID,
-            program
-        })
-    }, [orgUnitID, program]);
-
-
-    /**
-     * Table columns
-     * @type {[{dataIndex: string, title: string, render: (function(*): unknown), key: string},{dataIndex: string, title: string, key: string},{dataIndex: string, title: string, render: (function(): string), key: string},{dataIndex: string, title: string, render: (function(*, *): *), key: string}]}
-     */
-    const chartTableColumns = [
-        {
-            title: "Patient IP/OP NO.",
-            dataIndex: "Patient IP/OP No.",
-            key: "Patient IP/OP No.",
-        },
-        {
-            title: "Ward",
-            dataIndex: "Ward (specialty)",
-            key: "Ward (specialty)",
-        },
-        {
-            title: "Date Added",
-            dataIndex: "createdAt",
-            key: "createdAt",
-            render: (text, record) => new Date(record.createdAt).toLocaleDateString()
-        },
-        {
-            title: "Actions",
-            dataIndex: "Actions",
-            key: "event",
-            render: (text, record) => (
-                <Space size="large">
-                    <div
-                        onClick={() => navigate(`/charts/event/${record.eventUid}`)}
-                        className={styles.addLink}>View
-                    </div>
-                </Space>
-            )
-        }
-
-    ]
-
-    /**
-     * Load state on query execution
-     */
-    useEffect(() => {
-        setRecords(data?.events?.instances?.flatMap(instance => {
-            const object = {
-                createdAt: instance.createdAt,
-                eventUid: instance.event
-            }
-
-            instance.dataValues.forEach(dataValue => {
-                const dataElement = getDataElementByID(dataValue?.dataElement)
-                object[dataElement?.displayName] = dataValue.value;
-            })
-            return object
-
-        }))
-    }, [data]);
-
-
-    /**
-     * Filter the records by adding filter parameter with the data element id of the date
-     * @returns {Promise<void>}
-     */
-    const filterByIp = async () => {
-        if (ip)
-            await refetch({
-                filter: `${getDataElementByName("ip/op").id}:ILIKE:${ip}`,
-            })
-    }
-
-    /**
-     * Filter the records by adding filter parameter with the data element id of the date
-     * @returns {Promise<void>}
-     */
-    const filterByDate = async () => {
-        if (dateString)
-            await refetch({
-                date: dateString,
-            })
-    }
-
-    const clearFilters = async () => {
-        await refetch({filter: "", date: ""})
-        setDateString(null)
-        setDate(null)
-        setIp(null)
-    }
-
-    const filterByWards = async (wardCode) => {
-        setIp("")
-        setDate("")
-        setDateString("")
-        if (wardCode === "")
-            await refetch({
-                filter: ""
-            })
-        else
-            await refetch({
-                filter: `${getDataElementByName("Ward (specialty)").id}:ILIKE:${wardCode}`
-            })
-    }
 
 
 
@@ -199,10 +43,7 @@ export const ViewCharts = () => {
                             <label style={{cursor: "pointer"}} htmlFor="date">Filter by Date</label>
                             <div className={styles.inputWrapper}>
                                 <DatePicker
-                                    onChange={(date, dateString) => {
-                                        setDate(date)
-                                        setDateString(dateString)
-                                    }}
+                                    onChange={handleDateChange}
                                     value={date}
                                     className={styles.inputs}
                                     size="large"
@@ -220,7 +61,7 @@ export const ViewCharts = () => {
                             <div className={styles.inputWrapper}>
                                 <Input
                                     value={ip}
-                                    onChange={evt => setIp(evt.target.value)}
+                                    onChange={handleIpNoChange}
                                     className={styles.inputs}
                                     size="large"
                                     id="ip/op"
