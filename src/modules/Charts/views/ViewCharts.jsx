@@ -1,6 +1,5 @@
 import {Button, DatePicker, Input} from "antd";
 import {CardItem} from "../../../shared/components/Cards/CardItem";
-
 import styles from "../styles/ViewCharts.module.css"
 import {SideNav} from "../../../shared/components/Nav/SideNav";
 import {ViewChartsCardHeader} from "../Components/Headers/ViewChartsCardHeader";
