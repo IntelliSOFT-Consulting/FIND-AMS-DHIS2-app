@@ -9,6 +9,7 @@ import styles from "../styles/ViewCharts.module.css"
 import {SideNav} from "../../../shared/components/Nav/SideNav";
 import {FolderOutlined} from "@ant-design/icons";
 import {ViewChartsCardHeader} from "../Components/Headers/ViewChartsCardHeader";
+import {MyTable} from "../../../shared/components/Tables/Table";
 
 const query = {
     events: {
@@ -29,7 +30,6 @@ const query = {
 }
 
 
-
 export const ViewCharts = () => {
     const navigate = useNavigate()
 
@@ -41,7 +41,6 @@ export const ViewCharts = () => {
     const [date, setDate] = useState(null)
     const [dateString, setDateString] = useState(null)
     const [ip, setIp] = useState(null)
-    const [instances, setInstances] = useState(null)
     const [wards, setWards] = useState([])
 
 
@@ -62,12 +61,13 @@ export const ViewCharts = () => {
             handler: () => filterByWards(option.code)
         }))
 
-        if(wardFolders?.length>0 ){
+        if (wardFolders?.length > 0) {
             setWards([...wardFolders, {
                 displayName: "All Charts",
                 code: "",
                 icon: FolderOutlined,
-                handler: () => filterByWards("")}
+                handler: () => filterByWards("")
+            }
             ])
         }
     }, [reduxElements]);
@@ -125,8 +125,19 @@ export const ViewCharts = () => {
      * Load state on query execution
      */
     useEffect(() => {
-        setInstances(data?.events?.instances)
-        setRecords(data?.events.instances)
+        setRecords(data?.events?.instances?.flatMap(instance => {
+            const object = {
+                createdAt: instance.createdAt,
+                eventUid: instance.event
+            }
+
+            instance.dataValues.forEach(dataValue => {
+                const dataElement = getDataElementByID(dataValue?.dataElement)
+                object[dataElement?.displayName] = dataValue.value;
+            })
+            return object
+
+        }))
     }, [data]);
 
 
@@ -172,6 +183,7 @@ export const ViewCharts = () => {
                 filter: `${getDataElementByName("Ward (specialty)").id}:ILIKE:${wardCode}`
             })
     }
+
 
 
     return (
@@ -224,38 +236,12 @@ export const ViewCharts = () => {
                             onClick={clearFilters}
                             danger={true}>Clear filters</Button>
                     </div>
-                    <Table
-                        rowKey={record => record?.eventUid}
+
+                    <MyTable
+                        rowKey="eventUid"
                         loading={loading}
-                        pagination={records?.length > 10 ? {pageSize: 10} : false}
-                        dataSource={instances?.flatMap(instance => {
-                            const object = {
-                                createdAt: instance.createdAt,
-                                eventUid: instance.event
-                            }
-
-                            instance.dataValues.forEach(dataValue => {
-                                const dataElement = getDataElementByID(dataValue?.dataElement)
-                                object[dataElement?.displayName] = dataValue.value;
-                            })
-                            return object
-
-                        })}
+                        data={records}
                         columns={chartTableColumns}
-                        bordered
-                        size="small"
-                        locale={{
-                            emptyText: (
-                                <div>
-                                    <p>No Results. Add new chart</p>
-                                    <Button
-                                        onClick={() => navigate("/charts/members-present-form")}
-                                        type="primary">
-                                        New
-                                    </Button>
-                                </div>
-                            ),
-                        }}
                     />
                 </div>
             </div>
