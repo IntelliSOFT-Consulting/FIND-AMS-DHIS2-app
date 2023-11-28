@@ -14,8 +14,6 @@ const query = {
     events: {
         resource: "tracker/events",
         params: ({filter = "", program, orgUnit}) => ({
-            page: 1,
-            pageSize: 15,
             program,
             orgUnit,
             fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
