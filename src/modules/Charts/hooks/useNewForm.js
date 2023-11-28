@@ -33,7 +33,7 @@ export const useNewForm = () => {
 
     const [chartDataLoading, setChartDataLoading] = useState(false)
 
-    const {stages, program} = useSelector(state => state.forms)
+    const {stages, program, dataElements} = useSelector(state => state.forms)
 
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
@@ -59,24 +59,28 @@ export const useNewForm = () => {
 
             const dataValues = response.events.dataValues
 
-            dataValues.forEach(dataValue => {
-                const newObject = {}
+            if (dataValues.length > 0)
+                dataValues.forEach(dataValue => {
+                    const newObject = {}
 
-                if ((new Date(dataValue.value) == "Invalid Date") && isNaN(new Date(dataValue.value)))
-                    newObject[dataValue.dataElement] = dataValue.value
-                else
-                    newObject[dataValue.dataElement] = dayjs(dataValue.value)
+                    const dataElementObject = getDataElementByID(dataValue.dataElement)
 
-                setInitialState(prevState => ({
-                    ...prevState, ...newObject
-                }))
-            })
+                    if (dataElementObject.valueType === "DATE")
+                        newObject[dataValue.dataElement] = dayjs(dataValue.value)
+                    else
+                        newObject[dataValue.dataElement] = dataValue.value
+
+                    setInitialState(prevState => ({
+                        ...prevState, ...newObject
+                    }))
+                })
 
 
         } catch (e) {
+            console.log("error", e)
             notification.error({
                 message: "error",
-                description: "Something went wrong"
+                description: "Error getting chart data"
             })
         } finally {
             setChartDataLoading(false)
@@ -184,8 +188,9 @@ export const useNewForm = () => {
 
 
     useEffect(() => {
-        getChart()
-    }, [eventId]);
+        if (eventId && dataElements)
+            getChart()
+    }, [eventId, dataElements]);
 
 
     useEffect(() => {
