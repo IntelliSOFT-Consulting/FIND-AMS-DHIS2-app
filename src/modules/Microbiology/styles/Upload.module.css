@@ -5,6 +5,10 @@
     gap: 4rem;
 }
 
+.form{
+    margin-bottom: 16rem;
+}
+
 /*.......action buttons...........*/
 .actionContainer {
     display: flex;

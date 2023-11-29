@@ -6,12 +6,23 @@ import {Form, Spin} from "antd";
 import styles from "../styles/Upload.module.css"
 
 export const UploadDocument = () => {
-    const {formSections, form, loading} = useUploadDocument()
+    const {
+        formSections,
+        form,
+        loading,
+        navigate,
+        fileUploadProps,
+        isHidden,
+        onFinish
+    } = useUploadDocument()
 
     return (
         <CardItem title="UPLOAD DOCUMENT">
-            <Form form={form}>
+            <Form onFinish={onFinish} layout="vertical" form={form} className={styles.form}>
                 <FormSection
+                    overrideRequired={true}
+                    checkIfHidden={isHidden}
+                    fileUploadProps={fileUploadProps}
                     containerStyles={styles.parentContainer}
                     section={formSections?.sections[0]}
                 />
