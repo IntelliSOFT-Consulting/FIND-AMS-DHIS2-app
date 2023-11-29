@@ -94,8 +94,8 @@ export const useNewForm = () => {
             value: values[key]
         }))
 
-        formSections.recommendation.dataElements.forEach(dataElement=>{
-            if(recommendationValues.includes(dataElement.id))
+        formSections.recommendation.dataElements.forEach(dataElement => {
+            if (recommendationValues.includes(dataElement.id))
                 dataValues.push({
                     dataElement: dataElement.id,
                     value: true
@@ -106,8 +106,8 @@ export const useNewForm = () => {
                 })
         })
 
-        formSections.redFlags.dataElements.forEach(dataElement=>{
-            if(redFlagValues.includes(dataElement.id))
+        formSections.redFlags.dataElements.forEach(dataElement => {
+            if (redFlagValues.includes(dataElement.id))
                 dataValues.push({
                     dataElement: dataElement.id,
                     value: true
@@ -180,14 +180,15 @@ export const useNewForm = () => {
         dataElementObject.attributeValues.forEach(attribute => {
             const attributeElementId = attribute.value.split(",")[0]
 
-            const attributeValue = attribute.value.split(",")[1]
+            const attributeValuesArray = attribute.value.split(",").splice(1)
 
             const conditionalCheck = form.getFieldValue(attributeElementId)
 
             if (conditionalCheck === undefined)
                 validity = validity
             else
-                validity = validity && (conditionalCheck == attributeValue)
+                validity = validity && (attributeValuesArray.includes(conditionalCheck))
+
         })
 
         if (validity === false)
