@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {FolderOutlined} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
-import {useDataEngine, useDataQuery} from "@dhis2/app-runtime";
+import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
 import {useDataElements} from "./useDataElements";
 
@@ -33,7 +33,6 @@ export const useListing = () => {
 
     const navigate = useNavigate()
 
-    const engine = useDataEngine()
 
     const {getDataElementByID, getDataElementByName} = useDataElements()
 
@@ -66,7 +65,7 @@ export const useListing = () => {
         })
     }
 
-    const handleChange = async(evt) => {
+    const handleChange = async (evt) => {
         setSearchString(evt.target.value)
 
         if (evt.target.value === "")
@@ -144,12 +143,12 @@ export const useListing = () => {
 
     return {
         searchString,
-        setSearchString,
         handleSearch,
         categories,
         tableColumns,
         loading,
         records,
-        handleChange
+        handleChange,
+        navigate
     }
 }

@@ -8,19 +8,27 @@ export const MicrobiologyListing = () => {
 
     const {
         searchString,
-        setSearchString,
         handleSearch,
         categories,
         tableColumns,
         loading,
         records,
-        handleChange
+        handleChange,
+        navigate
     } = useListing()
 
     return (
         <div className={styles.parentContainer}>
             <SideNav title="Categories" options={categories}/>
             <div className={styles.tableContainer}>
+                <div className={styles.titleContainer}>
+                    <p >Microbiology Data</p>
+                    <button
+                        onClick={() => navigate("/microbiology-data/upload")}
+                        className="outline-btn">UPLOAD NEW RESOURCE
+                    </button>
+                </div>
+                
                 <div className={styles.searchContainer}>
                     <Input
                         value={searchString}

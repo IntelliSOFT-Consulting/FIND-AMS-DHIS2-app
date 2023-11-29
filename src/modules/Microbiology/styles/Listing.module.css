@@ -9,7 +9,16 @@
     }
 }
 
-.searchContainer{
+.titleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #d3d3d3;
+    color: #1d5288;
+    font-size: 16px;
+}
+
+.searchContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
