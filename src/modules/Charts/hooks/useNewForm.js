@@ -258,7 +258,8 @@ export const useNewForm = () => {
         checkIfValid,
         onFieldsChange,
         redFlagsInitialState,
-        recommendationInitialState
+        recommendationInitialState,
+        navigate
     }
 
 }
