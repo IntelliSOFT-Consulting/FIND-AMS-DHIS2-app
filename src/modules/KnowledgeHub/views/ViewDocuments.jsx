@@ -179,7 +179,7 @@ export const ViewDocuments = () => {
             title: 'DATE ADDED',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            render: () => new Date().toLocaleDateString()
+            render: (text, record) => new Date(record.createdAt).toLocaleDateString()
         },
         {
             title: "Actions",

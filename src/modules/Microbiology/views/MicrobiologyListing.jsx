@@ -1,30 +1,44 @@
-import {CardItem} from "../../../shared/components/Cards/CardItem";
-import {CardHeader} from "../components/CardHeader";
 import styles from "../styles/Listing.module.css"
-import {Input} from "antd";
 import {useListing} from "../hooks/useListing";
+import {SideNav} from "../../../shared/components/Nav/SideNav";
+import {MyTable} from "../../../shared/components/Tables/Table";
+import {Input} from "antd";
 
 export const MicrobiologyListing = () => {
 
-    const {searchString, setSearchString, handleSearch} = useListing()
+    const {
+        searchString,
+        setSearchString,
+        handleSearch,
+        categories,
+        tableColumns,
+        loading,
+        records,
+        handleChange
+    } = useListing()
 
     return (
-        <CardItem CardHeader={CardHeader}>
-            <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem"}}>
-                <Input
-                    value={searchString}
-                    onChange={evt => setSearchString(evt.target.value)}
-                    className={styles.inputs}
-                    size="large"
-                    id="ip/op"
-                    placeholder="Search using document name"
-                    label="Filter by Date"
+        <div className={styles.parentContainer}>
+            <SideNav title="Categories" options={categories}/>
+            <div className={styles.tableContainer}>
+                <div className={styles.searchContainer}>
+                    <Input
+                        value={searchString}
+                        onChange={handleChange}
+                        size="large"
+                        id="search"
+                        placeholder="Search using document name"
+                    />
+                    <button className="outline-btn" onClick={handleSearch}>SEARCH</button>
+                </div>
+                <MyTable
+                    rowKey="eventID"
+                    columns={tableColumns}
+                    data={records}
+                    loading={loading}
                 />
-                <button
-                    onClick={handleSearch}
-                    className="outline-btn">SEARCH
-                </button>
             </div>
-        </CardItem>
+
+        </div>
     )
 }
