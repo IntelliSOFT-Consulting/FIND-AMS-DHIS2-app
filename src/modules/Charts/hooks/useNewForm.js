@@ -24,6 +24,8 @@ export const useNewForm = () => {
     const [formValues, setFormValues] = useState([])
 
     const [initialState, setInitialState] = useState({})
+    const [recommendationInitialState, setRecommendationInitialState] = useState(null)
+    const [redFlagsInitialState, setRedFlagsInitialState] = useState(null)
 
     const [recommendationValues, setRecommendationValues] = useState([])
 
@@ -185,6 +187,25 @@ export const useNewForm = () => {
 
     }
 
+    const populateMultiselectInitialStates = () => {
+        const initialRecommendation = formSections?.recommendation?.dataElements
+            ?.map(dataElement => dataElement.id)
+            .filter(dataElementId => initialState[dataElementId] == "true")
+
+        const initialRedFlags = formSections?.redFlags?.dataElements
+            ?.map(dataElement => dataElement.id)
+            .filter(dataElementId => initialState[dataElementId] == "true")
+
+        setRedFlagsInitialState(initialRedFlags)
+
+        setRecommendationInitialState(initialRecommendation)
+
+    }
+
+    useEffect(() => {
+        if (formSections.recommendation !== {} && formSections.redFlags !== {} && !chartDataLoading)
+            populateMultiselectInitialStates()
+    }, [formSections, dataElements, chartDataLoading]);
 
     useEffect(() => {
         if (eventId && dataElements)
@@ -221,7 +242,9 @@ export const useNewForm = () => {
         getChart,
         onFinish,
         checkIfValid,
-        onFieldsChange
+        onFieldsChange,
+        redFlagsInitialState,
+        recommendationInitialState
     }
 
 }

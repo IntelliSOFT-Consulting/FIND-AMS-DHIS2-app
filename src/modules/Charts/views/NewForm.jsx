@@ -18,7 +18,9 @@ export const NewForm = () => {
         form,
         onFinish,
         checkIfValid,
-        onFieldsChange
+        onFieldsChange,
+        redFlagsInitialState,
+        recommendationInitialState
     } = useNewForm()
 
     return (
@@ -69,17 +71,22 @@ export const NewForm = () => {
                                 />
 
 
-                                <MultiSelectSection
+                                {recommendationInitialState && <MultiSelectSection
+                                    initialValues={recommendationInitialState}
                                     setCheckedValues={setRecommendationValues}
                                     number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
                                     section={formSections.recommendation}
-                                />
+                                />}
 
-                                <MultiSelectSection
-                                    setCheckedValues={setRedFlagValues}
-                                    number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
-                                    section={formSections.redFlags}
-                                />
+
+                                {redFlagsInitialState &&
+                                    <MultiSelectSection
+                                        initialValues={redFlagsInitialState}
+                                        setCheckedValues={setRedFlagValues}
+                                        number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
+                                        section={formSections.redFlags}
+                                    />
+                                }
 
 
                                 <FormSection
