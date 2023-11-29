@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {useDataElements} from "./useGetDataElement";
+import {useDataElements} from "./useDataElements";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {FolderOutlined} from "@ant-design/icons";
 import {Space} from "antd";
