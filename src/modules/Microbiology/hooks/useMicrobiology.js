@@ -1,7 +1,7 @@
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useDispatch} from "react-redux";
 import {formatStages, getArrayOfDataElements} from "../../../shared/helpers/formatData";
-import {setKnowledgeHub} from "../../../shared/redux/actions";
+import {setMicrobiology} from "../../../shared/redux/actions";
 import {notification} from "antd";
 
 export const useMicrobiology = () => {
@@ -32,9 +32,9 @@ export const useMicrobiology = () => {
             const sections = formatStages(program)
 
             dispatch(
-                setKnowledgeHub({
+                setMicrobiology({
                     program: program.id,
-                    formSections: sections,
+                    formSections: sections[0],
                     trackedEntityType: program.trackedEntityType,
                     dataElements: getArrayOfDataElements(program?.programStages[0]?.programStageSections)
                 })
