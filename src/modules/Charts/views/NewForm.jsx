@@ -20,7 +20,8 @@ export const NewForm = () => {
         checkIfValid,
         onFieldsChange,
         redFlagsInitialState,
-        recommendationInitialState
+        recommendationInitialState,
+        navigate
     } = useNewForm()
 
     return (
