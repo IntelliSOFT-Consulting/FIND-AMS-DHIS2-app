@@ -77,7 +77,6 @@ export const useUploadDocument = () => {
 
     const onFinish = async values => {
         try {
-            console.log("values", values)
             setLoading(true)
             if (!file)
                 return notification.info({
