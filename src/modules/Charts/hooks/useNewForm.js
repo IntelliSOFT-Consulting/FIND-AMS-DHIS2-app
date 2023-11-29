@@ -94,18 +94,28 @@ export const useNewForm = () => {
             value: values[key]
         }))
 
-        recommendationValues.forEach(value => {
-            dataValues.push({
-                dataElement: value,
-                value: true,
-            })
+        formSections.recommendation.dataElements.forEach(dataElement=>{
+            if(recommendationValues.includes(dataElement.id))
+                dataValues.push({
+                    dataElement: dataElement.id,
+                    value: true
+                })
+            else
+                dataValues.push({
+                    dataElement: dataElement.id,
+                })
         })
 
-        redFlagValues.forEach(value => {
-            dataValues.push({
-                dataElement: value,
-                value: true,
-            })
+        formSections.redFlags.dataElements.forEach(dataElement=>{
+            if(redFlagValues.includes(dataElement.id))
+                dataValues.push({
+                    dataElement: dataElement.id,
+                    value: true
+                })
+            else
+                dataValues.push({
+                    dataElement: dataElement.id,
+                })
         })
 
         const payload = {
@@ -199,6 +209,10 @@ export const useNewForm = () => {
         setRedFlagsInitialState(initialRedFlags)
 
         setRecommendationInitialState(initialRecommendation)
+
+        setRedFlagValues(initialRedFlags)
+
+        setRecommendationValues(initialRecommendation)
 
     }
 
