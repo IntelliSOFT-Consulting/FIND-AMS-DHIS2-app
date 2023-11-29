@@ -1,8 +1,6 @@
 import {applyMiddleware, combineReducers, compose, createStore} from "redux";
-import {formsReducer, knowledgeHubReducer, orgUnitReducer, userReducer} from "../reducers";
+import {formsReducer, knowledgeHubReducer, microbiologyReducer, orgUnitReducer, userReducer} from "../reducers";
 import thunk from "redux-thunk";
-
-
 
 
 const initialState = {}
@@ -11,7 +9,8 @@ const reducer = combineReducers({
     forms: formsReducer,
     orgUnit: orgUnitReducer,
     knowledgeHub: knowledgeHubReducer,
-    user: userReducer
+    user: userReducer,
+    microbiology: microbiologyReducer
 })
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

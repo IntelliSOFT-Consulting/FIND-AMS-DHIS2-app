@@ -20,6 +20,13 @@ export const setKnowledgeHub = forms => dispatch => {
     })
 }
 
+export const setMicrobiology = data => dispatch => {
+    dispatch({
+        type: "MICROBIOLOGY",
+        payload: data
+    })
+}
+
 export const setUser = user => dispatch => {
     dispatch({
         type: "USER",

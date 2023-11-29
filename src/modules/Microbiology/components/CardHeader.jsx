@@ -7,7 +7,7 @@ export const CardHeader = () => {
         <div className="card-header">
             <p className="card-header-text">MICROBIOLOGY DATA</p>
             <button
-                onClick={() => navigate("/microbiology-data")}
+                onClick={() => navigate("/microbiology-data/upload")}
                 className={styles.primaryBtn}>UPLOAD NEW FILE</button>
         </div>
     )

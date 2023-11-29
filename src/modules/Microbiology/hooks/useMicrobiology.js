@@ -1,17 +1,15 @@
-
-
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useDispatch} from "react-redux";
-import { setKnowledgeHub} from "../redux/actions";
-import {formatStages, getArrayOfDataElements} from "../helpers/formatData";
+import {formatStages, getArrayOfDataElements} from "../../../shared/helpers/formatData";
+import {setKnowledgeHub} from "../../../shared/redux/actions";
 import {notification} from "antd";
 
-
-export const useKnowledgeHub = () => {
+export const useMicrobiology = () => {
     const engine = useDataEngine()
+
     const dispatch = useDispatch()
 
-    const getKnowledgeForm = async () => {
+    const getMicrobiologyData = async () => {
         try {
             const {programs} = await engine.query({
                 programs: {
@@ -24,20 +22,20 @@ export const useKnowledgeHub = () => {
                             "programStages[id,name,repeatable,attributeValues[attribute[id,name],value],programStageSections[id,displayName,description,dataElements[id,displayName,description,attributeValues[attribute[id,name],value],valueType,optionSet[id,displayName,options[id,displayName,code]]]]]",
                             "programSections[name,trackedEntityAttributes[id,name,searchable,description,attributeValues[attribute[id,name],value],valueType,optionSet[options[displayName, code]]]",
                         ],
-                        filter: "name:ilike:Knowledge",
+                        filter: "name:ilike:Microbiology",
                     }
                 }
             })
-            const program = programs?.programs[0];
 
+            const program = programs?.programs[0]
 
-            const stages = formatStages(program)
+            const sections = formatStages(program)
 
             dispatch(
                 setKnowledgeHub({
-                    program: program?.id,
-                    stages,
-                    trackedEntityType: program?.trackedEntityType,
+                    program: program.id,
+                    formSections: sections,
+                    trackedEntityType: program.trackedEntityType,
                     dataElements: getArrayOfDataElements(program?.programStages[0]?.programStageSections)
                 })
             )
@@ -50,7 +48,6 @@ export const useKnowledgeHub = () => {
         }
     }
 
-
-    return {getKnowledgeForm}
+    return {getMicrobiologyData}
 
 }
