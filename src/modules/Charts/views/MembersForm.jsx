@@ -1,153 +1,22 @@
 import {CardItem} from "../../../shared/components/Cards/CardItem";
-import {Form, notification, Space, Spin, Table} from "antd";
-import {useNavigate} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {Form, Spin, Table} from "antd";
 import InputItem from "../../../shared/components/Fields/InputItem";
-import {useDataEngine} from "@dhis2/app-runtime";
-import {useEffect, useState} from "react";
-import {useDataElements} from "../hooks/useDataElements";
 import styles from "../styles/Members.module.css"
+import {useMembers} from "../hooks/useMembers";
 
 
 export const MembersForm = () => {
 
-    const navigate = useNavigate()
-    const [form] = Form.useForm();
-
-    const engine = useDataEngine()
-    const {getDataElementByName} = useDataElements()
-
-    const {stages, program} = useSelector(state => state.forms)
-
-    const {id: orgUnitID} = useSelector(state => state.orgUnit)
-
-    const user = useSelector(state => state.user)
-
-    const [members, setMembers] = useState([])
-    const [nameElementID, setNameElementID] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [membersSection, setMembersSection] = useState({})
-    const [initialFormValues, setInitialFormValues] = useState({
-        "Full Names": user?.name
-    })
-
-
-    /**
-     * Init respective form sections once stages are fetched
-     */
-    useEffect(() => {
-        if (stages?.length > 0) {
-
-            const membersObject = stages[0].sections.find(section => section.title.includes("Members"))
-            setMembersSection(membersObject)
-
-        }
-    }, [stages]);
-
-    useEffect(() => {
-        if (membersSection?.dataElements) {
-            const fullNamesObject = membersSection.dataElements.find(element => element.name.includes("Full"))
-            setNameElementID(fullNamesObject?.id)
-
-        }
-    }, [membersSection]);
-
-
-    const columns = [
-        {
-            title: 'Full Names',
-            dataIndex: 'Full Names',
-            key: 'Full Names',
-        },
-        {
-            title: 'Designation',
-            dataIndex: 'Designation',
-            key: 'Designation',
-        },
-        {
-            title: "Action",
-            dataIndex: 'Designation',
-            key: 'Designation',
-            render: (text, record) => (
-                <Space size="middle">
-                    <div
-                        onClick={() => setMembers(prev => prev.filter(item => item['Full Names'] !== record['Full Names']))}
-                        className={styles.removeLink}>
-                        Remove
-                    </div>
-                </Space>
-            )
-        }
-    ]
-
-    const addMembers = () => {
-        const formValues = form.getFieldsValue({strict: false})
-        const keys = Object.keys(formValues)
-        for (const i of keys) {
-            if (formValues[i] === undefined) {
-                return
-            }
-        }
-
-        setMembers(prev => prev?.length > 0 ? [...prev, {...formValues}] : [{...formValues}])
-        form.resetFields()
-    }
-    useEffect(() => {
-        if (members.length > 0) {
-            setInitialFormValues({
-                "Full Names": ""
-            })
-        }
-    }, [members.length]);
-
-
-    const onFinish = async () => {
-        let dataValues = []
-        members.forEach(member => {
-            const keys = Object.keys(member)
-            keys.forEach(key => {
-                dataValues.push({"dataElement": getDataElementByName(key).id, value: member[key]})
-            })
-        })
-
-        const payload = {
-            events: [
-                {
-                    "occurredAt": new Date().toJSON().slice(0, 10),
-                    "notes": [],
-                    program,
-                    "programStage": stages[0]?.id,
-                    orgUnit: orgUnitID,
-                    dataValues
-                }
-            ]
-        }
-
-        try {
-            if (members.length < 1)
-                return
-            setLoading(true)
-            const response = await engine.mutate({
-                resource: "tracker",
-                type: "create",
-                data: payload,
-                params: {
-                    async: false
-                }
-            })
-            if (response?.status === "OK") {
-                navigate(`/charts/new-form/${response?.bundleReport?.typeReportMap?.EVENT.objectReports[0]?.uid}`)
-            }
-
-        } catch (e) {
-            notification.error({
-                message: "error",
-                description: "Something went wrong"
-            })
-        } finally {
-            setLoading(false)
-        }
-    }
+    const {
+        members,
+        loading,
+        membersSection,
+        initialFormValues,
+        navigate,
+        tableColumns,
+        addMembers,
+        onFinish,
+    } = useMembers()
 
 
     const Header = () => (
