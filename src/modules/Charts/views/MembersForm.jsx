@@ -176,7 +176,7 @@ export const MembersForm = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: `Please input ${dataElement.displayName}!`,
+                                    message: `Please input ${dataElement.name}!`,
                                 },
                                 dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
                             ]}
