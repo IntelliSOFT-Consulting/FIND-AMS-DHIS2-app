@@ -7,8 +7,6 @@ import {MyTable} from "../../../shared/components/Tables/Table";
 import {useViewCharts} from "../hooks/useViewCharts";
 
 
-
-
 export const ViewCharts = () => {
 
     const {
@@ -26,8 +24,6 @@ export const ViewCharts = () => {
     } = useViewCharts()
 
 
-
-
     return (
         <CardItem CardHeader={ViewChartsCardHeader}>
             <div className={styles.parentDiv}>
@@ -38,7 +34,7 @@ export const ViewCharts = () => {
                 <div>
                     <div className={styles.searchContainer}>
                         <div className={styles.inputContainer}>
-                            <label  htmlFor="date">Filter by Date</label>
+                            <label htmlFor="date">Filter by Date</label>
                             <div className={styles.inputWrapper}>
                                 <DatePicker
                                     onChange={handleDateChange}
@@ -55,7 +51,7 @@ export const ViewCharts = () => {
                             </div>
                         </div>
                         <div className={styles.inputContainer}>
-                            <label  htmlFor="ip/op">Search Specific Records</label>
+                            <label htmlFor="ip/op">Search Specific Records</label>
                             <div className={styles.inputWrapper}>
                                 <Input
                                     value={ip}
