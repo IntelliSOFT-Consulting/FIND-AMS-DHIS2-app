@@ -68,7 +68,7 @@ const items = [
     getItem("Reports", `${domain}/dhis-web-event-reports/index.html`, <ArrowDownRightIcon/>, null, "item"),
     getItem("Configurations", `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`, <Cog6ToothIcon/>, null, "item"),
 ];
-const NavigationLayout = ({user, program, organisationUnits}) => {
+const NavigationLayout = ({user}) => {
     const classes = styles();
 
     const {getForms} = useGetChartReview()
