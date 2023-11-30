@@ -22,6 +22,7 @@ export const FormSection = ({
                                 overrideRequired,
                                 checkIfValid = () => ({validity: true}),
                                 checkIfHidden = () => false,
+                                checkIfCompulsory = () => false
                             }) => {
 
 
@@ -38,7 +39,7 @@ export const FormSection = ({
                         name={dataElement.id}
                         rules={[
                             {
-                                required: dataElement.required || (overrideRequired && dataElement?.valueType !== "FILE_RESOURCE"),
+                                required: checkIfCompulsory(dataElement.id) || (overrideRequired && dataElement?.valueType !== "FILE_RESOURCE"),
                                 message: `Please input ${dataElement.name}!`,
                             },
                         ]}

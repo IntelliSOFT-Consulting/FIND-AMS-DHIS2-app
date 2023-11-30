@@ -18,6 +18,7 @@ export const NewForm = () => {
         form,
         onFinish,
         checkIfValid,
+        checkIfCompulsory,
         onFieldsChange,
         redFlagsInitialState,
         recommendationInitialState,
@@ -39,7 +40,7 @@ export const NewForm = () => {
                                 <div className={styles.patientDetailsWrapper}>
                                     <div className={styles.title}>PATIENT DETAILS</div>
                                     <FormSection
-                                        overrideRequired
+                                        checkIfCompulsory={checkIfCompulsory}
                                         ordered={false}
                                         containerStyles={styles.patientDetailsSection}
                                         section={formSections.patients}
@@ -92,6 +93,7 @@ export const NewForm = () => {
 
 
                                 <FormSection
+                                    checkIfCompulsory={checkIfCompulsory}
                                     ordered={false}
                                     containerStyles={styles.commentsSection}
                                     section={formSections.comments}

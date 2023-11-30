@@ -198,6 +198,21 @@ export const useNewForm = () => {
 
     }
 
+    const checkIfCompulsory = (dataElementID) => {
+        const dataElement = getDataElementByID(dataElementID)
+
+        if (dataElement.attributeValues.length === 0)
+            return false
+
+        const compulsoryAttributeIndex = dataElement.attributeValues.findIndex(attribute => attribute.attribute.name.toLowerCase().includes("compulsory"))
+
+        if (compulsoryAttributeIndex === -1) return false
+
+        else return true
+
+
+    }
+
     const populateMultiselectInitialStates = () => {
         const initialRecommendation = formSections?.recommendation?.dataElements
             ?.map(dataElement => dataElement.id)
@@ -257,6 +272,7 @@ export const useNewForm = () => {
         getChart,
         onFinish,
         checkIfValid,
+        checkIfCompulsory,
         onFieldsChange,
         redFlagsInitialState,
         recommendationInitialState,
