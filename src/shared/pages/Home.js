@@ -1,8 +1,8 @@
 import React from "react";
 import {createUseStyles} from "react-jss";
 import {ArrowTopRightOnSquareIcon, ChartPieIcon, Cog6ToothIcon, DocumentIcon} from "@heroicons/react/24/solid";
-import {Link} from "react-router-dom";
 import {ArrowUpIcon} from "@heroicons/react/20/solid";
+import {Link} from "react-router-dom";
 
 const styles = createUseStyles({
     container: {
@@ -75,6 +75,25 @@ const styles = createUseStyles({
     },
 });
 
+const LinkWrapper = ({external, path, children}) => {
+    const classes = styles()
+    return (
+        <>
+            {
+                external ? (
+                    <a href={path} className={classes.linkItem}>
+                        {children}
+                    </a>
+                ) : (
+                    <Link to={path} className={classes.linkItem}>
+                        {children}
+                    </Link>
+                )
+            }
+        </>
+    )
+}
+
 export default function Home() {
     const domain = window.location.origin;
     const links = [
@@ -82,42 +101,48 @@ export default function Home() {
             title: "AMS Chart Review",
             path: `/charts`,
             icon: ChartPieIcon,
+            external: false
         },
         {
             title: "AMS Knowledge Hub",
             path: `/knowledge-hub`,
             icon: ArrowUpIcon,
+            external: false
         },
         {
             title: "Microbiology Data",
             path: `/microbiology-data`,
             icon: DocumentIcon,
+            external: false
         },
         {
             title: "REPORTS",
             path: `${domain}/dhis-web-event-reports/index.html`,
             icon: ArrowTopRightOnSquareIcon,
+            external: true
         },
         {
             title: "CONFIGURATIONS",
             path: `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`,
             icon: Cog6ToothIcon,
+            external: true
         },
     ];
+
     const classes = styles();
 
     return (
         <div className={classes.container}>
             <div className={classes.links}>
                 {links.map((link) => (
-                    <Link key={link.title} to={link.path} className={classes.linkItem}>
+                    <LinkWrapper key={link.title} external={link.external} path={link.path}>
                         <div className={classes.iconSection}>
                             <link.icon className={classes.icon} aria-hidden="true"/>
                         </div>
                         <div className={classes.title}>
                             <span>{link.title}</span>
                         </div>
-                    </Link>
+                    </LinkWrapper>
                 ))}
             </div>
         </div>

@@ -50,7 +50,7 @@ const domain = window.location.origin;
 
 function getItem(label, key, icon, children, type) {
     return {
-        key,
+        key ,
         icon,
         children,
         label,
