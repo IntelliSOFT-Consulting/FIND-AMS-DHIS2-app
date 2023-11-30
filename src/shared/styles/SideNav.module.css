@@ -32,6 +32,10 @@
     font-size: 2rem;
 }
 
+.action{
+    margin-left: auto;
+}
+
 .sideNavItem{
     display: flex;
     align-items: center;

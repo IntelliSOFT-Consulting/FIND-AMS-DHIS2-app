@@ -89,9 +89,9 @@ export const useViewCharts = () => {
         },
         {
             title: "Date Added",
-            dataIndex: "createdAt",
-            key: "createdAt",
-            render: (text, record) => new Date(record.createdAt).toLocaleDateString()
+            dataIndex: "Date",
+            key: "Date",
+            render: (text, record) => new Date(record.Date).toLocaleDateString()
         },
         {
             title: "Actions",

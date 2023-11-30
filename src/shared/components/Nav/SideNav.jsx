@@ -19,6 +19,7 @@ export const SideNav = ({options, title}) => {
                         key={index}>
                         <category.icon className={styles.navIcon}/>
                         <p>{category.displayName}</p>
+                        <div className={styles.action}>{category.action}</div>
                     </div>
                 ))
             }

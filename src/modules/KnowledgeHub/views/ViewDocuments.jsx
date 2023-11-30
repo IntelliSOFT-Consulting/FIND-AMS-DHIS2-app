@@ -9,6 +9,7 @@ import {downloadPDF} from "../helpers";
 import {useKnowledgeHub} from "../../../shared/hooks/useKnowledgeHub";
 import {FolderAddOutlined, FolderOutlined} from "@ant-design/icons";
 import {SideNav} from "../../../shared/components/Nav/SideNav";
+import {PencilSquareIcon} from "@heroicons/react/20/solid";
 
 const query = {
     events: {
@@ -87,7 +88,12 @@ export const ViewDocuments = () => {
             const documentFolders = documentCategoryObject?.optionSet?.options?.map(option => ({
                 ...option,
                 icon: FolderOutlined,
-                handler: () => filterByCategory(option.code)
+                handler: () => filterByCategory(option.code),
+                action: (
+                    <Space size="middle">
+                        <PencilSquareIcon width={20} height={20}/>
+                    </Space>
+                )
             }))
 
             setDocumentCategories([{

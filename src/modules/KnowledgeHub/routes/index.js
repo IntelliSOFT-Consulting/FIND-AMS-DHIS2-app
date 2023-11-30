@@ -20,5 +20,9 @@ export const knowledgeRoutes = [
         path: "/new-category/:optionSetID",
         component: NewCategory
     },
+    {
+        path: "/update-category/:optionSetID/:optionID",
+        component: NewCategory
+    },
 
 ]
