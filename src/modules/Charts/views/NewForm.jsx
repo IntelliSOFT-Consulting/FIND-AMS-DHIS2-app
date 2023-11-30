@@ -67,6 +67,7 @@ export const NewForm = () => {
 
 
                                 <FormSection
+                                    overrideRequired
                                     overrideInputType="RADIO"
                                     containerStyles={styles.dosageSection}
                                     startingIndex={formSections.antibiotics?.dataElements?.length + 2}
