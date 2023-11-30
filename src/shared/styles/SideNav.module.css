@@ -24,7 +24,7 @@
     text-decoration: underline;
     @media (min-width: 1024px) {
         text-align: left;
-        margin-bottom: auto;
+        margin-bottom: 5rem;
     }
 }
 
