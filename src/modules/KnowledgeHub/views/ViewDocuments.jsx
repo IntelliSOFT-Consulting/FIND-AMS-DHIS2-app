@@ -349,7 +349,7 @@ export const ViewDocuments = () => {
                     justifyContent: "space-between",
                     borderBottom: "1px solid #D3D3D3"
                 }}>
-                    <p style={{fontSize: "14px", padding: "4px"}}>Guidelines</p>
+                    <p style={{fontSize: "14px", padding: "4px"}}>AMS KNOWLEDGE HUB</p>
                     <button
                         onClick={() => navigate("/knowledge-hub/new-file")}
                         className="outline-btn">UPLOAD NEW RESOURCE
