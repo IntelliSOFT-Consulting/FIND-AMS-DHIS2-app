@@ -39,6 +39,7 @@ export const NewForm = () => {
                                 <div className={styles.patientDetailsWrapper}>
                                     <div className={styles.title}>PATIENT DETAILS</div>
                                     <FormSection
+                                        overrideRequired
                                         ordered={false}
                                         containerStyles={styles.patientDetailsSection}
                                         section={formSections.patients}
