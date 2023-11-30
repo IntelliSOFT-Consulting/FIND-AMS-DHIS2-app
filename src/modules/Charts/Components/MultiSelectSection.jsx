@@ -1,7 +1,7 @@
 import {Checkbox, Form} from "antd";
 import styles from "../styles/Multiselect.module.css"
 
-export const MultiSelectSection = ({section, number, setCheckedValues, initialValues, overrideRequired}) => {
+export const MultiSelectSection = ({section, number, setCheckedValues, initialValues}) => {
     const onChange = (checkedValues) => {
         setCheckedValues(checkedValues)
     };
