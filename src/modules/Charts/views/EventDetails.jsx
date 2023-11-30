@@ -2,7 +2,7 @@ import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {useEffect, useState} from "react";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {findSectionObject} from "../helpers";
 import styles from "../styles/ChartDetails.module.css"
 import {SectionDisplay} from "../Components/SectionDisplay";
@@ -17,6 +17,8 @@ const query = {
         resource: ``,
     }
 }
+
+
 
 
 export const EventDetails = () => {
@@ -35,6 +37,7 @@ export const EventDetails = () => {
     })
     const [patientIp, setPatientIp] = useState("")
 
+    const navigate = useNavigate()
 
     const {eventId} = useParams()
 
@@ -91,8 +94,19 @@ export const EventDetails = () => {
         getPatientIP()
     }, [formSections, data]);
 
+    const CardHeader = () => {
+        return (
+            <div className={styles.cardHeader}>
+                <p className="">{`AMS CHART REVIEW: FORM ${patientIp}`}</p>
+                <button
+                    onClick={()=> navigate(-1)}
+                    className="outline-btn">Back</button>
+            </div>
+        )
+    }
+
     return (
-        <CardItem title={`AMS CHART REVIEW: FORM ${patientIp}`}>
+        <CardItem CardHeader={CardHeader}>
             <div className={styles.header}>PATIENT DETAILS</div>
 
             <div className={styles.parent}>

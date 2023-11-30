@@ -17,6 +17,12 @@
     grid-column: 1 /3;
 }
 
+.cardHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /*..................Basic info styles .............*/
 
 .basicInfoWrapper {
