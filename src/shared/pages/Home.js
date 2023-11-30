@@ -1,7 +1,8 @@
 import React from "react";
-import { createUseStyles } from "react-jss";
-import { ChartPieIcon, ArrowTopRightOnSquareIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import {createUseStyles} from "react-jss";
+import {ArrowTopRightOnSquareIcon, ChartPieIcon, Cog6ToothIcon, DocumentIcon} from "@heroicons/react/24/solid";
 import {Link} from "react-router-dom";
+import {ArrowUpIcon} from "@heroicons/react/20/solid";
 
 const styles = createUseStyles({
     container: {
@@ -75,27 +76,33 @@ const styles = createUseStyles({
 });
 
 export default function Home() {
+    const domain = window.location.origin;
     const links = [
         {
             title: "AMS Chart Review",
             path: `/charts`,
-            icon: ArrowTopRightOnSquareIcon,
+            icon: ChartPieIcon,
         },
         {
             title: "AMS Knowledge Hub",
             path: `/knowledge-hub`,
-            icon: Cog6ToothIcon,
+            icon: ArrowUpIcon,
         },
         {
             title: "Microbiology Data",
             path: `/microbiology-data`,
-            icon: ChartPieIcon,
+            icon: DocumentIcon,
         },
         {
-            title: "Configurations",
-            path: `/configurations`,
-            icon: ChartPieIcon,
-        }
+            title: "REPORTS",
+            path: `${domain}/dhis-web-event-reports/index.html`,
+            icon: ArrowTopRightOnSquareIcon,
+        },
+        {
+            title: "CONFIGURATIONS",
+            path: `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`,
+            icon: Cog6ToothIcon,
+        },
     ];
     const classes = styles();
 
@@ -105,7 +112,7 @@ export default function Home() {
                 {links.map((link) => (
                     <Link key={link.title} to={link.path} className={classes.linkItem}>
                         <div className={classes.iconSection}>
-                            <link.icon className={classes.icon} aria-hidden="true" />
+                            <link.icon className={classes.icon} aria-hidden="true"/>
                         </div>
                         <div className={classes.title}>
                             <span>{link.title}</span>

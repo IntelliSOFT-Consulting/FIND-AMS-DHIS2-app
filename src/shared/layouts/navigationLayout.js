@@ -46,6 +46,8 @@ const styles = createUseStyles({
     },
 });
 
+const domain = window.location.origin;
+
 function getItem(label, key, icon, children, type) {
     return {
         key,
@@ -63,8 +65,8 @@ const items = [
     getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon
         style={{width: "16px", height: "16px"}}/>, null, "item"),
 
-    getItem("Reports", "/reports", <ArrowDownRightIcon/>, null, "item"),
-    getItem("Configurations", "/configurations", <Cog6ToothIcon/>, null, "item"),
+    getItem("Reports", `${domain}/dhis-web-event-reports/index.html`, <ArrowDownRightIcon/>, null, "item"),
+    getItem("Configurations", `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`, <Cog6ToothIcon/>, null, "item"),
 ];
 const NavigationLayout = ({user, program, organisationUnits}) => {
     const classes = styles();
