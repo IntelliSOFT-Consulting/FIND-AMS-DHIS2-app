@@ -10,8 +10,9 @@
     flex-wrap: wrap;
     gap: 2rem;
     @media (min-width: 1024px) {
+        justify-content: start;
         flex-direction: column;
-        align-items: start;
+        align-items: center;
     }
 }
 
@@ -23,7 +24,7 @@
     text-decoration: underline;
     @media (min-width: 1024px) {
         text-align: left;
-        margin-bottom: 2rem;
+        margin-bottom: auto;
     }
 }
 
