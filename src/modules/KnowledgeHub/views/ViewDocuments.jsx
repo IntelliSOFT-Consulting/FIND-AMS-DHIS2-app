@@ -90,7 +90,9 @@ export const ViewDocuments = () => {
                 icon: FolderOutlined,
                 handler: () => filterByCategory(option.code),
                 action: (
-                    <Space size="middle">
+                    <Space
+                        onClick={() => navigate(`/knowledge-hub/update-category/${categoryOptionSetID}/${option.id}`)}
+                        size="middle">
                         <PencilSquareIcon width={20} height={20}/>
                     </Space>
                 )

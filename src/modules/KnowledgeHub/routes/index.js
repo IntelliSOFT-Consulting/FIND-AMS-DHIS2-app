@@ -2,6 +2,7 @@ import {ViewDocuments} from "../views/ViewDocuments";
 import {NewFile} from "../views/NewFile";
 import {FileView} from "../views/FileView";
 import {NewCategory} from "../views/NewCategory";
+import {UpdateCategory} from "../views/UpdateCategory";
 
 export const knowledgeRoutes = [
     {
@@ -22,7 +23,7 @@ export const knowledgeRoutes = [
     },
     {
         path: "/update-category/:optionSetID/:optionID",
-        component: NewCategory
+        component: UpdateCategory
     },
 
 ]
