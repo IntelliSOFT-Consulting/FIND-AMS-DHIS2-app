@@ -1,8 +1,9 @@
 import {CardItem} from "../../../shared/components/Cards/CardItem";
-import {Form, Spin, Table} from "antd";
+import {Form, Spin} from "antd";
 import InputItem from "../../../shared/components/Fields/InputItem";
 import styles from "../styles/Members.module.css"
 import {useMembers} from "../hooks/useMembers";
+import {MyTable} from "../../../shared/components/Tables/Table";
 
 
 export const MembersForm = () => {
@@ -12,10 +13,10 @@ export const MembersForm = () => {
         loading,
         membersSection,
         initialFormValues,
-        navigate,
         tableColumns,
         addMembers,
-        onFinish,
+        submitForm,
+        form
     } = useMembers()
 
 
@@ -23,7 +24,7 @@ export const MembersForm = () => {
         <div className="card-header">
             <p className="card-header-text">MEMBERS PRESENT</p>
             <button
-                onClick={onFinish}
+                onClick={submitForm}
                 className={styles.primaryBtn}>START
             </button>
         </div>
@@ -35,7 +36,10 @@ export const MembersForm = () => {
             {membersSection?.dataElements?.length > 0 && (
                 <Form
                     initialValues={initialFormValues}
-                    className={styles.formContainer} form={form} layout="vertical" onFinish={onFinish}
+                    className={styles.formContainer}
+                    form={form}
+                    layout="vertical"
+                    onFinish={addMembers}
                     autoComplete="off">
                     {membersSection?.dataElements?.map(dataElement => (
                         <Form.Item
@@ -45,9 +49,8 @@ export const MembersForm = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: `Please input ${dataElement.displayName}!`,
+                                    message: `Please input ${dataElement.name}!`,
                                 },
-                                dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
                             ]}
                         >
                             <InputItem
@@ -61,31 +64,16 @@ export const MembersForm = () => {
                         </Form.Item>
                     ))}
                     {loading ? (
-                        <Spin style={{gridColumn: "1", marginLeft: "auto",}}/>
+                        <Spin className={styles.spinner}/>
                     ) : (
                         <button
-                            onClick={addMembers}
-
-                            type="button"
                             className={styles.addButton}>ADD
                         </button>
                     )}
 
-                    <Table
-                        style={{gridColumn: "1", marginTop: "4rem"}}
-                        pagination={members?.length > 10 ? {pageSize: 10} : false}
-                        bordered
-                        rowKey={record => record["Full Names"]}
-                        columns={columns}
-                        dataSource={members}
-                        locale={{
-                            emptyText: (
-                                <div>
-                                    <p>No Results.</p>
-                                </div>
-                            ),
-                        }}
-                    />
+                    <div className={styles.tableContainer}>
+                        <MyTable columns={tableColumns} data={members} rowKey="Full Names"/>
+                    </div>
 
                 </Form>
             )}

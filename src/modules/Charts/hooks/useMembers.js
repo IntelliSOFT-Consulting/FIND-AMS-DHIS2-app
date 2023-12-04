@@ -2,7 +2,7 @@ import {useNavigate} from "react-router-dom";
 import {Form, notification, Space} from "antd";
 import {useDataElements} from "./useDataElements";
 import {useSelector} from "react-redux";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import styles from "../styles/Members.module.css"
 import {useDataEngine} from "@dhis2/app-runtime";
 
@@ -63,15 +63,13 @@ export const useMembers = () => {
 
         const formValues = form.getFieldsValue()
 
-        const keys = Object.keys(formValues)
-
         setMembers(prev => prev?.length > 0 ? [...prev, {...formValues}] : [{...formValues}])
 
         form.resetFields()
 
     }
 
-    const onFinish = async () => {
+    const submitForm = async () => {
 
         let dataValues = []
 
@@ -136,7 +134,14 @@ export const useMembers = () => {
     }
 
 
-    return{
+    useEffect(() => {
+        if (stages?.length> 0)
+            setMembersSection(stages[0].sections.find(section => section.title.toLowerCase().includes("members")))
+    }, [stages]);
+
+
+
+    return {
         members,
         loading,
         membersSection,
@@ -144,7 +149,8 @@ export const useMembers = () => {
         navigate,
         tableColumns,
         addMembers,
-        onFinish,
+        submitForm,
+        form
     }
 
 
