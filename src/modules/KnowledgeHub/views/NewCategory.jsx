@@ -1,62 +1,12 @@
 import {CardItem} from "../../../shared/components/Cards/CardItem";
-import {Form, Input, notification, Spin} from "antd";
-import {useDataEngine} from "@dhis2/app-runtime";
-import {useNavigate, useParams} from "react-router-dom";
+import {Form, Input, Spin} from "antd";
 import styles from "../styles/NewFile.module.css"
-import React, {useState} from "react";
+import React from "react";
+import {useNewCategory} from "../hooks/useNewCategory";
 
 export const NewCategory = () => {
-    const [loading, setLoading] = useState(false)
 
-    const engine = useDataEngine()
-    const navigate = useNavigate()
-
-    const {optionSetID} = useParams()
-
-    const onFinish = async (values) => {
-        try {
-            setLoading(true)
-            const payload = {
-                code: values.name.toLowerCase(),
-                name: values.name,
-                optionSet: {
-                    id: optionSetID
-                },
-            }
-
-            /**
-             * Create option first
-             */
-            const firstResponse = await engine.mutate({
-                resource: "schemas/option",
-                type: "create",
-                data: payload,
-            })
-
-            /**
-             * Add it to the option set
-             */
-            if (firstResponse.status === "OK") {
-                const response = await engine.mutate({
-                    resource: "options",
-                    type: "create",
-                    data: payload,
-                })
-                if (response?.status === "OK"){
-                    navigate(`/knowledge-hub`)
-                }
-
-            }
-
-
-        } catch (e) {
-            notification.error({
-                message: "Something went wrong"
-            })
-        }finally {
-            setLoading(false)
-        }
-    }
+    const {loading, onFinish} = useNewCategory()
 
 
     return (
