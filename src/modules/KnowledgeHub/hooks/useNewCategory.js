@@ -57,6 +57,6 @@ export const useNewCategory = () => {
     }
 
 
-    return {loading, onFinish}
+    return {loading, onFinish, navigate}
 
 }

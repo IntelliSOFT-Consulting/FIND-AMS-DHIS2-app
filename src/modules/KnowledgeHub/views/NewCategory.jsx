@@ -6,7 +6,7 @@ import {useNewCategory} from "../hooks/useNewCategory";
 
 export const NewCategory = () => {
 
-    const {loading, onFinish} = useNewCategory()
+    const {loading, onFinish, navigate} = useNewCategory()
 
 
     return (
