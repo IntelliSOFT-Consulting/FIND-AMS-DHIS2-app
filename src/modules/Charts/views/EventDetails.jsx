@@ -2,7 +2,7 @@ import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {useEffect, useState} from "react";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {findSectionObject} from "../helpers";
 import styles from "../styles/ChartDetails.module.css"
 import {SectionDisplay} from "../Components/SectionDisplay";
@@ -17,8 +17,6 @@ const query = {
         resource: ``,
     }
 }
-
-
 
 
 export const EventDetails = () => {
@@ -99,14 +97,24 @@ export const EventDetails = () => {
             <div className={styles.cardHeader}>
                 <p className="">{`AMS CHART REVIEW: FORM ${patientIp}`}</p>
                 <button
-                    onClick={()=> navigate(-1)}
-                    className="outline-btn">Back</button>
+                    onClick={() => navigate(-1)}
+                    className="outline-btn">Back
+                </button>
             </div>
         )
     }
 
+    const linkItems = [
+        {
+            title: <Link to="/charts">Charts</Link>
+        },
+        {
+            title: "Chart review details"
+        },
+    ]
+
     return (
-        <CardItem CardHeader={CardHeader}>
+        <CardItem CardHeader={CardHeader} linkItems={linkItems}>
             <div className={styles.header}>PATIENT DETAILS</div>
 
             <div className={styles.parent}>
@@ -174,7 +182,6 @@ export const EventDetails = () => {
                     sectionForms={formSections.comments}
                     data={data?.events?.dataValues}
                 />
-
 
 
             </div>
