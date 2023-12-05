@@ -1,5 +1,5 @@
 import {CardItem} from "../../../shared/components/Cards/CardItem";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import styles from "../styles/FileView.module.css"
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
@@ -154,8 +154,18 @@ export const FileView = () => {
     }, [formElements, eventId]);
 
 
+    const linkItems = [
+        {
+            title: <Link to="/knowledge-hub">Resources</Link>
+        },
+        {
+            title: "Resource details"
+        },
+    ]
+
+
     return (
-        <CardItem CardHeader={Header}>
+        <CardItem CardHeader={Header} linkItems={linkItems}>
             {
                 loading ?
                     <div style={{width: "100%", display: "flex", justifyContent: "center", padding: "2rem"}}>

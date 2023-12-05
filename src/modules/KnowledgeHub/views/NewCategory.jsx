@@ -1,7 +1,7 @@
 import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {Form, Input, notification, Spin} from "antd";
 import {useDataEngine} from "@dhis2/app-runtime";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import styles from "../styles/NewFile.module.css"
 import React, {useState} from "react";
 
@@ -58,10 +58,19 @@ export const NewCategory = () => {
         }
     }
 
+    const linkItems = [
+        {
+            title: <Link to="/knowledge-hub">Resources</Link>
+        },
+        {
+            title: "New Folder"
+        },
+    ]
+
 
     return (
         <Form layout="vertical" onFinish={onFinish} style={{position: "relative"}}>
-            <CardItem title="New Category">
+            <CardItem title="New Category" linkItems={linkItems}>
 
                 <Form.Item
                     style={{marginBottom: "16rem"}}

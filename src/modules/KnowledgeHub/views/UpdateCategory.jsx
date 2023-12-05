@@ -4,14 +4,24 @@ import styles from "../styles/NewFile.module.css"
 
 import React from "react";
 import {useUpdateCategory} from "../hooks/useUpdateCategory";
+import {Link} from "react-router-dom";
 
 export const UpdateCategory = () => {
 
     const {option, loading, onFinish, navigate} = useUpdateCategory()
 
+    const linkItems = [
+        {
+            title: <Link to="/knowledge-hub">Resources</Link>
+        },
+        {
+            title: "Edit folder"
+        },
+    ]
+
     return (
 
-        <CardItem title="New Category">
+        <CardItem title="New Category" linkItems={linkItems}>
             {option.name && (
                 <Form
                     onFinish={onFinish}

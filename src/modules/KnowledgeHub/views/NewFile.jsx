@@ -4,7 +4,7 @@ import {Form, notification, Spin} from "antd";
 import React, {useEffect, useState} from "react";
 import styles from "../styles/NewFile.module.css"
 import {useDataEngine} from "@dhis2/app-runtime";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {FormSection} from "../../../shared/components/Forms/FormSection";
 import {findSectionObject} from "../../Charts/helpers";
 import {useDataElements} from "../hooks/useDataElements";
@@ -175,13 +175,22 @@ export const NewFile = () => {
         }
     }
 
+    const linkItems = [
+        {
+            title: <Link to="/knowledge-hub">Resources</Link>
+        },
+        {
+            title: "New resource"
+        },
+    ]
+
     return (
         <Form
             initialValues={{
                 remember: true,
             }}
             onFinish={onFinish} form={form} layout="vertical" style={{position: "relative"}}>
-            <CardItem title="AMS KNOWLEDGE HUB">
+            <CardItem title="AMS KNOWLEDGE HUB" linkItems={linkItems}>
 
                 <FormSection
                     checkIfHidden={isHidden}

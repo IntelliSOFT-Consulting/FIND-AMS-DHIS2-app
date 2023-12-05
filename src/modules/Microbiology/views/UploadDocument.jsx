@@ -3,6 +3,7 @@ import {useUploadDocument} from "../hooks/useUploadDocument";
 import React from "react";
 import {DatePicker, Form, Input, Spin, Upload} from "antd";
 import styles from "../styles/Upload.module.css"
+import {Link} from "react-router-dom";
 
 export const UploadDocument = () => {
 
@@ -14,9 +15,17 @@ export const UploadDocument = () => {
         onFinish
     } = useUploadDocument()
 
+    const linkItems = [
+        {
+            title: <Link to="/microbiology-data">Microbiology</Link>
+        },
+        {
+            title: "New upload"
+        },
+    ]
 
     return (
-        <CardItem title="UPLOAD DOCUMENT">
+        <CardItem title="UPLOAD DOCUMENT" linkItems={linkItems}>
             <Form onFinish={onFinish} layout="vertical" form={form} className={styles.form}>
 
                 <Form.Item
