@@ -1,12 +1,32 @@
-
-.parentContainer {
+.form {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1rem 4rem;
+    margin-bottom: 16rem;
+    @media (min-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
-.form{
-    margin-bottom: 16rem;
+.formItem {
+    grid-column-start: span 1;
+}
+
+.rangePicker {
+    width: 100%;
+}
+
+.uploadItem {
+    @media (min-width: 768px) {
+        grid-column: 1 / 3;
+    }
+}
+
+.uploadText {
+    width: 100%;
+    padding: 4rem;
+    color: #1d5288;
+    font-size: 20px;
 }
 
 /*.......action buttons...........*/

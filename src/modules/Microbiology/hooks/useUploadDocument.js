@@ -28,6 +28,7 @@ export const useUploadDocument = () => {
 
 
     const fileUploadProps = {
+        accept: ".txt",
         maxCount: 1,
         beforeUpload: file => {
             const isLt5M = file.size / 1024 / 1024 < 5
