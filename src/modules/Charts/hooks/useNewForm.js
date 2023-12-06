@@ -43,9 +43,9 @@ export const useNewForm = () => {
     }]
 
     const redFlagRules = [{
-            required: true,
-            message: "Please select a red flag"
-        }]
+        required: true,
+        message: "Please select a red flag"
+    }]
 
     const {stages, program, dataElements} = useSelector(state => state.forms)
 
@@ -73,7 +73,7 @@ export const useNewForm = () => {
 
             const dataValues = response.events.dataValues
 
-            if (dataValues.length > 0)
+            if (dataValues.length > 0) {
                 dataValues.forEach(dataValue => {
                     const newObject = {}
 
@@ -88,6 +88,7 @@ export const useNewForm = () => {
                         ...prevState, ...newObject
                     }))
                 })
+            }
 
 
         } catch (e) {
@@ -224,13 +225,26 @@ export const useNewForm = () => {
 
         else return true
 
-
     }
 
     const populateMultiselectInitialStates = () => {
         const initialRecommendation = formSections?.recommendation?.dataElements
             ?.map(dataElement => dataElement.id)
             .filter(dataElementId => initialState[dataElementId] == "true")
+
+        setInitialState(prevState => ({
+            ...prevState,
+            recommendation:  formSections?.recommendation?.dataElements
+                ?.map(dataElement => dataElement.id)
+                .filter(dataElementId => initialState[dataElementId] == "true")
+        }))
+
+        setInitialState(prevState => ({
+            ...prevState,
+            redFlags:  formSections?.redFlags?.dataElements
+                ?.map(dataElement => dataElement.id)
+                .filter(dataElementId => initialState[dataElementId] == "true")
+        }))
 
         const initialRedFlags = formSections?.redFlags?.dataElements
             ?.map(dataElement => dataElement.id)
@@ -270,6 +284,8 @@ export const useNewForm = () => {
                 signature: findSectionObject({searchString: "Signature", sectionArray: stages[0].sections}),
             })
     }, [stages]);
+
+
 
     return {
         formSections,
