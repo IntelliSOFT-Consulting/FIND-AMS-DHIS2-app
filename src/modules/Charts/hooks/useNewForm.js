@@ -24,7 +24,9 @@ export const useNewForm = () => {
     const [formValues, setFormValues] = useState([])
 
     const [initialState, setInitialState] = useState({})
+
     const [recommendationInitialState, setRecommendationInitialState] = useState(null)
+
     const [redFlagsInitialState, setRedFlagsInitialState] = useState(null)
 
     const [recommendationValues, setRecommendationValues] = useState([])
@@ -34,6 +36,16 @@ export const useNewForm = () => {
     const [loading, setLoading] = useState(false)
 
     const [chartDataLoading, setChartDataLoading] = useState(false)
+
+    const recommendationRules = [{
+        required: true,
+        message: "Please select a recommendation"
+    }]
+
+    const redFlagRules = [{
+            required: true,
+            message: "Please select a red flag"
+        }]
 
     const {stages, program, dataElements} = useSelector(state => state.forms)
 
@@ -89,10 +101,12 @@ export const useNewForm = () => {
     }
 
     const onFinish = async values => {
-        const dataValues = Object.keys(values).map(key => ({
+        let dataValues = Object.keys(values).map(key => ({
             dataElement: key,
             value: values[key]
         }))
+
+        dataValues = dataValues.filter(dataValue => getDataElementByID(dataValue.dataElement)?.id)
 
         formSections.recommendation.dataElements.forEach(dataElement => {
             if (recommendationValues.includes(dataElement.id))
@@ -276,7 +290,9 @@ export const useNewForm = () => {
         onFieldsChange,
         redFlagsInitialState,
         recommendationInitialState,
-        navigate
+        navigate,
+        recommendationRules,
+        redFlagRules
     }
 
 }
