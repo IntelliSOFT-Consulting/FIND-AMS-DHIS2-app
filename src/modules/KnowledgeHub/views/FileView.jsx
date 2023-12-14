@@ -1,124 +1,21 @@
 import {CardItem} from "../../../shared/components/Cards/CardItem";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import styles from "../styles/FileView.module.css"
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
-import {useDataEngine, useDataQuery} from "@dhis2/app-runtime";
-import {useEffect, useState} from "react";
-import {getDataElementObjectByID} from "../../../shared/helpers/formatData";
-import {useSelector} from "react-redux";
-import {notification, Spin} from "antd";
-import {downloadPDF} from "../helpers";
+import {Spin} from "antd";
 import {Viewer, Worker} from "@react-pdf-viewer/core";
-import {useBase64} from "../../../shared/helpers/fileOperations";
+import {useFileView} from "../hooks/useFileView";
+import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
 
-const query = {
-    events: {
-        resource: ``,
-    }
-}
+
 
 
 export const FileView = () => {
-    /**
-     * State hook to store all form fields and their values for display
-     */
-    const [formElements, setFormElements] = useState([])
 
-    const {base64String, convertBlobToBase64} = useBase64()
+    const {base64String, handleDownloads, loading, getFormElement} = useFileView()
 
-    const {stages} = useSelector(state => state.knowledgeHub)
-
-    /**
-     * Pdf viewer layout plugin
-     * @type {DefaultLayoutPlugin}
-     */
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
-
-    const {eventId} = useParams()
-
-    /**
-     * Query hook to get event to Id
-     */
-    const {data, loading} = useDataQuery(query)
-
-
-    /**
-     * Effect hook to invoke a refetch once the eventId is loaded to get the event by UID
-     */
-    useEffect(() => {
-        query.events.resource = `tracker/events/${eventId}`
-    }, [eventId]);
-
-    /**
-     * Effect hook that loads the form elements array with formatted info from the data elements array and the data values array
-     */
-    useEffect(() => {
-        if (data) {
-            data?.events?.dataValues.forEach(dataValue => {
-                const dataElement = getDataElementObjectByID({
-                    elementId: dataValue.dataElement, dataElements: stages[0]?.sections[0]?.dataElements
-                })
-                setFormElements(prev => [...prev, {...dataElement, value: dataValue.value}])
-            })
-        }
-    }, [data]);
-
-
-    /**
-     * Gets the object containing the data element from the section array
-     * @param name
-     * @returns {*}
-     */
-    const getFormElement = (name) => {
-        const item = formElements?.find(doc => doc?.name?.toLowerCase()?.includes(name?.toLowerCase()))
-        return item
-    }
-
-    /**
-     * Engine hook for delete requests
-     * @type {DataEngine}
-     */
-    const engine = useDataEngine()
-
-
-    const fetchFile = async () => {
-        try {
-            const response = await engine.query({
-                events: {
-                    resource: "/events/files",
-                    params: {
-                        dataElementUid: getFormElement("file")?.id,
-                        eventUid: eventId
-                    }
-                }
-            })
-            convertBlobToBase64(response.events)
-            return response.events
-        } catch (e) {
-            return e
-        }
-    }
-
-    /**
-     * Download handler
-     * First fetch the blob from DHis2
-     * Then send that blob to the helper function that created an anchor tag dynamically and clicks on it
-     * @returns {Promise<void>}
-     */
-    const handleDownload = async () => {
-        const fileName = getFormElement("Name")?.value
-        try {
-            const blob = await fetchFile()
-            await downloadPDF({fileBlob: blob, documentName: fileName})
-
-        } catch (e) {
-            notification.error({
-                message: "Download failed"
-            })
-        }
-    }
 
 
     /**
@@ -133,7 +30,7 @@ export const FileView = () => {
             <p className="card-header-text">AMS KNOWLEDGE HUB</p>
             <div className={styles.headerButtonsWrapper}>
                 <button
-                    onClick={handleDownload}
+                    onClick={handleDownloads}
                     className={styles.successButton}
                 >
                     DOWNLOAD
@@ -149,23 +46,9 @@ export const FileView = () => {
         </div>)
     }
 
-    useEffect(() => {
-        fetchFile()
-    }, [formElements, eventId]);
-
-
-    const linkItems = [
-        {
-            title: <Link to="/knowledge-hub">Resources</Link>
-        },
-        {
-            title: "Resource details"
-        },
-    ]
-
 
     return (
-        <CardItem CardHeader={Header} linkItems={linkItems}>
+        <CardItem CardHeader={Header}>
             {
                 loading ?
                     <div style={{width: "100%", display: "flex", justifyContent: "center", padding: "2rem"}}>

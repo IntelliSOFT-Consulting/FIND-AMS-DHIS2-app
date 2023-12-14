@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {findSectionObject} from "../helpers";
-import {useDataElements} from "./useGetDataElement";
+import {useDataElements} from "./useDataElements";
 
 
 export const useNewForm = () => {
