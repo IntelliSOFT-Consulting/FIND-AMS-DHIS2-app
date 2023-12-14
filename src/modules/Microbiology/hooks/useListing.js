@@ -41,14 +41,9 @@ export const useListing = () => {
 
     const tableColumns = [
         {
-            title: 'DOCUMENT NAME',
+            title: 'Status',
             dataIndex: 'Rename file',
             key: 'Rename file',
-        },
-        {
-            title: 'ADDED BY',
-            dataIndex: 'createdBy',
-            key: 'createdBy',
         },
         {
             title: 'DATE ADDED',
@@ -56,6 +51,18 @@ export const useListing = () => {
             key: 'createdAt',
             render: (text, record) => new Date(record.createdAt).toLocaleDateString()
         },
+        {
+            title: 'UPLOAD TYPE',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            render: (text, record) => new Date(record.createdAt).toLocaleDateString()
+        },
+        {
+            title: 'REPORTING PERIOD',
+            dataIndex: 'createdBy',
+            key: 'createdBy',
+        },
+
 
     ]
 
