@@ -1,6 +1,5 @@
 import styles from "../styles/Listing.module.css"
 import {useListing} from "../hooks/useListing";
-import {SideNav} from "../../../shared/components/Nav/SideNav";
 import {MyTable} from "../../../shared/components/Tables/Table";
 import {Input} from "antd";
 
@@ -18,8 +17,6 @@ export const MicrobiologyListing = () => {
     } = useListing()
 
     return (
-        <div className={styles.parentContainer}>
-            <SideNav title="Categories" options={categories}/>
             <div className={styles.tableContainer}>
                 <div className={styles.titleContainer}>
                     <p >Microbiology Data</p>
@@ -46,7 +43,5 @@ export const MicrobiologyListing = () => {
                     loading={loading}
                 />
             </div>
-
-        </div>
     )
 }
