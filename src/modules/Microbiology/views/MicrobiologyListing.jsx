@@ -1,7 +1,7 @@
 import styles from "../styles/Listing.module.css"
 import {useListing} from "../hooks/useListing";
 import {MyTable} from "../../../shared/components/Tables/Table";
-import {Space} from "antd";
+import {Space, Table} from "antd";
 import {DocumentIcon} from "@heroicons/react/24/solid";
 
 export const MicrobiologyListing = () => {
@@ -14,6 +14,7 @@ export const MicrobiologyListing = () => {
 
 
     const tableColumns = [
+        Table.EXPAND_COLUMN,
         {
             title: '',
             dataIndex: 'status',
@@ -61,6 +62,7 @@ export const MicrobiologyListing = () => {
             dataIndex: 'imported',
             key: 'imported',
         },
+
     ]
 
 
@@ -74,6 +76,16 @@ export const MicrobiologyListing = () => {
                 </button>
             </div>
             <MyTable
+                expandable={{
+                    expandedRowRender: record => (
+                        <Space size="middle">
+                            {record.conflictValues && record.conflictValues.map((conflictValue, key) => (
+                                <p className={styles.conflict} key={key}>{conflictValue}</p>
+                            ))}
+                        </Space>
+                    ),
+                    rowExpandable: record => record.conflictValues !== null
+                }}
                 rowKey="batchNo"
                 columns={tableColumns}
                 data={records}
