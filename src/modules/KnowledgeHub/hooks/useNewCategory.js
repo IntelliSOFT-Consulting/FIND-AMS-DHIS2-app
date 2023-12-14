@@ -14,6 +14,7 @@ export const useNewCategory = () => {
 
     const {optionSetID} = useParams()
 
+
     const onFinish = async values => {
         setLoading(true)
 
@@ -31,6 +32,7 @@ export const useNewCategory = () => {
                 resource: "schemas/option",
                 type: "create",
                 data: payload,
+
             })
 
             if (firstResponse.status === "OK") {
@@ -39,19 +41,20 @@ export const useNewCategory = () => {
                     type: "create",
                     data: payload,
                 })
-                if (response?.status === "OK"){
+
+                if (response?.status === "OK") {
                     navigate(`/knowledge-hub`)
                 }
 
             }
 
         } catch (e) {
-
             notification.error({
-                message: "Something went wrong"
+                message: "Error",
+                description: e?.details?.httpStatusCode === 409 ? "This folder already exists" : ""
             })
 
-        }finally {
+        } finally {
             setLoading(false)
         }
     }
