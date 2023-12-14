@@ -8,6 +8,7 @@ import {FolderAddOutlined, FolderOutlined} from "@ant-design/icons";
 import {notification, Popconfirm, Space} from "antd";
 import styles from "../styles/ListGuidelines.module.css";
 import {downloadPDF} from "../helpers";
+import {PencilSquareIcon} from "@heroicons/react/20/solid";
 
 const query = {
     events: {
@@ -212,10 +213,18 @@ export const useViewDocuments = () => {
 
     useEffect(() => {
         if (dataElements?.length > 0) {
+
             const documentFolders = getDataElementByName("category")?.optionSet?.options?.map(option => ({
                 ...option,
                 icon: FolderOutlined,
-                handler: () => filterByCategory(option.code)
+                handler: () => filterByCategory(option.code),
+                action: (
+                    <Space
+                        onClick={() => navigate(`/knowledge-hub/update-category/${getDataElementByName("category")?.optionSet?.id}/${option.id}`)}
+                        size="middle">
+                        <PencilSquareIcon width={20} height={20}/>
+                    </Space>
+                )
             }))
 
             setDocumentCategories([{

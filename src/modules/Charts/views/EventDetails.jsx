@@ -6,6 +6,7 @@ import {MultiSelectSectionDisplay} from "../Components/MultiSelectSectionDisplay
 import {TextAreaDisplay} from "../Components/TextAreaDisplay";
 import {Spin} from "antd";
 import {useEventDetails} from "../hooks/useEventDetails";
+import {Link, useNavigate} from "react-router-dom";
 
 
 export const EventDetails = () => {
@@ -16,6 +17,29 @@ export const EventDetails = () => {
         loading,
         data
     } = useEventDetails()
+
+    const CardHeader = () => {
+        const navigate = useNavigate()
+        return (
+            <div className={styles.cardHeader}>
+                <p className="">{`AMS CHART REVIEW: FORM ${patientIp}`}</p>
+                <button
+                    onClick={() => navigate(-1)}
+                    className="outline-btn">Back
+                </button>
+            </div>
+        )
+    }
+
+    const linkItems = [
+        {
+            title: <Link to="/charts">Charts</Link>
+        },
+        {
+            title: "Chart review details"
+        },
+    ]
+
     return (
         <CardItem CardHeader={CardHeader} linkItems={linkItems}>
             <div className={styles.header}>PATIENT DETAILS</div>
@@ -85,7 +109,6 @@ export const EventDetails = () => {
                     sectionForms={formSections.comments}
                     data={data?.events?.dataValues}
                 />
-
 
 
             </div>

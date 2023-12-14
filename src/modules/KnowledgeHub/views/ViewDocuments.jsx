@@ -32,19 +32,6 @@ export const ViewDocuments = () => {
         data
     } = useViewDocuments()
 
-    // const documentFolders = documentCategoryObject?.optionSet?.options?.map(option => ({
-    //     ...option,
-    //     icon: FolderOutlined,
-    //     handler: () => filterByCategory(option.code),
-    //     action: (
-    //         <Space
-    //             onClick={() => navigate(`/knowledge-hub/update-category/${categoryOptionSetID}/${option.id}`)}
-    //             size="middle">
-    //             <PencilSquareIcon width={20} height={20}/>
-    //         </Space>
-    //     )
-    // }))
-
 
     return (
         <div className={styles.parentContainer}>
