@@ -42,28 +42,8 @@ export const useUploadDocument = () => {
         },
         customRequest: async (options) => {
             const {onSuccess, onError, file} = options;
-
-            const formData = new FormData()
-
-            await formData.append("file", file)
-
-            try {
-                const response = await engine.mutate({
-                    resource: "fileResources",
-                    type: "create",
-                    data: {
-                        file,
-                    },
-                })
-
-                if (response.httpStatusCode === 202) {
-                    onSuccess("ok")
-                    setFile(response.response.fileResource.id)
-                }
-
-            } catch (e) {
-                onError(e)
-            }
+            setFile(file)
+            onSuccess("ok")
         }
     }
 
@@ -76,67 +56,36 @@ export const useUploadDocument = () => {
         else return true
     }
 
-    const onFinish = async values => {
-        try {
-            setLoading(true)
-            if (!file)
-                return notification.info({
-                    message: "Please upload a file"
-                })
+    const onFinish = () => {
+        const formData = new FormData()
+        formData.append("fileContent", file)
+        setLoading(true)
 
-            let dataValues = Object.keys(values).map(key => ({
-                dataElement: key,
-                value: values[key]
-            }))
-
-            dataValues = dataValues.filter(dataValue => dataValue.value !== undefined)
-
-
-            dataValues.push({
-                dataElement: getDataElementByName("Microbiology file").id,
-                value: file
-            })
-
-            dataValues.push({
-                dataElement: getDataElementByName("createdBy").id,
-                value: `${user.surname} ${user.firstName}`
-            })
-
-            const payload = {
-                events: [
-                    {
-                        occurredAt: new Date().toJSON().slice(0, 10),
-                        notes: [],
-                        program: program,
-                        programStage: formSections[0]?.id,
-                        orgUnit: orgUnitID,
-                        dataValues,
-                        completedAt: new Date().toJSON().slice(0, 10),
-                        status: "COMPLETED"
-                    }
-                ]
-            }
-
-            const response = await engine.mutate({
-                resource: "tracker",
-                type: "create",
-                data: payload,
-                params: {
-                    async: false
+        fetch("https://4ace-102-219-208-30.ngrok-free.app/api/find-ams/file-import/parse-file", {
+            method: "POST",
+            body: formData
+        })
+            .then(response => response.json())
+            .then(response => {
+                if (response.scanAvailable) {
+                    notification.info({
+                        message: "success",
+                        description: "Upload successful"
+                    })
+                    navigate("/microbiology-data")
                 }
-            })
 
-            if (response.status === "OK")
-                navigate("/microbiology-data")
-
-        } catch (e) {
-            notification.error({
-                message: "error",
-                description: "Couldn't create"
             })
-        } finally {
-            setLoading(false)
-        }
+            .catch(error => {
+                notification.error({
+                    message: "error",
+                    description: "Something went wrong during the upload"
+                })
+            })
+            .finally(() => {
+                setLoading(false)
+
+            })
     }
 
     return {

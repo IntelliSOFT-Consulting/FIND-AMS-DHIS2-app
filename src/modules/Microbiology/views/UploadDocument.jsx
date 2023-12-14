@@ -28,23 +28,23 @@ export const UploadDocument = () => {
         <CardItem title="UPLOAD DOCUMENT" linkItems={linkItems}>
             <Form onFinish={onFinish} layout="vertical" form={form} className={styles.form}>
 
-                <Form.Item
-                    className={styles.formItem}
-                    rules={[
-                        {required: true, message: "Please fill out the new file name"}
-                    ]}
-                    label="Rename file" name="rename_file">
-                    <Input/>
-                </Form.Item>
+                {/*<Form.Item*/}
+                {/*    className={styles.formItem}*/}
+                {/*    rules={[*/}
+                {/*        {required: true, message: "Please fill out the new file name"}*/}
+                {/*    ]}*/}
+                {/*    label="Rename file" name="rename_file">*/}
+                {/*    <Input/>*/}
+                {/*</Form.Item>*/}
 
-                <Form.Item
-                    className={styles.formItem}
-                    rules={[
-                        {required: true, message: "Please fill out the reporting period"}
-                    ]}
-                    label="Reporting period" name="reporting_period">
-                    <DatePicker.RangePicker className={styles.rangePicker}/>
-                </Form.Item>
+                {/*<Form.Item*/}
+                {/*    className={styles.formItem}*/}
+                {/*    rules={[*/}
+                {/*        {required: true, message: "Please fill out the reporting period"}*/}
+                {/*    ]}*/}
+                {/*    label="Reporting period" name="reporting_period">*/}
+                {/*    <DatePicker.RangePicker className={styles.rangePicker}/>*/}
+                {/*</Form.Item>*/}
 
 
                 <Form.Item
