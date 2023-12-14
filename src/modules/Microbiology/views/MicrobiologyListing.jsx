@@ -73,17 +73,6 @@ export const MicrobiologyListing = () => {
                     className="outline-btn">UPLOAD NEW RESOURCE
                 </button>
             </div>
-
-            {/*<div className={styles.searchContainer}>*/}
-            {/*    <Input*/}
-            {/*        value={searchString}*/}
-            {/*        onChange={handleChange}*/}
-            {/*        size="large"*/}
-            {/*        id="search"*/}
-            {/*        placeholder="Search using document name"*/}
-            {/*    />*/}
-            {/*    <button className="outline-btn" onClick={handleSearch}>SEARCH</button>*/}
-            {/*</div>*/}
             <MyTable
                 rowKey="batchNo"
                 columns={tableColumns}
