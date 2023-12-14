@@ -86,6 +86,10 @@ export const useViewCharts = () => {
             title: "Ward",
             dataIndex: "Ward (specialty)",
             key: "Ward (specialty)",
+            render: (text, record) => {
+                const wardDataElement = getDataElementByName("Ward (specialty)")
+                return wardDataElement.optionSet.options.find(option => option?.code === record["Ward (specialty)"])?.displayName
+            }
         },
         {
             title: "Date Added",
