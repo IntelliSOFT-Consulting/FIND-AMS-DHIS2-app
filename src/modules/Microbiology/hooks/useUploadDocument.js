@@ -61,7 +61,7 @@ export const useUploadDocument = () => {
         formData.append("fileContent", file)
         setLoading(true)
 
-        fetch("https://findams.intellisoftkenya.com/api/find-ams/file-import/parse-file", {
+        fetch("https://c84c-102-219-208-30.ngrok-free.app/api/find-ams/file-import/parse-file", {
             method: "POST",
             body: formData
         })
