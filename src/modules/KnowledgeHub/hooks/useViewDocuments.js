@@ -8,7 +8,7 @@ import {FolderAddOutlined, FolderOutlined} from "@ant-design/icons";
 import {notification, Popconfirm, Space} from "antd";
 import styles from "../styles/ListGuidelines.module.css";
 import {downloadPDF} from "../helpers";
-import {PencilSquareIcon} from "@heroicons/react/20/solid";
+import {PencilSquareIcon, TrashIcon} from "@heroicons/react/20/solid";
 
 const query = {
     events: {
@@ -129,6 +129,43 @@ export const useViewDocuments = () => {
         }
     }
 
+    const handleDeleteFolder = async ({optionSetID, optionID}) => {
+        try {
+            const firstResponse = await engine.mutate({
+                resource: `optionSets/${optionSetID}/options/${optionID}`,
+                type: "delete",
+                params: {
+                    async: false,
+                    importStrategy: "DELETE"
+                }
+            })
+
+            const secondResponse = await engine.mutate({
+                resource: `options/${optionID}`,
+                type: "delete",
+                params: {
+                    async: false,
+                    importStrategy: "DELETE"
+                }
+            })
+
+            if (firstResponse.status === "OK" && secondResponse.status === "OK"){
+                notification.success({
+                    message: "success",
+                })
+                window.location.reload()
+            }
+
+
+
+        } catch (e) {
+            notification.error({
+                message: "error",
+                description: "Couldn't delete folder"
+            })
+        }
+    }
+
     const formatTableData = () => {
         if (stages && data)
             data?.events?.instances.forEach(instance => {
@@ -182,7 +219,10 @@ export const useViewDocuments = () => {
                         Archive
                     </div>
                     <div
-                        onClick={() => handleDownload({fileName: record['Document Name'], eventUid: record.eventID})}
+                        onClick={() => handleDownload({
+                            fileName: record['Document Name'],
+                            eventUid: record.eventID
+                        })}
                         className={styles.actionLink}>
                         Download
                     </div>
@@ -220,9 +260,25 @@ export const useViewDocuments = () => {
                 handler: () => filterByCategory(option.code),
                 action: (
                     <Space
-                        onClick={() => navigate(`/knowledge-hub/update-category/${getDataElementByName("category")?.optionSet?.id}/${option.id}`)}
                         size="middle">
-                        <PencilSquareIcon width={20} height={20}/>
+                        <PencilSquareIcon
+                            onClick={() => navigate(`/knowledge-hub/update-category/${getDataElementByName("category")?.optionSet?.id}/${option.id}`)}
+                            width={20}
+                            height={20}
+                        />
+                        <Popconfirm
+                            onConfirm={() => handleDeleteFolder({
+                                optionSetID: getDataElementByName("category")?.optionSet?.id,
+                                optionID: option.id
+                            })}
+                            title="Are you sure you wnat to delete this folder?">
+                            <TrashIcon
+                                width={20}
+                                height={20}
+                                color="#ff0000"
+                            />
+                        </Popconfirm>
+
                     </Space>
                 )
             }))
