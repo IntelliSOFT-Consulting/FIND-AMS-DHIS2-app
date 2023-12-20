@@ -14,6 +14,7 @@ import {useGetChartReview} from "../hooks/useGetChartReview";
 import {useGetOrgUnit} from "../hooks/useGetOrgUnit";
 import {DocumentTextIcon} from "@heroicons/react/24/outline";
 import {useUser} from "../hooks/useUser";
+import {ArrowTopRightOnSquareIcon} from "@heroicons/react/24/solid";
 
 const {Content, Sider} = Layout;
 
@@ -64,9 +65,22 @@ const items = [
     getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ArrowUpOutlined/>, null, "item"),
     getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon
         style={{width: "16px", height: "16px"}}/>, null, "item"),
-
-    getItem("REPORTS", `${domain}/dhis-web-event-reports/index.html`, <ArrowDownRightIcon/>, null, "item"),
-    getItem("CONFIGURATION", `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`, <Cog6ToothIcon/>, null, "item"),
+    {
+      label: (
+          <a href={`${domain}/dhis-web-dashboard`}>
+              <ArrowTopRightOnSquareIcon width={16} height={16} /> REPORTS
+          </a>
+      ),
+      key: "reports"
+    },
+    {
+      label: (
+          <a href={`${domain}/dhis-web-maintenance/index.html#/list/programSection/program`}>
+              <Cog6ToothIcon width={16} height={16} /> CONFIGURATIONS
+          </a>
+      ),
+      key: "configuration"
+    },
 ];
 const NavigationLayout = ({user}) => {
     const classes = styles();
