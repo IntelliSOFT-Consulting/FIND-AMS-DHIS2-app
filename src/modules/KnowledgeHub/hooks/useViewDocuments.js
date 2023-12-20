@@ -215,10 +215,6 @@ export const useViewDocuments = () => {
                         View
                     </div>
                     <div
-                        className={styles.actionLink}>
-                        Archive
-                    </div>
-                    <div
                         onClick={() => handleDownload({
                             fileName: record['Document Name'],
                             eventUid: record.eventID
