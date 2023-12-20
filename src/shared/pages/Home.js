@@ -117,7 +117,7 @@ export default function Home() {
         },
         {
             title: "REPORTS",
-            path: `${domain}/dhis-web-event-reports/index.html`,
+            path: `${domain}/dhis-web-dashboard`,
             icon: ArrowTopRightOnSquareIcon,
             external: true
         },
