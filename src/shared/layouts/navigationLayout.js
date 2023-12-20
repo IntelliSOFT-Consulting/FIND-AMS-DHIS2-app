@@ -59,14 +59,14 @@ function getItem(label, key, icon, children, type) {
 }
 
 const items = [
-    getItem("Dashboard", "/", <HomeIcon/>, null, "item"),
-    getItem("AMS Chart Review", "/charts", <Pie/>, null, "item"),
+    getItem("DASHBOARD", "/", <HomeIcon/>, null, "item"),
+    getItem("AMS CHART REVIEW", "/charts", <Pie/>, null, "item"),
     getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ArrowUpOutlined/>, null, "item"),
     getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon
         style={{width: "16px", height: "16px"}}/>, null, "item"),
 
-    getItem("Reports", `${domain}/dhis-web-event-reports/index.html`, <ArrowDownRightIcon/>, null, "item"),
-    getItem("Configurations", `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`, <Cog6ToothIcon/>, null, "item"),
+    getItem("REPORTS", `${domain}/dhis-web-event-reports/index.html`, <ArrowDownRightIcon/>, null, "item"),
+    getItem("CONFIGURATION", `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`, <Cog6ToothIcon/>, null, "item"),
 ];
 const NavigationLayout = ({user}) => {
     const classes = styles();

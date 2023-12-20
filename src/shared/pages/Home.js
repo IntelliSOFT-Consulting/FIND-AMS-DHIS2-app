@@ -98,19 +98,19 @@ export default function Home() {
     const domain = window.location.origin;
     const links = [
         {
-            title: "AMS Chart Review",
+            title: "AMS CHART REVIEW",
             path: `/charts`,
             icon: ChartPieIcon,
             external: false
         },
         {
-            title: "AMS Knowledge Hub",
+            title: "AMS KNOWLEDGE HUB",
             path: `/knowledge-hub`,
             icon: ArrowUpIcon,
             external: false
         },
         {
-            title: "Microbiology Data",
+            title: "MICROBIOLOGY DATA",
             path: `/microbiology-data`,
             icon: DocumentIcon,
             external: false
