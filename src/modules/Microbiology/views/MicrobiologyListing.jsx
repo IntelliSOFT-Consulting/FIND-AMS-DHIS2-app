@@ -88,7 +88,7 @@ export const MicrobiologyListing = () => {
                 }}
                 rowKey="batchNo"
                 columns={tableColumns}
-                data={records}
+                data={records.reverse()}
                 loading={loading}
             />
 
