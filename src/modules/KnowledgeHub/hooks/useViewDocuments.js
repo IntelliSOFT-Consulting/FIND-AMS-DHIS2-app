@@ -267,7 +267,7 @@ export const useViewDocuments = () => {
                                 optionSetID: getDataElementByName("category")?.optionSet?.id,
                                 optionID: option.id
                             })}
-                            title="Are you sure you wnat to delete this folder?">
+                            title="Are you sure you want to delete this folder?">
                             <TrashIcon
                                 width={20}
                                 height={20}
