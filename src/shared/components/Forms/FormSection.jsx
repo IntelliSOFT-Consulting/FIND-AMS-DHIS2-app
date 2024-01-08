@@ -1,10 +1,10 @@
 import {Form} from "antd";
-import InputItem from "../../../shared/components/Fields/InputItem";
-import styles from "../styles/FormSection.module.css"
+import InputItem from "../Fields/InputItem";
+import styles from "../../../modules/Charts/styles/FormSection.module.css"
 
 
 const Wrapper = ({ordered, children, listStyle, startingIndex, containerStyles}) => ordered ? (
-    <ol type={listStyle} start={startingIndex} className={containerStyles}>{children}</ol>
+    <ol type={listStyle} start={String(startingIndex)} className={containerStyles}>{children}</ol>
 ) : (
     <div className={containerStyles}>{children}</div>
 )
@@ -17,13 +17,19 @@ export const FormSection = ({
                                 childStyles,
                                 placeholderNumber,
                                 ordered = true,
-                                overrideInputType
+                                overrideInputType,
+                                fileUploadProps,
+                                overrideRequired,
+                                checkIfValid = () => ({validity: true}),
+                                checkIfHidden = () => false,
+                                checkIfCompulsory = () => false
                             }) => {
+
 
     return (
         <Wrapper ordered={ordered} listStyle={listStyle} containerStyles={containerStyles}
                  startingIndex={startingIndex}>
-            {section?.dataElements?.map(dataElement => (
+            {section?.dataElements?.map(dataElement => !checkIfHidden(dataElement.id) && (
                 <li key={dataElement.id} className={styles.listStyle}>
                     <p className={styles.placeholderNumber}>{placeholderNumber}</p>
                     <Form.Item
@@ -33,20 +39,20 @@ export const FormSection = ({
                         name={dataElement.id}
                         rules={[
                             {
-                                required: dataElement.required,
-                                message: `Please input ${dataElement.displayName}!`,
+                                required: checkIfCompulsory(dataElement.id) || (overrideRequired && dataElement?.valueType !== "FILE_RESOURCE"),
+                                message: `Please input ${dataElement.name}!`,
                             },
-                            dataElement?.validator ? {validator: eval(dataElement.validator)} : null,
                         ]}
                     >
                         <InputItem
+                            disabled={!checkIfValid(dataElement.id).validity}
+                            fileUploadProps={fileUploadProps}
                             type={overrideInputType ? overrideInputType : dataElement?.optionSet && dataElement?.valueType === "TEXT" ? "SELECT" : dataElement.valueType}
                             options={dataElement.optionSet?.options?.map((option) => ({
                                 label: option.name || option?.displayName,
                                 value: option.code,
                             }))}
                             placeholder={`Enter ${dataElement.name}`}
-                            name={dataElement.id}
                         />
                     </Form.Item>
                 </li>

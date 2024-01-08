@@ -1,8 +1,10 @@
 import React from "react";
-import {Input, Radio, Select, DatePicker, Checkbox} from "antd";
+import {Input, Radio, Select, DatePicker, Checkbox, Upload} from "antd";
 
-export default function InputItem({ type, name, ...props }) {
+export default function InputItem({ type, name,fileUploadProps, ...props }) {
+
   const renderInput = () => {
+
     switch (type) {
 
       case "TEXT":
@@ -40,7 +42,11 @@ export default function InputItem({ type, name, ...props }) {
         )
 
       case "LONG_TEXT":
-        return <Input.TextArea rows={12} name={name} {...props} />;
+        return <Input.TextArea rows={4} name={name} {...props} />;
+
+
+      case "FILE_RESOURCE":
+        return <Upload.Dragger style={{ width: "100%"}} name={name}  {...fileUploadProps} />;
 
       default:
         return <Input name={name} {...props} />;

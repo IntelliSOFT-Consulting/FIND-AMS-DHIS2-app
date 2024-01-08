@@ -1,21 +1,29 @@
 import {Checkbox, Form} from "antd";
 import styles from "../styles/Multiselect.module.css"
 
-export const MultiSelectSection = ({section, number, setCheckedValues}) => {
+export const MultiSelectSection = ({section, number, setCheckedValues, initialValue, rules = [], title}) => {
     const onChange = (checkedValues) => {
         setCheckedValues(checkedValues)
     };
+
     return (
-        <Form.Item className={styles.parentContainer}>
+        <div>
             <p className={styles.sectionTitle}><span style={{fontWeight: 700}}>{number}.</span>{section.title}</p>
-            <Checkbox.Group
-                onChange={onChange}
-                className={styles.checkboxWrapper}
-                options={section?.dataElements?.map(element => ({
-                    label: element.name,
-                    value: element.id
-                }))}/>
-        </Form.Item>
+            <Form.Item
+                initialValue={initialValue[title]}
+                rules={rules}
+                name={title}
+                className={styles.parentContainer}>
+                <Checkbox.Group
+                    onChange={onChange}
+                    className={styles.checkboxWrapper}
+                    options={section?.dataElements?.map(element => ({
+                        label: element.name,
+                        value: element.id
+                    }))}/>
+            </Form.Item>
+        </div>
+
 
     )
 }

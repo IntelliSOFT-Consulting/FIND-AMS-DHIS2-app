@@ -23,20 +23,37 @@ export const orgUnitReducer = (state = {}, action) => {
 }
 
 
-export const membersReducer = (state = [], action) => {
+export const knowledgeHubReducer = (state = {}, action) => {
     switch (action.type) {
-        case "ADD_MEMBER":
+        case "KNOWLEDGE":
             return {
                 ...state,
                 ...action.payload
             }
-        case 'REMOVE_MEMBER':
-            const filtered = state.filter(member => member.id !== action.payload)
+        default:
+            return state;
+    }
+}
+
+export const microbiologyReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "MICROBIOLOGY":
             return {
-                ...filtered
+                ...state,
+                ...action.payload
             }
+        default:
+            return state;
+    }
+}
+
+
+export const userReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "USER":
+            return action.payload
 
         default:
-            return state
+            return state;
     }
 }
