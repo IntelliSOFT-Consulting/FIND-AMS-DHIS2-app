@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
 import {useDataElements} from "./useDataElements";
+import {useAttributes} from "./useAttributues";
 
 const query = {
     logs: {
@@ -25,6 +26,7 @@ export const useListing = () => {
 
 
     const {getDataElementByName} = useDataElements()
+    const {getAttributeByID} = useAttributes()
 
 
     const {data, refetch, loading} = useDataQuery(query)
@@ -41,6 +43,18 @@ export const useListing = () => {
 
         if (evt.target.value === "")
             await refetch({filter: ""})
+    }
+
+    const parseErrorMessage = (message) =>{
+        const words = message.split(/\s+/)
+        const forIndex = words.indexOf("for")
+
+        if(forIndex > -1 && words[forIndex + 1] === "attribute"){
+            const attribute = getAttributeByID(words[forIndex + 2])
+            words[forIndex + 2] = attribute?.displayName
+        }
+
+        return words.join(" ")
     }
 
 
@@ -74,6 +88,7 @@ export const useListing = () => {
         loading,
         records,
         handleChange,
-        navigate
+        navigate,
+        parseErrorMessage
     }
 }

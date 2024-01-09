@@ -47,6 +47,18 @@ export const microbiologyReducer = (state = {}, action) => {
     }
 }
 
+export const whonetReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "WHONET":
+            return {
+                ...state,
+                ...action.payload
+            }
+        default:
+            return state;
+    }
+}
+
 
 export const userReducer = (state = {}, action) => {
     switch (action.type) {

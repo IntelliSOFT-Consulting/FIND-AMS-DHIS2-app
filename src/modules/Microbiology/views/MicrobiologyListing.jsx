@@ -3,14 +3,18 @@ import {useListing} from "../hooks/useListing";
 import {MyTable} from "../../../shared/components/Tables/Table";
 import {Space, Table} from "antd";
 import {DocumentIcon} from "@heroicons/react/24/solid";
+import {useAttributes} from "../hooks/useAttributues";
 
 export const MicrobiologyListing = () => {
 
     const {
         loading,
         records,
-        navigate
+        navigate,
+        parseErrorMessage
     } = useListing()
+
+
 
 
     const tableColumns = [
@@ -80,11 +84,11 @@ export const MicrobiologyListing = () => {
                     expandedRowRender: record => (
                         <Space size="middle">
                             {record.conflictValues && record.conflictValues.map((conflictValue, key) => (
-                                <p className={styles.conflict} key={key}>{conflictValue}</p>
+                                <p className={styles.conflict} key={key}>{parseErrorMessage(conflictValue)}</p>
                             ))}
                         </Space>
                     ),
-                    rowExpandable: record => record.conflictValues !== null
+                    rowExpandable: record => record.conflictValues?.length > 0
                 }}
                 rowKey="batchNo"
                 columns={tableColumns}

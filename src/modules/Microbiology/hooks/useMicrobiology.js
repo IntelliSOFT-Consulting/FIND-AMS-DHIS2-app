@@ -1,7 +1,7 @@
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useDispatch} from "react-redux";
 import {formatStages, getArrayOfDataElements} from "../../../shared/helpers/formatData";
-import {setMicrobiology} from "../../../shared/redux/actions";
+import {setMicrobiology, setWHONET} from "../../../shared/redux/actions";
 import {notification} from "antd";
 
 export const useMicrobiology = () => {
@@ -48,6 +48,36 @@ export const useMicrobiology = () => {
         }
     }
 
-    return {getMicrobiologyData}
+
+    const getWHONETData = async()=>{
+        try {
+            const {programs} = await engine.query({
+                programs: {
+                    resource: "trackedEntityTypes",
+                    params: {
+                        fields: [
+                           "id","displayName","name","trackedEntityTypeAttributes[trackedEntityAttribute[id,displayName]]"
+                        ],
+                    }
+                }
+            })
+
+
+            dispatch(
+                setWHONET({
+                    attributes: programs.trackedEntityTypes[0]
+                })
+            )
+
+        } catch (e) {
+            console.log("error",e)
+            notification.error({
+                message: "error",
+                description: "Something went wrong"
+            })
+        }
+    }
+
+    return {getMicrobiologyData, getWHONETData}
 
 }

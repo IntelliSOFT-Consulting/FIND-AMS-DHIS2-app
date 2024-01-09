@@ -27,6 +27,15 @@ export const setMicrobiology = data => dispatch => {
     })
 }
 
+export const setWHONET = data => dispatch => {
+    dispatch({
+        type: "WHONET",
+        payload: data
+    })
+}
+
+
+
 export const setUser = user => dispatch => {
     dispatch({
         type: "USER",
