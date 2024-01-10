@@ -97,7 +97,7 @@ export const FileView = () => {
                                             onChange={(evt) => setUpdateObject(prev => ({...prev, description: evt.target.value}))}
                                             disabled={inputStates.isDescriptionDisabled}
                                             value={updateObject.description}
-                                            className={styles.textArea}
+                                            className={styles.input}
                                         />
                                         <PencilSquareIcon
                                             onClick={() => setInputStates(prev => ({
