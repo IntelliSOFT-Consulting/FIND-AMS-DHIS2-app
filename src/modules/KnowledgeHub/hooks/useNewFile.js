@@ -101,11 +101,19 @@ export const useNewFile = () => {
         maxCount: 1,
         beforeUpload: file => {
             const isLt5M = file.size / 1024 / 1024 < 5
+
             if (!isLt5M)
                 notification.error({
                     message: "Document is too large"
                 })
-            return isLt5M
+
+
+            if (file.type !== "application/pdf")
+                notification.error({
+                    message: "Please upload a pdf"
+                })
+
+            return (isLt5M && (file.type === "application/pdf"))
         },
         customRequest: async (options) => {
             const {onSuccess, onError, file} = options;
