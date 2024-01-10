@@ -88,6 +88,8 @@ export const FileView = () => {
                                     <div className={styles.valueElement}>{getFormElement("Permission")?.value}</div>
                                     <div className={styles.keyElement}>Category</div>
                                     <div className={styles.valueElement}>{getFormElement("Category")?.value}</div>
+                                    <div className={styles.keyElement}>Created By</div>
+                                    <div className={styles.valueElement}>{getFormElement("createdBy")?.value}</div>
                                 </div>
 
                                 <div className={styles.detailContainer}>

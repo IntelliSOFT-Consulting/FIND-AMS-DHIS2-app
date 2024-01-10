@@ -2,7 +2,6 @@ import {Button, Input, Table} from "antd";
 import styles from "../styles/ListGuidelines.module.css"
 import {SideNav} from "../../../shared/components/Nav/SideNav";
 import {useViewDocuments} from "../hooks/useViewDocuments";
-import {PencilSquareIcon} from "@heroicons/react/20/solid";
 
 const query = {
     events: {
