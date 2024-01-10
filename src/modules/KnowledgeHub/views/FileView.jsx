@@ -3,17 +3,26 @@ import {useNavigate} from "react-router-dom";
 import styles from "../styles/FileView.module.css"
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import {Spin} from "antd";
+import {Button, Input, Spin} from "antd";
 import {Viewer, Worker} from "@react-pdf-viewer/core";
 import {useFileView} from "../hooks/useFileView";
 import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
-
-
+import {PencilSquareIcon} from "@heroicons/react/20/solid";
 
 
 export const FileView = () => {
 
-    const {base64String, handleDownloads, loading, getFormElement} = useFileView()
+    const {
+        base64String,
+        handleDownloads,
+        loading,
+        getFormElement,
+        updateObject,
+        setUpdateObject,
+        inputStates,
+        setInputStates,
+        editDetails
+    } = useFileView()
 
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
@@ -59,7 +68,22 @@ export const FileView = () => {
                             <div className={styles.parentWrapper}>
                                 <div className={styles.detailContainer}>
                                     <div className={styles.keyElement}>Document Name:</div>
-                                    <div className={styles.valueElement}>{getFormElement("Name")?.value}</div>
+                                    <div className={styles.inputWrapper}>
+                                        <Input
+                                            onChange={(evt) => setUpdateObject(prev => ({...prev, name: evt.target.value}))}
+                                            disabled={inputStates.isNameDisabled}
+                                            value={updateObject.name}
+                                            className={styles.input}
+                                        />
+                                        <PencilSquareIcon
+                                            onClick={() => setInputStates(prev => ({
+                                                ...prev,
+                                                isNameDisabled: !prev.isNameDisabled
+                                            }))}
+                                            className={styles.icon}
+                                        />
+                                    </div>
+
                                     <div className={styles.keyElement}>Document Permissions:</div>
                                     <div className={styles.valueElement}>{getFormElement("Permission")?.value}</div>
                                     <div className={styles.keyElement}>Category</div>
@@ -68,8 +92,23 @@ export const FileView = () => {
 
                                 <div className={styles.detailContainer}>
                                     <div className={styles.keyElement}>Description:</div>
-                                    <div className={styles.valueElement}>{getFormElement("Description")?.value}</div>
+                                    <div className={styles.textAreaWrapper}>
+                                        <Input.TextArea
+                                            onChange={(evt) => setUpdateObject(prev => ({...prev, description: evt.target.value}))}
+                                            disabled={inputStates.isDescriptionDisabled}
+                                            value={updateObject.description}
+                                            className={styles.textArea}
+                                        />
+                                        <PencilSquareIcon
+                                            onClick={() => setInputStates(prev => ({
+                                                ...prev,
+                                                isDescriptionDisabled: !prev.isDescriptionDisabled
+                                            }))}
+                                            className={styles.icon}
+                                        />
+                                    </div>
                                 </div>
+                                <button type="button" onClick={editDetails}  className={styles.saveButton}>SAVE</button>
                             </div>
 
                             {base64String.length > 0 && (

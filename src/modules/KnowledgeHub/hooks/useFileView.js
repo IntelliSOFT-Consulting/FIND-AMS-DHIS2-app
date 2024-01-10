@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useBase64} from "../../../shared/helpers/fileOperations";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useDataEngine} from "@dhis2/app-runtime";
 import {notification} from "antd";
 import {useDataElements} from "./useDataElements";
@@ -11,15 +11,29 @@ export const useFileView = () => {
 
     const [formElements, setFormElements] = useState([])
 
+    const [updateObject, setUpdateObject] = useState({
+        name: "",
+        description: ""
+    })
+
+    const [inputStates, setInputStates] = useState({
+        isNameDisabled: true,
+        isDescriptionDisabled: true
+    })
+
     const [loading, setLoading] = useState(false)
 
     const {base64String, convertBlobToBase64} = useBase64()
 
-    const {stages} = useSelector(state => state.knowledgeHub)
+    const {stages, program} = useSelector(state => state.knowledgeHub)
+
+    const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
     const {eventId} = useParams()
 
     const engine = useDataEngine()
+
+    const navigate = useNavigate()
 
     const {getDataElementByName, getDataElementByID} = useDataElements()
 
@@ -134,6 +148,73 @@ export const useFileView = () => {
 
     }
 
+    const editDetails = async () => {
+        try {
+
+            setLoading(true)
+
+            const nameDataElement = getDataElementByName("name")
+            const descriptionDataElement = getDataElementByName("description")
+
+            const dataValues = [
+                {
+                    dataElement: nameDataElement.id,
+                    value: updateObject.name || getFormElement("name")?.value
+                },
+                {
+                    dataElement: descriptionDataElement.id,
+                    value: updateObject.description || getFormElement("name")?.value
+                },
+            ]
+
+            const payload = {
+                events: [{
+                    "occurredAt": new Date().toJSON().slice(0, 10),
+                    "notes": [],
+                    program,
+                    "programStage": stages[0].id,
+                    orgUnit: orgUnitID,
+                    event: eventId, dataValues
+                }]
+            }
+
+            const response = await engine.mutate({
+                resource: "tracker",
+                type: "create",
+                data: payload,
+                params: {
+                    async: false,
+                    importStrategy: "UPDATE",
+                    partial: true
+                }
+            })
+
+            if(response?.status === "OK"){
+                notification.success({
+                    message: "success",
+                    description: "Edit success"
+                })
+
+                setInputStates({
+                    isNameDisabled: true,
+                    isDescriptionDisabled: true
+                })
+            }
+
+        } catch (e) {
+
+            notification.error({
+                message: "error",
+                description: "Something went wrong"
+            })
+
+        } finally {
+
+            setLoading(false)
+
+        }
+    }
+
     useEffect(() => {
         if (eventId && stages) {
             getEvent()
@@ -141,12 +222,26 @@ export const useFileView = () => {
         }
     }, [eventId, stages]);
 
+    useEffect(() => {
+        if (formElements.length > 0) {
+            setUpdateObject({
+                name: getFormElement("name")?.value,
+                description: getFormElement("description")?.value
+            })
+        }
+    }, [formElements]);
+
     return {
+        setUpdateObject,
+        updateObject,
         formElements,
         base64String,
         handleDownloads,
         loading,
         getFormElement,
+        inputStates,
+        setInputStates,
+        editDetails
     }
 
 
