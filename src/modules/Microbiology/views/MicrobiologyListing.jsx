@@ -14,8 +14,6 @@ export const MicrobiologyListing = () => {
     } = useListing()
 
 
-
-
     const tableColumns = [
         Table.EXPAND_COLUMN,
         {
@@ -24,10 +22,12 @@ export const MicrobiologyListing = () => {
             key: 'status',
             render: (text, record) => (
                 <Space>
-                    {record.status === "ERROR" ?
-                        (<DocumentIcon width="24" color="#ff0000"/>)
-                        :
+                    {record.status === "SUCCESS" ?
                         (<DocumentIcon width="24" color="#3B7A57"/>)
+                        :
+                        (record.updated > 0 || record.imported > 1) ?
+                            (<DocumentIcon width="24" color="#FFA500"/>) :
+                            (<DocumentIcon width="24" color="#ff0000"/>)
                     }
                 </Space>
             )
