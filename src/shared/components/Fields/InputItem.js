@@ -6,7 +6,13 @@ export default function InputItem({type, name, fileUploadProps, ...props}) {
     const renderInput = () => {
 
         const disabledDate = current => {
-            return current && current.valueOf() > Date.now()
+            const today = new Date()
+            today.setHours(0,0,0,0)
+
+            const nextDay = new Date(today)
+            nextDay.setDate(today.getDate() + 1)
+
+            return current && current >= nextDay
         }
 
         switch (type) {
