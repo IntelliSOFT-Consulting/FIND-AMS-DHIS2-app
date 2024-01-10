@@ -72,7 +72,7 @@ export const MicrobiologyListing = () => {
     return (
         <div className={styles.tableContainer}>
             <div className={styles.titleContainer}>
-                <p>Microbiology Import Logs</p>
+                <p>MICROBIOLOGY IMPORT LOGS</p>
                 <button
                     onClick={() => navigate("/microbiology-data/upload")}
                     className="outline-btn">UPLOAD NEW RESOURCE
