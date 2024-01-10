@@ -26,7 +26,7 @@ export const useListing = () => {
 
 
     const {getDataElementByName} = useDataElements()
-    const {getAttributeByID} = useAttributes()
+    const {getAttributeByID, getOptionSetByID} = useAttributes()
 
 
     const {data, refetch, loading} = useDataQuery(query)
@@ -53,6 +53,16 @@ export const useListing = () => {
             const attribute = getAttributeByID(words[forIndex + 2])
             words[forIndex + 2] = attribute?.displayName
         }
+
+        const setIndex = words.indexOf("set")
+
+
+        if(setIndex > -1 && words[setIndex - 1] === "option"){
+           const optionObject =  getOptionSetByID(words[setIndex + 1])
+            words[setIndex + 1] = optionObject?.displayName
+        }
+
+
 
         return words.join(" ")
     }

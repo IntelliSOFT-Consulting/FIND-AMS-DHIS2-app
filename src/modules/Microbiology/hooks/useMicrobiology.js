@@ -49,14 +49,14 @@ export const useMicrobiology = () => {
     }
 
 
-    const getWHONETData = async()=>{
+    const getWHONETData = async () => {
         try {
             const {programs} = await engine.query({
                 programs: {
                     resource: "trackedEntityTypes",
                     params: {
                         fields: [
-                           "id","displayName","name","trackedEntityTypeAttributes[trackedEntityAttribute[id,displayName]]"
+                            "id", "displayName", "name", "trackedEntityTypeAttributes[trackedEntityAttribute[id,displayName]]"
                         ],
                     }
                 }
@@ -70,7 +70,6 @@ export const useMicrobiology = () => {
             )
 
         } catch (e) {
-            console.log("error",e)
             notification.error({
                 message: "error",
                 description: "Something went wrong"
@@ -78,6 +77,50 @@ export const useMicrobiology = () => {
         }
     }
 
-    return {getMicrobiologyData, getWHONETData}
+
+    const getOptionSets = async () => {
+        try {
+            const {programs} = await engine.query({
+                programs: {
+                    resource: "optionSets",
+                    params: {
+                        fields: [
+                            "displayName",
+                            "shortName",
+                            "id",
+                            "lastUpdated",
+                            "created",
+                            "displayDescription",
+                            "code",
+                            "publicAccess",
+                            "access",
+                            "href",
+                            "level",
+                            "displayName",
+                            "valueType",
+                            "publicAccess"
+                        ],
+                        filter: "name:ne:default",
+                        order: "displayName:ASC"
+                    }
+                }
+            })
+
+            dispatch(
+                setWHONET({
+                    optionSets: programs.optionSets
+                })
+            )
+
+        } catch(e) {
+            notification.error({
+                message: "error",
+                description: "Something went wrong"
+            })
+        }
+    }
+
+
+    return {getMicrobiologyData, getWHONETData, getOptionSets}
 
 }

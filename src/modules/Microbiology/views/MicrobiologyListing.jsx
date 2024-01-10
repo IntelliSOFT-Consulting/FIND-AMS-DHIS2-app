@@ -3,7 +3,6 @@ import {useListing} from "../hooks/useListing";
 import {MyTable} from "../../../shared/components/Tables/Table";
 import {Space, Table} from "antd";
 import {DocumentIcon} from "@heroicons/react/24/solid";
-import {useAttributes} from "../hooks/useAttributues";
 
 export const MicrobiologyListing = () => {
 

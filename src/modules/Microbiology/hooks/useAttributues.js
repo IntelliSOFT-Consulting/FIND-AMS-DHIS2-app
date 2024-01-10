@@ -2,7 +2,7 @@ import {useSelector} from "react-redux";
 
 
 export const useAttributes = ()=>{
-    const {attributes} = useSelector(state => state.whonet)
+    const {attributes, optionSets} = useSelector(state => state.whonet)
 
 
     const getAttributeByID = (searchID) => {
@@ -10,6 +10,13 @@ export const useAttributes = ()=>{
         return attribute.trackedEntityAttribute
     }
 
-    return {getAttributeByID}
+    const getOptionSetByID = (searchID) =>{
+        const optionObject = optionSets.find(optionSet=> optionSet.id === searchID)
+        return optionObject
+    }
+
+    return {getAttributeByID, getOptionSetByID}
+
+
 
 }

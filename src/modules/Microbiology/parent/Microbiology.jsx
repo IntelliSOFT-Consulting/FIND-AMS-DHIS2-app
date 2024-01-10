@@ -4,11 +4,12 @@ import {useMicrobiology} from "../hooks/useMicrobiology";
 import {useEffect} from "react";
 
 export const Microbiology = () => {
-    const {getMicrobiologyData, getWHONETData} = useMicrobiology()
+    const {getMicrobiologyData, getWHONETData, getOptionSets} = useMicrobiology()
 
     useEffect(() => {
         getMicrobiologyData()
         getWHONETData()
+        getOptionSets()
     }, []);
 
 
