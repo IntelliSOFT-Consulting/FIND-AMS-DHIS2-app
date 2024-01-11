@@ -46,6 +46,11 @@ export const MicrobiologyListing = () => {
             )
         },
         {
+            title: 'Date',
+            dataIndex: 'uploadDate',
+            key: 'uploadDate',
+        },
+        {
             title: 'Deleted',
             dataIndex: 'deleted',
             key: 'deleted',
