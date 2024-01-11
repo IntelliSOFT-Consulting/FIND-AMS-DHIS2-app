@@ -25,7 +25,7 @@ export const MicrobiologyListing = () => {
                     {record.status === "SUCCESS" ?
                         (<DocumentIcon width="24" color="#3B7A57"/>)
                         :
-                        (record.updated > 0 || record.imported > 1) ?
+                        (record.updated > 0 || record.imported > 0) ?
                             (<DocumentIcon width="24" color="#FFA500"/>) :
                             (<DocumentIcon width="24" color="#ff0000"/>)
                     }
