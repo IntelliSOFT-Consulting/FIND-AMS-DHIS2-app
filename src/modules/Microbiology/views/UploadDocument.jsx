@@ -1,7 +1,7 @@
 import {CardItem} from "../../../shared/components/Cards/CardItem";
 import {useUploadDocument} from "../hooks/useUploadDocument";
 import React from "react";
-import {DatePicker, Form, Input, Spin, Upload} from "antd";
+import { Form, Spin, Upload} from "antd";
 import styles from "../styles/Upload.module.css"
 import {Link} from "react-router-dom";
 

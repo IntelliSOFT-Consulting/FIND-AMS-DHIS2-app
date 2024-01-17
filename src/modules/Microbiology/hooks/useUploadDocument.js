@@ -3,28 +3,23 @@ import {useForm} from "antd/es/form/Form";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {notification} from "antd";
-import {useDataEngine} from "@dhis2/app-runtime";
 import {useDataElements} from "./useDataElements";
 
 
 export const useUploadDocument = () => {
+    const domain = window.location.origin;
+
     const [loading, setLoading] = useState(false)
 
     const [file, setFile] = useState({})
 
-    const {formSections, program, dataElements} = useSelector(state => state.microbiology)
-
-    const user = useSelector(state => state.user)
-
-    const {id: orgUnitID} = useSelector(state => state.orgUnit)
+    const {formSections} = useSelector(state => state.microbiology)
 
     const [form] = useForm()
 
     const navigate = useNavigate()
 
-    const engine = useDataEngine()
-
-    const {getDataElementByID, getDataElementByName} = useDataElements()
+    const {getDataElementByID} = useDataElements()
 
 
     const fileUploadProps = {
@@ -41,7 +36,7 @@ export const useUploadDocument = () => {
             return isLt5M
         },
         customRequest: async (options) => {
-            const {onSuccess, onError, file} = options;
+            const {onSuccess, file} = options;
             setFile(file)
             onSuccess("ok")
         }
@@ -61,7 +56,7 @@ export const useUploadDocument = () => {
         formData.append("fileContent", file)
         setLoading(true)
 
-        fetch("https://c84c-102-219-208-30.ngrok-free.app/api/find-ams/file-import/parse-file", {
+        fetch(`${domain}/ams/file-import/parse-file`, {
             method: "POST",
             body: formData
         })
