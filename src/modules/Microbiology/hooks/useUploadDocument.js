@@ -56,7 +56,7 @@ export const useUploadDocument = () => {
         formData.append("fileContent", file)
         setLoading(true)
 
-        fetch(`${domain}/ams/file-import/parse-file`, {
+        fetch(`http://192.46.223.40:8090/ams/file-import/parse-file`, {
             method: "POST",
             body: formData
         })
