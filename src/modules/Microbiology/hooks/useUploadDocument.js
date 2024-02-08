@@ -33,7 +33,14 @@ export const useUploadDocument = () => {
                     message: "Document is too large"
                 })
 
-            return isLt5M
+            console.log("file.type", file.type)
+
+            if(file.type !== "text/plain")
+                notification.error({
+                    message: "Please upload a txt file"
+                })
+
+            return (isLt5M && (file.type === "text/plain"))
         },
         customRequest: async (options) => {
             const {onSuccess, file} = options;

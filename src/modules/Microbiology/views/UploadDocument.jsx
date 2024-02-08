@@ -36,7 +36,7 @@ export const UploadDocument = () => {
                     ]}
                      name="file">
                     <Upload.Dragger {...fileUploadProps}>
-                        <p  className={styles.uploadText}>CLICK OR DROP FILE TO UPLOAD</p>
+                        <p  className={styles.uploadText}>CLICK OR DROP FILE TO UPLOAD(.txt)</p>
                     </Upload.Dragger>
                 </Form.Item>
 
