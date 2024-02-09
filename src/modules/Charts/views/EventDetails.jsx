@@ -1,5 +1,4 @@
 import {CardItem} from "../../../shared/components/Cards/CardItem";
-
 import styles from "../styles/ChartDetails.module.css"
 import {SectionDisplay} from "../Components/SectionDisplay";
 import {MultiSelectSectionDisplay} from "../Components/MultiSelectSectionDisplay";
@@ -15,7 +14,8 @@ export const EventDetails = () => {
         formSections,
         patientIp,
         loading,
-        data
+        data,
+        convertToPdfAndDownload
     } = useEventDetails()
 
     const CardHeader = () => {
@@ -23,10 +23,18 @@ export const EventDetails = () => {
         return (
             <div className={styles.cardHeader}>
                 <p className="">{`AMS CHART REVIEW: FORM ${patientIp}`}</p>
-                <button
-                    onClick={() => navigate(-1)}
-                    className="outline-btn">Back
-                </button>
+                <div className={styles.buttonWrapper}>
+                    <button
+                        onClick={convertToPdfAndDownload}
+                        className={styles.successButton}>
+                        Download
+                    </button>
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="outline-btn">Back
+                    </button>
+                </div>
+
             </div>
         )
     }
@@ -41,10 +49,11 @@ export const EventDetails = () => {
     ]
 
     return (
-        <CardItem CardHeader={CardHeader} linkItems={linkItems}>
-            <div className={styles.header}>PATIENT DETAILS</div>
 
-            <div className={styles.parent}>
+        <CardItem CardHeader={CardHeader} linkItems={linkItems}>
+        <div className={styles.header}>PATIENT DETAILS</div>
+
+            <div id="eventPage" className={styles.parent}>
                 {loading && (<Spin style={{margin: "auto", justifySelf: "center", alignSelf: "center"}}/>)}
                 <SectionDisplay
                     containerStyles={styles.basicInfoWrapper}

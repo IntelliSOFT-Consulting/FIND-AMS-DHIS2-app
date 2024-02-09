@@ -5,6 +5,7 @@ import {useSelector} from "react-redux";
 import {formatChartData} from "../../../shared/helpers/formatData";
 import {useDataElements} from "./useDataElements";
 import {findSectionObject} from "../helpers";
+import html2pdf from 'html2pdf.js';
 
 const query = {
     events: {
@@ -50,6 +51,14 @@ export const useEventDetails = () => {
 
     }
 
+    const convertToPdfAndDownload = () =>{
+        const element  = document.getElementById('eventPage')
+
+        html2pdf()
+            .from(element)
+            .save(`${patientIp}.pdf`);
+    }
+
     useEffect(() => {
 
         if (stages?.length > 0)
@@ -79,6 +88,6 @@ export const useEventDetails = () => {
 
     }, [eventId]);
 
-    return {formSections, patientIp, loading, data}
+    return {formSections, patientIp, loading, data, convertToPdfAndDownload}
 
 }
