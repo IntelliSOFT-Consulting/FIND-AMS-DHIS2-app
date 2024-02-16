@@ -51,7 +51,7 @@ export const useNewForm = () => {
 
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
-    const {getDataElementByID} = useDataElements()
+    const {getDataElementByID, getDataElementByName} = useDataElements()
 
     const [form] = Form.useForm()
 
@@ -102,6 +102,24 @@ export const useNewForm = () => {
     }
 
     const onFinish = async values => {
+        const {orgUnits} = await engine.query({
+            orgUnits: {
+                resource: `organisationUnits.json`,
+                params: {
+                    filter: `level:eq:2`,
+                    fields: "id,name,code"
+                }
+            }
+        })
+
+        const wardDataElement = getDataElementByName("Ward (specialty)");
+
+        const wardValue = values[wardDataElement.id]
+
+        console.log('wardValue', wardValue);
+
+        const orgUnit = orgUnits?.organisationUnits.find(org => org.code.toLowerCase().includes(wardValue.toLowerCase()));
+
         let dataValues = Object.keys(values).map(key => ({
             dataElement: key,
             value: values[key]
@@ -140,7 +158,7 @@ export const useNewForm = () => {
                     "notes": [],
                     program,
                     "programStage": stages[0].id,
-                    orgUnit: orgUnitID,
+                    orgUnit: orgUnit.id || orgUnitID,
                     event: eventId,
                     dataValues
                 }
@@ -234,14 +252,14 @@ export const useNewForm = () => {
 
         setInitialState(prevState => ({
             ...prevState,
-            recommendation:  formSections?.recommendation?.dataElements
+            recommendation: formSections?.recommendation?.dataElements
                 ?.map(dataElement => dataElement.id)
                 .filter(dataElementId => initialState[dataElementId] == "true")
         }))
 
         setInitialState(prevState => ({
             ...prevState,
-            redFlags:  formSections?.redFlags?.dataElements
+            redFlags: formSections?.redFlags?.dataElements
                 ?.map(dataElement => dataElement.id)
                 .filter(dataElementId => initialState[dataElementId] == "true")
         }))
@@ -284,7 +302,6 @@ export const useNewForm = () => {
                 signature: findSectionObject({searchString: "Signature", sectionArray: stages[0].sections}),
             })
     }, [stages]);
-
 
 
     return {

@@ -15,7 +15,7 @@ const query = {
             program,
             orgUnit,
             fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
-            ouMode: "SELECTED",
+            ouMode: "ALL",
             order: "createdAt:desc",
             occurredBefore: date,
             occurredAfter: date,
