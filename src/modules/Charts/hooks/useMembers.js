@@ -89,51 +89,6 @@ export const useMembers = () => {
         dispatch(setMembersState(dataValues))
 
         navigate(`/charts/new-form/new`)
-        // const payload = {
-        //     events: [
-        //         {
-        //             "occurredAt": new Date().toJSON().slice(0, 10),
-        //             "notes": [],
-        //             program,
-        //             "programStage": stages[0]?.id,
-        //             orgUnit: orgUnitID,
-        //             dataValues
-        //         }
-        //     ]
-        // }
-        //
-        // try {
-        //
-        //     if (members.length < 1)
-        //         return
-        //
-        //     setLoading(true)
-        //
-        //     const response = await engine.mutate({
-        //         resource: "tracker",
-        //         type: "create",
-        //         data: payload,
-        //         params: {
-        //             async: false
-        //         }
-        //     })
-        //
-        //     if (response.status === "OK")
-        //         navigate(`/charts/new-form/${response?.bundleReport?.typeReportMap?.EVENT.objectReports[0]?.uid}`)
-        //
-        // } catch (e) {
-        //
-        //     notification.error({
-        //         message: "error",
-        //         description: "Something went wrong"
-        //     })
-        //
-        // } finally {
-        //
-        //     setLoading(false)
-        //
-        // }
-
     }
 
 
