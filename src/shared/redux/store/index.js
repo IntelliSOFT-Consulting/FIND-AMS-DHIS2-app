@@ -2,6 +2,7 @@ import {applyMiddleware, combineReducers, compose, createStore} from "redux";
 import {
     formsReducer,
     knowledgeHubReducer,
+    membersReducer,
     microbiologyReducer,
     orgUnitReducer,
     userReducer,
@@ -14,6 +15,7 @@ const initialState = {}
 
 const reducer = combineReducers({
     forms: formsReducer,
+    members: membersReducer,
     orgUnit: orgUnitReducer,
     knowledgeHub: knowledgeHubReducer,
     user: userReducer,

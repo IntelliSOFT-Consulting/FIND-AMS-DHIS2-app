@@ -1,17 +1,18 @@
 import {useNavigate} from "react-router-dom";
-import {Form, notification, Space} from "antd";
+import {Form, Space} from "antd";
 import {useDataElements} from "./useDataElements";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import styles from "../styles/Members.module.css"
-import {useDataEngine} from "@dhis2/app-runtime";
+import {setMembersState} from "../../../shared/redux/actions";
 
 
 export const useMembers = () => {
+    const dispatch = useDispatch()
 
     const [members, setMembers] = useState([])
 
-    const [loading, setLoading] = useState(false)
+    const [loading] = useState(false)
 
     const [membersSection, setMembersSection] = useState({})
 
@@ -27,11 +28,8 @@ export const useMembers = () => {
 
     const {getDataElementByName} = useDataElements()
 
-    const {stages, program} = useSelector(state => state.forms)
+    const {stages} = useSelector(state => state.forms)
 
-    const {id: orgUnitID} = useSelector(state => state.orgUnit)
-
-    const engine = useDataEngine()
 
     const tableColumns = [
         {
@@ -70,6 +68,8 @@ export const useMembers = () => {
     }
 
     const submitForm = async () => {
+        if (members.length < 1)
+            return
 
         let dataValues = []
 
@@ -86,59 +86,61 @@ export const useMembers = () => {
 
         })
 
-        const payload = {
-            events: [
-                {
-                    "occurredAt": new Date().toJSON().slice(0, 10),
-                    "notes": [],
-                    program,
-                    "programStage": stages[0]?.id,
-                    orgUnit: orgUnitID,
-                    dataValues
-                }
-            ]
-        }
+        dispatch(setMembersState(dataValues))
 
-        try {
-
-            if (members.length < 1)
-                return
-
-            setLoading(true)
-
-            const response = await engine.mutate({
-                resource: "tracker",
-                type: "create",
-                data: payload,
-                params: {
-                    async: false
-                }
-            })
-
-            if (response.status === "OK")
-                navigate(`/charts/new-form/${response?.bundleReport?.typeReportMap?.EVENT.objectReports[0]?.uid}`)
-
-        } catch (e) {
-
-            notification.error({
-                message: "error",
-                description: "Something went wrong"
-            })
-
-        } finally {
-
-            setLoading(false)
-
-        }
+        navigate(`/charts/new-form/new`)
+        // const payload = {
+        //     events: [
+        //         {
+        //             "occurredAt": new Date().toJSON().slice(0, 10),
+        //             "notes": [],
+        //             program,
+        //             "programStage": stages[0]?.id,
+        //             orgUnit: orgUnitID,
+        //             dataValues
+        //         }
+        //     ]
+        // }
+        //
+        // try {
+        //
+        //     if (members.length < 1)
+        //         return
+        //
+        //     setLoading(true)
+        //
+        //     const response = await engine.mutate({
+        //         resource: "tracker",
+        //         type: "create",
+        //         data: payload,
+        //         params: {
+        //             async: false
+        //         }
+        //     })
+        //
+        //     if (response.status === "OK")
+        //         navigate(`/charts/new-form/${response?.bundleReport?.typeReportMap?.EVENT.objectReports[0]?.uid}`)
+        //
+        // } catch (e) {
+        //
+        //     notification.error({
+        //         message: "error",
+        //         description: "Something went wrong"
+        //     })
+        //
+        // } finally {
+        //
+        //     setLoading(false)
+        //
+        // }
 
     }
 
 
     useEffect(() => {
-        if (stages?.length> 0)
+        if (stages?.length > 0)
             setMembersSection(stages[0].sections.find(section => section.title.toLowerCase().includes("members")))
     }, [stages]);
-
 
 
     return {

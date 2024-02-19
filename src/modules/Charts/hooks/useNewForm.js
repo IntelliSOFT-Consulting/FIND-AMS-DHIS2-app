@@ -2,10 +2,11 @@ import {Form, notification} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {findSectionObject} from "../helpers";
 import {useDataElements} from "./useDataElements";
+import {clearMembers} from "../../../shared/redux/actions";
 
 
 export const useNewForm = () => {
@@ -50,6 +51,10 @@ export const useNewForm = () => {
     const {stages, program, dataElements} = useSelector(state => state.forms)
 
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
+
+    const members = useSelector(state=>state.members)
+
+    const dispatch = useDispatch()
 
     const {getDataElementByID, getDataElementByName} = useDataElements()
 
@@ -116,8 +121,6 @@ export const useNewForm = () => {
 
         const wardValue = values[wardDataElement.id]
 
-        console.log('wardValue', wardValue);
-
         const orgUnit = orgUnits?.organisationUnits.find(org => org.code.toLowerCase().includes(wardValue.toLowerCase()));
 
         let dataValues = Object.keys(values).map(key => ({
@@ -126,6 +129,10 @@ export const useNewForm = () => {
         }))
 
         dataValues = dataValues.filter(dataValue => getDataElementByID(dataValue.dataElement)?.id)
+
+        members.forEach(member=>{
+            dataValues.push(member)
+        })
 
         formSections.recommendation.dataElements.forEach(dataElement => {
             if (recommendationValues.includes(dataElement.id))
@@ -157,16 +164,32 @@ export const useNewForm = () => {
                     "occurredAt": new Date().toJSON().slice(0, 10),
                     "notes": [],
                     program,
-                    "programStage": stages[0].id,
+                    // "programStage": stages[0].id,
                     orgUnit: orgUnit.id || orgUnitID,
-                    event: eventId,
                     dataValues
                 }
             ]
         }
 
+        if(eventId !== "new")
+            payload.events[0].event = eventId
+
         try {
             setLoading(true)
+
+            const request = {
+                resource: "tracker",
+                type: "create",
+                data: payload,
+                params:{
+                    async: false
+                }
+            }
+
+            if(eventId !=="new"){
+                request.params["importStrategy"] = "UPDATE"
+                request.params["partial"] = true;
+            }
 
             const response = await engine.mutate({
                 resource: "tracker",
@@ -174,8 +197,6 @@ export const useNewForm = () => {
                 data: payload,
                 params: {
                     async: false,
-                    importStrategy: "UPDATE",
-                    partial: true
                 }
             })
 
@@ -188,6 +209,7 @@ export const useNewForm = () => {
                 description: "Something went wrong"
             })
         } finally {
+            dispatch(clearMembers())
             setLoading(false)
         }
 
@@ -284,7 +306,7 @@ export const useNewForm = () => {
     }, [formSections, dataElements, chartDataLoading]);
 
     useEffect(() => {
-        if (eventId && dataElements)
+        if (eventId && eventId !=="new" && dataElements)
             getChart()
     }, [eventId, dataElements]);
 

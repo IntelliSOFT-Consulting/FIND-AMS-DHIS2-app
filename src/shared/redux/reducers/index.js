@@ -11,6 +11,18 @@ export const formsReducer = (state = {}, action) => {
 
 }
 
+export const membersReducer = (state = [], action) => {
+    switch (action.type) {
+        case "MEMBERS":
+            return action.payload
+        case "CLEAR_MEMBERS":
+            return []
+        default:
+            return state
+
+    }
+}
+
 
 export const orgUnitReducer = (state = {}, action) => {
     switch (action.type) {

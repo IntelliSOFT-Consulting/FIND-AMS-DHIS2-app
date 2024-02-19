@@ -42,3 +42,16 @@ export const setUser = user => dispatch => {
         payload: user
     })
 }
+
+export const setMembersState = member =>dispatch =>{
+    dispatch({
+        type: "MEMBERS",
+        payload: member
+    })
+}
+
+export const clearMembers = ()=>dispatch=>{
+    dispatch({
+        type: "CLEAR_MEMBERS"
+    })
+}
