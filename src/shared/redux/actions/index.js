@@ -55,3 +55,11 @@ export const clearMembers = ()=>dispatch=>{
         type: "CLEAR_MEMBERS"
     })
 }
+
+
+export const setCRR = crrData =>dispatch => {
+    dispatch({
+        type: "CRR",
+        payload: crrData
+    })
+}

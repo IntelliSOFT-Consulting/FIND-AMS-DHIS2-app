@@ -1,5 +1,6 @@
 import {applyMiddleware, combineReducers, compose, createStore} from "redux";
 import {
+    crrReducer,
     formsReducer,
     knowledgeHubReducer,
     membersReducer,
@@ -20,7 +21,8 @@ const reducer = combineReducers({
     knowledgeHub: knowledgeHubReducer,
     user: userReducer,
     microbiology: microbiologyReducer,
-    whonet: whonetReducer
+    whonet: whonetReducer,
+    crr: crrReducer
 })
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

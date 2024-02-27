@@ -1,10 +1,9 @@
 import React, {useEffect} from "react";
 import {
-    ArrowDownOutlined as ArrowDownRightIcon,
     ArrowUpOutlined,
     HomeOutlined as HomeIcon,
     PieChartOutlined as Pie,
-    SettingOutlined as Cog6ToothIcon
+    SettingOutlined as Cog6ToothIcon,
 } from "@ant-design/icons";
 import {Layout, Menu} from "antd";
 import {createUseStyles} from "react-jss";
@@ -64,6 +63,8 @@ const items = [
     getItem("AMS CHART REVIEW", "/charts", <Pie/>, null, "item"),
     getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ArrowUpOutlined/>, null, "item"),
     getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon
+        style={{width: "16px", height: "16px"}}/>, null, "item"),
+    getItem("CRR", "/crr", <Pie
         style={{width: "16px", height: "16px"}}/>, null, "item"),
     {
       label: (

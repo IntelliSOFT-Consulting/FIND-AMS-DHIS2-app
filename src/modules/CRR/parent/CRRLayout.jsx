@@ -1,7 +1,15 @@
 import {Route, Routes} from "react-router-dom";
 import {chartRoutes} from "../routes";
+import {useCRR} from "../hooks/useCRR";
+import {useEffect} from "react";
 
-export const AMSChartLayout = () => {
+export const CRRLayout = () => {
+    const {getForms} = useCRR()
+
+    useEffect(() => {
+        getForms()
+    }, []);
+
     return (
         <Routes>
             {chartRoutes.map(route=>(

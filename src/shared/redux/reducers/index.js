@@ -81,3 +81,13 @@ export const userReducer = (state = {}, action) => {
             return state;
     }
 }
+
+
+export const crrReducer = (state = {}, action)  =>{
+    switch (action.type) {
+        case "CRR":
+            return action.payload
+        default:
+            return state;
+    }
+}
