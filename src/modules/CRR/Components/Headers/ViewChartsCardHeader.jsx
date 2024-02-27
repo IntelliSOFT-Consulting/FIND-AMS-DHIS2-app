@@ -12,7 +12,7 @@ export const ViewChartsCardHeader = () => {
         <div className="card-header">
             <p className="card-header-text">AMS CHART REVIEW</p>
             <button
-                onClick={() => navigate("/charts/members-present-form")}
+                onClick={() => navigate("/crr/members-present-form")}
                 className={styles.primaryBtn}>ADD NEW
             </button>
         </div>
