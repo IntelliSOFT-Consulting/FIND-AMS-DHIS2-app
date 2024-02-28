@@ -19,10 +19,6 @@ export const useMembers = () => {
 
     const members = useSelector(state => state.members)
 
-    console.log("members", members)
-    console.log("members section ", membersSection)
-
-
     const [initialFormValues, setInitialFormValues] = useState({
         "Full Names": user?.name
     })

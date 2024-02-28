@@ -68,7 +68,6 @@ export const useCRR = () => {
                             "mandatory",
                             "attributeValues"
                         ],
-                        paging: false
                     }
                 }
             })
