@@ -16,7 +16,11 @@ export const useMembers = () => {
     const user = useSelector(state => state.user)
 
     const crr = useSelector(state => state.crr)
+
     const members = useSelector(state => state.members)
+
+    console.log("members", members)
+    console.log("members section ", membersSection)
 
 
     const [initialFormValues, setInitialFormValues] = useState({
@@ -55,7 +59,7 @@ export const useMembers = () => {
 
     const addMembers = () => {
         const formValues = form.getFieldsValue()
-        dispatch(addMemberAction({...formValues, id: members.length}))
+        dispatch(addMemberAction({...formValues, id: Math.floor(1000 + Math.random() * 9000)}))
         form.resetFields()
     }
 

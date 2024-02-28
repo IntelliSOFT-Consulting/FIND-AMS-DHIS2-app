@@ -8,7 +8,7 @@ import {useSelector} from "react-redux";
 
 
 export const MembersForm = () => {
-const members = useSelector(state =>state.members)
+    const members = useSelector(state => state.members)
 
     const {
         loading,
@@ -73,7 +73,7 @@ const members = useSelector(state =>state.members)
                     )}
 
                     <div className={styles.tableContainer}>
-                        <MyTable columns={tableColumns} data={members} rowKey="Full Names"/>
+                      <MyTable columns={tableColumns} data={members} rowKey="id"/>
                     </div>
 
                 </Form>
