@@ -4,10 +4,11 @@ import {useCRR} from "../hooks/useCRR";
 import {useEffect} from "react";
 
 export const CRRLayout = () => {
-    const {getForms} = useCRR()
+    const {getForms, getCRRTrackedEntities} = useCRR()
 
     useEffect(() => {
         getForms()
+        getCRRTrackedEntities()
     }, []);
 
     return (

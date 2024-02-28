@@ -41,7 +41,6 @@ export const useCRR = () => {
                     program: program?.id,
                     stages,
                     trackedEntityType: program?.trackedEntityType,
-
                 })
             )
 
@@ -53,5 +52,40 @@ export const useCRR = () => {
         }
     }
 
-    return {getForms}
+
+    const getCRRTrackedEntities = async () => {
+        try {
+            const {trackedEntityAttributes} = await engine.query({
+                trackedEntityAttributes: {
+                    resource: "trackedEntityAttributes",
+                    params: {
+                        fields: [
+                            "id",
+                            "displayName",
+                            "valueType",
+                            "unique",
+                            "optionSet",
+                            "mandatory",
+                            "attributeValues"
+                        ],
+                        paging: false
+                    }
+                }
+            })
+            dispatch(
+                setCRR({
+                    entities: trackedEntityAttributes?.trackedEntityAttributes
+                })
+            )
+        } catch (e) {
+            notification.error({
+                message: "Error",
+                description: "Couldn't get tracked entities",
+            });
+        }
+    }
+
+
+
+    return {getForms, getCRRTrackedEntities}
 }

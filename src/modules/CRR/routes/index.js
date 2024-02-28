@@ -4,7 +4,7 @@ import {NewForm} from "../views/NewForm";
 import {EventDetails} from "../views/EventDetails";
 
 
-export const chartRoutes = [
+export const crrRoutes = [
     {
         path: "/",
         component: ViewCharts

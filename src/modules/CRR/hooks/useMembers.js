@@ -1,22 +1,23 @@
 import {useNavigate} from "react-router-dom";
 import {Form, Space} from "antd";
-import {useDataElements} from "./useDataElements";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import styles from "../styles/Members.module.css"
-import {setMembersState} from "../../../shared/redux/actions";
+import {addMemberAction, removeMember} from "../../../shared/redux/actions";
 
 
 export const useMembers = () => {
     const dispatch = useDispatch()
-
-    const [members, setMembers] = useState([])
 
     const [loading] = useState(false)
 
     const [membersSection, setMembersSection] = useState({})
 
     const user = useSelector(state => state.user)
+
+    const crr = useSelector(state => state.crr)
+    const members = useSelector(state => state.members)
+
 
     const [initialFormValues, setInitialFormValues] = useState({
         "Full Names": user?.name
@@ -26,21 +27,16 @@ export const useMembers = () => {
 
     const [form] = Form.useForm()
 
-    const {getDataElementByName} = useDataElements()
-
-    const {stages} = useSelector(state => state.forms)
-
-
     const tableColumns = [
         {
-            title: 'Full Names',
-            dataIndex: 'Full Names',
-            key: 'Full Names',
+            title: 'Full Name',
+            dataIndex: 'Full name',
+            key: 'id',
         },
         {
             title: 'Designation',
             dataIndex: 'Designation',
-            key: 'Designation',
+            key: 'id',
         },
         {
             title: "Action",
@@ -48,7 +44,7 @@ export const useMembers = () => {
                 <Space size="middle">
                     <div
                         className={styles.removeLink}
-                        onClick={() => setMembers(prev => prev.filter(item => item["Full Names"] !== record["Full Names"]))}
+                        onClick={() => dispatch(removeMember(record.id))}
                     >
                         Remove
                     </div>
@@ -58,48 +54,26 @@ export const useMembers = () => {
     ]
 
     const addMembers = () => {
-
         const formValues = form.getFieldsValue()
-
-        setMembers(prev => prev?.length > 0 ? [...prev, {...formValues}] : [{...formValues}])
-
+        dispatch(addMemberAction({...formValues, id: members.length}))
         form.resetFields()
-
     }
 
     const submitForm = async () => {
         if (members.length < 1)
             return
-
-        let dataValues = []
-
-        members.forEach(member => {
-
-            const keys = Object.keys(member)
-
-            keys.forEach(key => {
-                dataValues.push({
-                    dataElement: getDataElementByName(key).id,
-                    value: member[key]
-                })
-            })
-
-        })
-
-        dispatch(setMembersState(dataValues))
-
-        navigate(`/charts/new-form/new`)
+        navigate(`/crr/new-form/new`)
     }
 
 
     useEffect(() => {
-        if (stages?.length > 0)
-            setMembersSection(stages[0].sections.find(section => section.title.toLowerCase().includes("members")))
-    }, [stages]);
+        if (crr?.registration) {
+            setMembersSection(crr.registration.sections.find(section => section.title === "Members"))
+        }
+    }, [crr]);
 
 
     return {
-        members,
         loading,
         membersSection,
         initialFormValues,

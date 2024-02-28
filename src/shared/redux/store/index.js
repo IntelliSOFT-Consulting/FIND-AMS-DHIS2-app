@@ -10,6 +10,8 @@ import {
     whonetReducer
 } from "../reducers";
 import thunk from "redux-thunk";
+import {persistReducer, persistStore} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
 
 const initialState = {}
@@ -25,6 +27,20 @@ const reducer = combineReducers({
     crr: crrReducer
 })
 
+const persistConfig = {
+    key: "members",
+    storage,
+    whitelist: ["members"]
+}
+
+const persistedReducer = persistReducer(
+    persistConfig,
+    reducer
+)
+
+
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export const store = createStore(reducer, initialState, composeEnhancer(applyMiddleware(thunk)))
+export const store = createStore(persistedReducer, initialState, composeEnhancer(applyMiddleware(thunk)))
+
+export const persistor = persistStore(store)

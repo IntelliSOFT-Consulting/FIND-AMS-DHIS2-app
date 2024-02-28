@@ -4,12 +4,13 @@ import InputItem from "../../../shared/components/Fields/InputItem";
 import styles from "../styles/Members.module.css"
 import {useMembers} from "../hooks/useMembers";
 import {MyTable} from "../../../shared/components/Tables/Table";
+import {useSelector} from "react-redux";
 
 
 export const MembersForm = () => {
+const members = useSelector(state =>state.members)
 
     const {
-        members,
         loading,
         membersSection,
         initialFormValues,

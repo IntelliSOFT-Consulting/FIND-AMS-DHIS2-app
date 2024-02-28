@@ -13,10 +13,12 @@ export const formsReducer = (state = {}, action) => {
 
 export const membersReducer = (state = [], action) => {
     switch (action.type) {
-        case "MEMBERS":
-            return action.payload
+        case "ADD_MEMBER":
+            return [...state, action.payload]
         case "CLEAR_MEMBERS":
             return []
+        case "REMOVE_MEMBER":
+            return state.filter(member => member.id !== action.payload)
         default:
             return state
 
@@ -86,7 +88,10 @@ export const userReducer = (state = {}, action) => {
 export const crrReducer = (state = {}, action)  =>{
     switch (action.type) {
         case "CRR":
-            return action.payload
+            return {
+                ...state,
+                ...action.payload
+            }
         default:
             return state;
     }
