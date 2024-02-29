@@ -5,10 +5,9 @@ export const MultiSelectSection = ({section, number, setCheckedValues, initialVa
     const onChange = (checkedValues) => {
         setCheckedValues(checkedValues)
     };
-
     return (
         <div>
-            <p className={styles.sectionTitle}><span style={{fontWeight: 700}}>{number}.</span>{section.title}</p>
+            <p className={styles.sectionTitle}><span style={{fontWeight: 700}}>{number}.</span>{section.dataElements[0].name}</p>
             <Form.Item
                 initialValue={initialValue[title]}
                 rules={rules}
@@ -17,9 +16,9 @@ export const MultiSelectSection = ({section, number, setCheckedValues, initialVa
                 <Checkbox.Group
                     onChange={onChange}
                     className={styles.checkboxWrapper}
-                    options={section?.dataElements?.map(element => ({
-                        label: element.name,
-                        value: element.id
+                    options={section?.dataElements[0]?.optionSet?.options?.map(option => ({
+                        label: option.displayName,
+                        value: option.id
                     }))}/>
             </Form.Item>
         </div>

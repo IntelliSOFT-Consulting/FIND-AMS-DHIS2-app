@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import {findSectionObject} from "../helpers";
 import {useDataElements} from "./useDataElements";
 import {clearMembers} from "../../../shared/redux/actions";
+import {useEntities} from "./useEntities";
 
 
 export const useNewForm = () => {
@@ -48,15 +49,19 @@ export const useNewForm = () => {
         message: "Please select a red flag"
     }]
 
-    const {stages, program, dataElements} = useSelector(state => state.forms)
+    const {program, dataElements} = useSelector(state => state.forms)
 
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
 
-    const members = useSelector(state=>state.members)
+    const members = useSelector(state => state.members)
+
+    const crr = useSelector(state => state.crr)
 
     const dispatch = useDispatch()
 
     const {getDataElementByID, getDataElementByName} = useDataElements()
+
+    const {getEntityByName, getEntityByID} = useEntities()
 
     const [form] = Form.useForm()
 
@@ -130,7 +135,7 @@ export const useNewForm = () => {
 
         dataValues = dataValues.filter(dataValue => getDataElementByID(dataValue.dataElement)?.id)
 
-        members.forEach(member=>{
+        members.forEach(member => {
             dataValues.push(member)
         })
 
@@ -164,14 +169,13 @@ export const useNewForm = () => {
                     "occurredAt": new Date().toJSON().slice(0, 10),
                     "notes": [],
                     program,
-                    // "programStage": stages[0].id,
                     orgUnit: orgUnit.id || orgUnitID,
                     dataValues
                 }
             ]
         }
 
-        if(eventId !== "new")
+        if (eventId !== "new")
             payload.events[0].event = eventId
 
         try {
@@ -181,12 +185,12 @@ export const useNewForm = () => {
                 resource: "tracker",
                 type: "create",
                 data: payload,
-                params:{
+                params: {
                     async: false
                 }
             }
 
-            if(eventId !=="new"){
+            if (eventId !== "new") {
                 request.params["importStrategy"] = "UPDATE"
                 request.params["partial"] = true;
             }
@@ -219,20 +223,20 @@ export const useNewForm = () => {
         setFormValues(allFields.map(field => ({name: field.name[0], value: field.value})))
     }
 
-    const checkIfValid = dataElementID => {
+    const checkIfValid = entityID => {
         const formValues = form.getFieldsValue()
 
         if (formValues === {})
             return {validity: true}
 
-        const dataElementObject = getDataElementByID(dataElementID)
+        const attributeObject = getEntityByID(entityID)
 
-        if (dataElementObject.attributeValues.length === 0)
+        if (attributeObject.attributeValues.length === 0)
             return {validity: true}
 
         let validity = true
 
-        dataElementObject.attributeValues.forEach(attribute => {
+        attributeObject.attributeValues.forEach(attribute => {
             const attributeElementId = attribute.value.split(",")[0]
 
             const attributeValuesArray = attribute.value.split(",").splice(1)
@@ -247,19 +251,20 @@ export const useNewForm = () => {
         })
 
         if (validity === false)
-            form.setFieldValue(dataElementID, "N/A")
+            form.setFieldValue(entityID, "N/A")
 
         return {validity}
 
     }
 
-    const checkIfCompulsory = (dataElementID) => {
-        const dataElement = getDataElementByID(dataElementID)
+    const checkIfCompulsory = attributeID => {
 
-        if (dataElement.attributeValues.length === 0)
+        const attribute = getEntityByID(attributeID)
+
+        if (attribute.attributeValues.length === 0)
             return false
 
-        const compulsoryAttributeIndex = dataElement.attributeValues.findIndex(attribute => attribute.attribute.name.toLowerCase().includes("compulsory"))
+        const compulsoryAttributeIndex = attribute.attributeValues.findIndex(attribute => attribute.attribute.name.toLowerCase().includes("compulsory"))
 
         if (compulsoryAttributeIndex === -1) return false
 
@@ -306,24 +311,23 @@ export const useNewForm = () => {
     }, [formSections, dataElements, chartDataLoading]);
 
     useEffect(() => {
-        if (eventId && eventId !=="new" && dataElements)
+        if (eventId && eventId !== "new" && dataElements)
             getChart()
     }, [eventId, dataElements]);
 
-
     useEffect(() => {
-        if (stages?.length > 0)
+        if (crr?.stages?.length > 0)
             setFormSections({
-                patients: findSectionObject({searchString: "Patients", sectionArray: stages[0].sections}),
-                antibiotics: findSectionObject({searchString: "Antibiotics", sectionArray: stages[0].sections}),
-                cultures: findSectionObject({searchString: "Cultures", sectionArray: stages[0].sections}),
-                dosage: findSectionObject({searchString: "Dosage", sectionArray: stages[0].sections}),
-                recommendation: findSectionObject({searchString: "Recommendation", sectionArray: stages[0].sections}),
-                redFlags: findSectionObject({searchString: "Flags", sectionArray: stages[0].sections}),
-                comments: findSectionObject({searchString: "Comments", sectionArray: stages[0].sections}),
-                signature: findSectionObject({searchString: "Signature", sectionArray: stages[0].sections}),
+                patients: findSectionObject({searchString: "Patients", sectionArray: crr.registration.sections}),
+                antibiotics: findSectionObject({searchString: "Antibiotics", sectionArray: crr.registration.sections}),
+                cultures: findSectionObject({searchString: "Cultures", sectionArray: crr.registration.sections}),
+                dosage: findSectionObject({searchString: "Dosage", sectionArray: crr.registration.sections}),
+                recommendation: findSectionObject({searchString: "Recommendation", sectionArray: crr.stages})?.sections[0],
+                redFlags: findSectionObject({searchString: "Flags", sectionArray: crr.stages})?.sections[0],
+                comments: findSectionObject({searchString: "Comments", sectionArray: crr.registration.sections}),
+                signature: findSectionObject({searchString: "Signature", sectionArray: crr.registration.sections}),
             })
-    }, [stages]);
+    }, [crr]);
 
 
     return {
