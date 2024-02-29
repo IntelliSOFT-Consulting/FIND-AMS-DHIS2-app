@@ -8,6 +8,7 @@ import {findSectionObject} from "../helpers";
 import {useDataElements} from "./useDataElements";
 import {clearMembers} from "../../../shared/redux/actions";
 import {useEntities} from "./useEntities";
+import {useInstances} from "./useInstances";
 
 
 export const useNewForm = () => {
@@ -61,7 +62,9 @@ export const useNewForm = () => {
 
     const {getDataElementByID, getDataElementByName} = useDataElements()
 
-    const {getEntityByName, getEntityByID} = useEntities()
+    const {getEnrollmentData} = useInstances()
+
+    const {getEntityByID} = useEntities()
 
     const [form] = Form.useForm()
 
@@ -111,113 +114,119 @@ export const useNewForm = () => {
         }
     }
 
-    const onFinish = async values => {
-        const {orgUnits} = await engine.query({
-            orgUnits: {
-                resource: `organisationUnits.json`,
-                params: {
-                    filter: `level:eq:2`,
-                    fields: "id,name,code"
-                }
-            }
-        })
-
-        const wardDataElement = getDataElementByName("Ward (specialty)");
-
-        const wardValue = values[wardDataElement.id]
-
-        const orgUnit = orgUnits?.organisationUnits.find(org => org.code.toLowerCase().includes(wardValue.toLowerCase()));
-
-        let dataValues = Object.keys(values).map(key => ({
-            dataElement: key,
-            value: values[key]
-        }))
-
-        dataValues = dataValues.filter(dataValue => getDataElementByID(dataValue.dataElement)?.id)
-
-        members.forEach(member => {
-            dataValues.push(member)
-        })
-
-        formSections.recommendation.dataElements.forEach(dataElement => {
-            if (recommendationValues.includes(dataElement.id))
-                dataValues.push({
-                    dataElement: dataElement.id,
-                    value: true
-                })
-            else
-                dataValues.push({
-                    dataElement: dataElement.id,
-                })
-        })
-
-        formSections.redFlags.dataElements.forEach(dataElement => {
-            if (redFlagValues.includes(dataElement.id))
-                dataValues.push({
-                    dataElement: dataElement.id,
-                    value: true
-                })
-            else
-                dataValues.push({
-                    dataElement: dataElement.id,
-                })
-        })
-
+    const onFinish = async (values) => {
         const payload = {
-            events: [
+            trackedEntityType: crr?.trackedEntityType?.id,
+            orgUnit: orgUnitID,
+            attributes: Object.keys(values).map(key => ({
+                attribute: key,
+                value: values[key]
+            })).filter(attribute => attribute.value && !Array.isArray(attribute.value)),
+            enrollments: [
                 {
-                    "occurredAt": new Date().toJSON().slice(0, 10),
-                    "notes": [],
-                    program,
-                    orgUnit: orgUnit.id || orgUnitID,
-                    dataValues
+                    orgUnit: orgUnitID,
+                    program: crr.program,
+                    enrollmentDate: new Date(),
+                    incidentDate: new Date(),
                 }
             ]
         }
 
-        if (eventId !== "new")
-            payload.events[0].event = eventId
-
         try {
             setLoading(true)
-
-            const request = {
-                resource: "tracker",
+            const {response} = await engine.mutate({
+                resource: "trackedEntityInstances",
                 type: "create",
-                data: payload,
-                params: {
-                    async: false
-                }
-            }
-
-            if (eventId !== "new") {
-                request.params["importStrategy"] = "UPDATE"
-                request.params["partial"] = true;
-            }
-
-            const response = await engine.mutate({
-                resource: "tracker",
-                type: "create",
-                data: payload,
-                params: {
-                    async: false,
-                }
+                data: payload
             })
+            if (response?.status === "SUCCESS") {
+                const trackedEntityInstance = await getEnrollmentData(response?.importSummaries[0]?.reference, true)
 
-            if (response?.status === "OK")
-                navigate("/charts")
+                const recommendationStage = crr.stages.find(stage => stage.title.toLowerCase().includes("recommendation"))
+
+                const redFlagStage = crr.stages.find(stage => stage.title.toLowerCase().includes("flag"))
+
+                const recommendationOptionCodes = values["recommendation"].map(value => {
+                    const option = formSections.recommendation.dataElements[0].optionSet?.options.find(option => option.id === value)
+                    return option.code
+                })
+
+                const redFlagOptionCodes = values["redFlags"].map(value => {
+                    const option = formSections.redFlags.dataElements[0].optionSet?.options.find(option => option.id === value)
+                    return option.code
+                })
+
+                await createEvent({
+                    trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
+                    enrollment: trackedEntityInstance.enrollment,
+                    selectedOptions: recommendationOptionCodes,
+                    dataElementID: formSections.recommendation.dataElements[0]?.id,
+                    programStage: recommendationStage.id
+                })
+
+                await createEvent({
+                    trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
+                    enrollment: trackedEntityInstance.enrollment,
+                    selectedOptions: redFlagOptionCodes,
+                    dataElementID: formSections.redFlags.dataElements[0]?.id,
+                    programStage: redFlagStage.id
+                })
+            }
+
+            navigate("/crr")
 
         } catch (e) {
+            console.log(" chart error", e)
+
             notification.error({
                 message: "error",
-                description: "Something went wrong"
+                description: "Couldn't save chart"
             })
         } finally {
             dispatch(clearMembers())
             setLoading(false)
         }
-
     }
+
+    const createEvent = async ({trackedEntityInstance, enrollment, selectedOptions, dataElementID, programStage}) => {
+        const events = selectedOptions.map(option => ({
+            program: crr.program,
+            programStage,
+            trackedEntityInstance,
+            orgUnit: orgUnitID,
+            enrollment,
+            status: "ACTIVE",
+            dataValues: [
+                {
+                    dataElement: dataElementID,
+                    value: option,
+                }
+            ],
+            eventDate: new Date().toISOString().slice(0, 10)
+        }))
+
+        try {
+            setLoading(true)
+            const {response} = await engine.mutate({
+                resource: "/events",
+                type: "create",
+                data: {
+                    events
+                }
+            })
+
+
+        } catch (e) {
+            console.log(" event error", e)
+            notification.error({
+                message: "error",
+                description: "Couldn't save event"
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
+
 
     const onFieldsChange = (changedFields, allFields) => {
         setFormValues(allFields.map(field => ({name: field.name[0], value: field.value})))
@@ -322,7 +331,10 @@ export const useNewForm = () => {
                 antibiotics: findSectionObject({searchString: "Antibiotics", sectionArray: crr.registration.sections}),
                 cultures: findSectionObject({searchString: "Cultures", sectionArray: crr.registration.sections}),
                 dosage: findSectionObject({searchString: "Dosage", sectionArray: crr.registration.sections}),
-                recommendation: findSectionObject({searchString: "Recommendation", sectionArray: crr.stages})?.sections[0],
+                recommendation: findSectionObject({
+                    searchString: "Recommendation",
+                    sectionArray: crr.stages
+                })?.sections[0],
                 redFlags: findSectionObject({searchString: "Flags", sectionArray: crr.stages})?.sections[0],
                 comments: findSectionObject({searchString: "Comments", sectionArray: crr.registration.sections}),
                 signature: findSectionObject({searchString: "Signature", sectionArray: crr.registration.sections}),
@@ -337,6 +349,7 @@ export const useNewForm = () => {
         initialState,
         setRecommendationValues,
         redFlagValues,
+        recommendationValues,
         setRedFlagValues,
         loading,
         chartDataLoading,
