@@ -3,13 +3,19 @@ import {useParams} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
 import {formatChartData} from "../../../shared/helpers/formatData";
-import {useDataElements} from "./useDataElements";
 import {findSectionObject} from "../helpers";
 import html2pdf from 'html2pdf.js';
+import {useEntities} from "./useEntities";
 
 const query = {
     events: {
-        resource: ``,
+        resource: `trackedEntityInstances`,
+        params: ({filter = "", program = ""}) => ({
+            fields: "trackedEntityInstance,trackedEntityType, attributes[*],enrollments[*],createdAt",
+            program,
+            ouMode: "ACCESSIBLE",
+            filter
+        })
     }
 }
 
@@ -28,31 +34,23 @@ export const useEventDetails = () => {
 
     const [patientIp, setPatientIp] = useState("")
 
-    const {eventId} = useParams()
+    const {teiID} = useParams()
 
-    const {data, loading} = useDataQuery(query)
+    const {data, loading, refetch} = useDataQuery(query)
 
-    const {stages} = useSelector(state => state.forms)
+    const {program, registration, stages, entities} = useSelector(state => state.crr)
 
-    const {getDataElementByName} = useDataElements()
+    const {getEntityByName} = useEntities()
 
     const getPatientIP = () => {
-
         if (formSections.patients.dataElements) {
-            const ipElement = getDataElementByName("ip/op")
-
-            const value = formatChartData({
-                dataElement: ipElement.id,
-                dataValues: data?.events?.dataValues
-            })
-
-            setPatientIp(value)
+            const patientIPValue = data?.events?.enrollments[0]?.attributes?.find(attribute => attribute.displayName.toLowerCase()?.includes("ip"))?.value
+            setPatientIp(patientIPValue)
         }
-
     }
 
-    const convertToPdfAndDownload = () =>{
-        const element  = document.getElementById('eventPage')
+    const convertToPdfAndDownload = () => {
+        const element = document.getElementById('eventPage')
 
         html2pdf()
             .from(element)
@@ -60,33 +58,41 @@ export const useEventDetails = () => {
     }
 
     useEffect(() => {
-
-        if (stages?.length > 0)
+        if (registration)
             setFormSections({
-                patients: findSectionObject({searchString: "Patients", sectionArray: stages[0].sections}),
-                antibiotics: findSectionObject({searchString: "Antibiotics", sectionArray: stages[0].sections}),
-                cultures: findSectionObject({searchString: "Cultures", sectionArray: stages[0].sections}),
-                dosage: findSectionObject({searchString: "Dosage", sectionArray: stages[0].sections}),
-                recommendation: findSectionObject({searchString: "Recommendation", sectionArray: stages[0].sections}),
-                redFlags: findSectionObject({searchString: "Flags", sectionArray: stages[0].sections}),
-                comments: findSectionObject({searchString: "Comments", sectionArray: stages[0].sections}),
-                signature: findSectionObject({searchString: "signature", sectionArray: stages[0].sections}),
+                patients: findSectionObject({searchString: "Patients", sectionArray: registration.sections}),
+                antibiotics: findSectionObject({searchString: "Antibiotics", sectionArray: registration.sections}),
+                cultures: findSectionObject({searchString: "Cultures", sectionArray: registration.sections}),
+                dosage: findSectionObject({searchString: "Dosage", sectionArray: registration.sections}),
+                recommendation: findSectionObject({
+                    searchString: "Recommendation",
+                    sectionArray: stages
+                })?.sections[0],
+                redFlags: findSectionObject({searchString: "Flags", sectionArray: stages})?.sections[0],
+                comments: findSectionObject({searchString: "Comments", sectionArray: registration.sections}),
+                signature: findSectionObject({searchString: "Signature", sectionArray: registration.sections}),
             })
 
-    }, [stages]);
+    }, [registration]);
 
     useEffect(() => {
-
         getPatientIP()
-
     }, [formSections, data]);
 
+    useEffect(() => {
+        if (teiID)
+            query.events.resource = `trackedEntityInstances/${teiID}`
+    }, [teiID]);
 
     useEffect(() => {
+        if (entities && program)
+            refetch({
+                program: program,
+                filter: `${getEntityByName("ip").id}:eq:${teiID}`
+            })
 
-        query.events.resource = `tracker/events/${eventId}`
+    }, [teiID, entities, program]);
 
-    }, [eventId]);
 
     return {formSections, patientIp, loading, data, convertToPdfAndDownload}
 

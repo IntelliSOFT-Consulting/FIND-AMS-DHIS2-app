@@ -51,7 +51,7 @@ export const useViewCharts = () => {
                 "date": instance.enrollments[0]?.enrollmentDate,
                 "teiID": instance.trackedEntityInstance
             }))
-            setPatientData(formattedPatientData.reverse())
+            setPatientData(formattedPatientData)
         }
     }, [data]);
 
@@ -89,7 +89,7 @@ export const useViewCharts = () => {
                         className={styles.addLink}>edit
                     </div>
                     <div
-                        onClick={() => navigate(`/crr/event/${record.teiID}`)}
+                        onClick={() => navigate(`/crr/trackedEntity/${record.teiID}`)}
                         className={styles.addLink}>View
                     </div>
                 </Space>
@@ -100,7 +100,6 @@ export const useViewCharts = () => {
 
 
     const filterByIp = async () => {
-        console.log("ip", ip)
         if (ip)
             await refetch({
                 filter: `${getEntityByName("ip").id}:ILIKE:${ip}`

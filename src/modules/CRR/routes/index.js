@@ -18,7 +18,7 @@ export const crrRoutes = [
         component: NewForm
     },
     {
-        path: "/event/:eventId",
+        path: "/trackedEntity/:teiID",
         component: EventDetails
     }
 

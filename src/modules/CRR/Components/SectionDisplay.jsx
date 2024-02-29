@@ -20,7 +20,7 @@ export const SectionDisplay = ({
             name: element?.name,
         }
 
-        const elementObject = data?.find(dataObject => dataObject?.dataElement === element.id)
+        const elementObject = data?.find(dataObject => dataObject?.attribute === element.id)
 
         if (element.optionSet) {
             const option = element.optionSet.options?.find(option => option.code === elementObject?.value)

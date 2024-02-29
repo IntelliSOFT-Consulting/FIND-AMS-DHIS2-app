@@ -43,13 +43,6 @@ export const formatChartData = ({dataElement, dataValues}) => {
     return object?.value
 }
 
-
-export const getDataElementObjectByID = ({elementId, dataElements}) => {
-    const object = dataElements?.find(dataElement => dataElement.id === elementId)
-    return object
-}
-
-
 export const getArrayOfDataElements = (programSections) => programSections.flatMap(section => section.dataElements.map(dataElement => dataElement))
 
 

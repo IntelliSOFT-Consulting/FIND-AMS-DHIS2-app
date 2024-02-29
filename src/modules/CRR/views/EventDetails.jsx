@@ -61,7 +61,7 @@ export const EventDetails = () => {
                     nameContainerStyles={styles.basicInfoName}
                     valueContainerStyles={styles.basicInfoValue}
                     sectionForms={formSections.patients}
-                    data={data?.events?.dataValues}
+                    data={data?.events?.enrollments[0].attributes}
                 />
 
 
@@ -73,7 +73,7 @@ export const EventDetails = () => {
                     nameContainerStyles={styles.genericName}
                     valueContainerStyles={styles.genericValue}
                     sectionForms={formSections.antibiotics}
-                    data={data?.events?.dataValues}
+                    data={data?.events?.enrollments[0].attributes}
                 />
 
 
@@ -86,7 +86,7 @@ export const EventDetails = () => {
                     nameContainerStyles={styles.genericName}
                     valueContainerStyles={styles.genericValue}
                     sectionForms={formSections.cultures}
-                    data={data?.events?.dataValues}
+                    data={data?.events?.enrollments[0].attributes}
                 />
 
                 <SectionDisplay
@@ -97,26 +97,26 @@ export const EventDetails = () => {
                     nameContainerStyles={styles.genericName}
                     valueContainerStyles={styles.genericValue}
                     sectionForms={formSections.dosage}
-                    data={data?.events?.dataValues}
+                    data={data?.events?.enrollments[0].attributes}
                 />
 
                 <MultiSelectSectionDisplay
                     number={formSections.antibiotics?.dataElements?.length + 1 + formSections.dosage?.dataElements?.length + 1}
-                    data={data?.events?.dataValues}
+                    data={data?.events?.enrollments[0].events}
                     sectionForms={formSections.recommendation}
                 />
 
 
                 <MultiSelectSectionDisplay
                     number={formSections.antibiotics?.dataElements?.length + 1 + formSections.dosage?.dataElements?.length + 2}
-                    data={data?.events?.dataValues}
+                    data={data?.events?.enrollments[0].events}
                     sectionForms={formSections.redFlags}
                 />
 
 
                 <TextAreaDisplay
                     sectionForms={formSections.comments}
-                    data={data?.events?.dataValues}
+                    data={data?.events?.enrollments[0].attributes}
                 />
 
 
