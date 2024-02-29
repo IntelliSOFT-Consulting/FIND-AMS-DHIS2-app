@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {useSelector} from "react-redux";
-import {formatChartData} from "../../../shared/helpers/formatData";
 import {findSectionObject} from "../helpers";
 import html2pdf from 'html2pdf.js';
 import {useEntities} from "./useEntities";
