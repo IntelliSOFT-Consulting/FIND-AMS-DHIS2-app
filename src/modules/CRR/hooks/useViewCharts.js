@@ -2,20 +2,21 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useDataElements} from "./useDataElements";
-import {useDataQuery} from "@dhis2/app-runtime";
+import { useDataQuery} from "@dhis2/app-runtime";
 import {FolderOutlined} from "@ant-design/icons";
-import {Space} from "antd";
+import { Space} from "antd";
 import styles from "../styles/ViewCharts.module.css";
+import {useEntities} from "./useEntities";
 
 
 const query = {
     events: {
-        resource: "tracker/events",
-        params: ({filter = "", date = "", program, orgUnit}) => ({
+        resource: "trackedEntityInstances.json",
+        params: ({filter= "", date= "", program}) => ({
             program,
-            orgUnit,
-            fields: "dataValues,occurredAt,event,status,orgUnit,program,programType,updatedAt,createdAt,assignedUser",
+            fields: "trackedEntityInstance,trackedEntityType, attributes[*],enrollments[*],createdAt",
             ouMode: "ALL",
+            pageSize: 50,
             order: "createdAt:desc",
             occurredBefore: date,
             occurredAfter: date,
@@ -26,51 +27,33 @@ const query = {
 
 
 export const useViewCharts = () => {
-    const [records, setRecords] = useState([])
     const [date, setDate] = useState(null)
     const [dateString, setDateString] = useState(null)
     const [ip, setIp] = useState(null)
     const [wards, setWards] = useState([])
-
+    const [patientData, setPatientData] = useState([])
 
     const navigate = useNavigate()
 
-    const {program, dataElements: reduxDataElements} = useSelector(state => state.forms)
-    const {id: orgUnitID} = useSelector(state => state.orgUnit)
+    const {dataElements: reduxDataElements} = useSelector(state => state.forms)
+    const crr = useSelector(state => state.crr)
 
-    const {getDataElementByID, getDataElementByName} = useDataElements()
+    const {getDataElementByName} = useDataElements()
+    const {getEntityByName} = useEntities()
 
-
-    const {loading, data, refetch} = useDataQuery(query)
+    const {refetch, data, loading} = useDataQuery(query)
 
     useEffect(() => {
-        const wardElement = getDataElementByName("Ward (specialty)")
-
-        const wardFolders = wardElement?.optionSet?.options?.map(option => ({
-            ...option,
-            icon: FolderOutlined,
-            handler: () => filterByWards(option.code)
-        }))
-
-        if (wardFolders?.length > 0)
-            setWards([...wardFolders, {
-                displayName: "All Charts",
-                code: "",
-                icon: FolderOutlined,
-                handler: () => filterByWards("")
-            }])
-
-    }, [reduxDataElements]);
-
-    /**
-     * Fetch data once org unit and program are loaded from redux store
-     */
-    useEffect(() => {
-        refetch({
-            orgUnit: orgUnitID,
-            program
-        })
-    }, [orgUnitID, program]);
+        if(data){
+            const formattedPatientData = data?.events?.trackedEntityInstances.map(instance => ({
+                "patientIP": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("patient")))?.value,
+                "ward": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("ward")))?.value,
+                "date": instance.enrollments[0]?.enrollmentDate,
+                "teiID": instance.trackedEntityInstance
+            }))
+            setPatientData(formattedPatientData.reverse())
+        }
+    }, [data]);
 
     /**
      * Table columns
@@ -79,23 +62,21 @@ export const useViewCharts = () => {
     const chartTableColumns = [
         {
             title: "Patient IP/OP NO.",
-            dataIndex: "Patient IP/OP No.",
-            key: "Patient IP/OP No.",
+            dataIndex: "patientIP",
+            key: "patientIP",
         },
         {
             title: "Ward",
-            dataIndex: "Ward (specialty)",
-            key: "Ward (specialty)",
-            render: (text, record) => {
-                const wardDataElement = getDataElementByName("Ward (specialty)")
-                return wardDataElement?.optionSet?.options?.find(option => option?.code === record["Ward (specialty)"])?.displayName
-            }
+            dataIndex: "ward",
+            key: "ward",
+            render: (text, record) => crr?.registration?.sections?.find(section => section?.title?.toLowerCase()?.includes("patients"))?.dataElements?.find(dataElement => dataElement?.name?.toLowerCase()?.includes("ward"))?.optionSet?.options?.find(option => option?.code === record?.ward)?.displayName
+
         },
         {
             title: "Date Added",
-            dataIndex: "createdAt",
-            key: "createdAt",
-            render: (text, record) => new Date(record.createdAt).toLocaleDateString()
+            dataIndex: "date",
+            key: "date",
+            render: (text, record) => new Date(record.date).toLocaleDateString()
         },
         {
             title: "Actions",
@@ -104,11 +85,11 @@ export const useViewCharts = () => {
             render: (text, record) => (
                 <Space size="large">
                     <div
-                        onClick={() => navigate(`/charts/new-form/${record.eventUid}`)}
+                        onClick={() => navigate(`/crr/new-form/${record.teiID}`)}
                         className={styles.addLink}>edit
                     </div>
                     <div
-                        onClick={() => navigate(`/charts/event/${record.eventUid}`)}
+                        onClick={() => navigate(`/crr/event/${record.teiID}`)}
                         className={styles.addLink}>View
                     </div>
                 </Space>
@@ -118,31 +99,11 @@ export const useViewCharts = () => {
     ]
 
 
-    /**
-     * Load table data once event data is fetched
-     */
-    useEffect(() => {
-        setRecords(data?.events?.instances?.flatMap(instance => {
-            const instanceObject = {
-                createdAt: instance.createdAt,
-                eventUid: instance.event
-            }
-
-            instance.dataValues.forEach(dataValue => {
-                const dataElement = getDataElementByID(dataValue?.dataElement)
-                instanceObject[dataElement?.displayName] = dataValue.value
-            })
-
-            return instanceObject
-
-        }))
-    }, [data]);
-
-
     const filterByIp = async () => {
+        console.log("ip", ip)
         if (ip)
             await refetch({
-                filter: `${getDataElementByName("ip/op").id}:ILIKE:${ip}`
+                filter: `${getEntityByName("ip").id}:ILIKE:${ip}`
             })
     }
 
@@ -163,7 +124,7 @@ export const useViewCharts = () => {
             })
         else
             await refetch({
-                filter: `${getDataElementByName("Ward (specialty)").id}:ILIKE:${wardCode}`
+                filter: `${getEntityByName("ward").id}:ILIKE:${wardCode}`
             })
     }
 
@@ -184,8 +145,36 @@ export const useViewCharts = () => {
         setIp(evt.target.value)
     }
 
+
+    useEffect(() => {
+        refetch({
+            program: crr?.program
+        })
+    }, [crr]);
+
+
+    useEffect(() => {
+        const wardEntity = getDataElementByName("ward")
+
+        const wardFolders = wardEntity?.optionSet?.options?.map(option => ({
+            ...option,
+            icon: FolderOutlined,
+            handler: () => filterByWards(option.code)
+        }))
+
+        if (wardFolders?.length > 0)
+            setWards([...wardFolders, {
+                displayName: "All Charts",
+                code: "",
+                icon: FolderOutlined,
+                handler: () => filterByWards("")
+            }])
+
+    }, [reduxDataElements]);
+
+
     return {
-        records,
+        patientData,
         date,
         dateString,
         ip,

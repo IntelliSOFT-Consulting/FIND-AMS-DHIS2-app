@@ -10,7 +10,7 @@ import {useViewCharts} from "../hooks/useViewCharts";
 export const ViewCharts = () => {
 
     const {
-        records,
+        patientData,
         date,
         ip,
         wards,
@@ -34,7 +34,7 @@ export const ViewCharts = () => {
                 <div>
                     <div className={styles.searchContainer}>
                         <div className={styles.inputContainer}>
-                            <label htmlFor="date">Filter by Date</label>
+                            <label htmlFor="date">Filter by date</label>
                             <div className={styles.inputWrapper}>
                                 <DatePicker
                                     onChange={handleDateChange}
@@ -51,7 +51,7 @@ export const ViewCharts = () => {
                             </div>
                         </div>
                         <div className={styles.inputContainer}>
-                            <label htmlFor="ip/op">Search Specific Records</label>
+                            <label htmlFor="ip/op">Search specific records</label>
                             <div className={styles.inputWrapper}>
                                 <Input
                                     value={ip}
@@ -73,9 +73,9 @@ export const ViewCharts = () => {
                     </div>
 
                     <MyTable
-                        rowKey="eventUid"
+                        rowKey="teiID"
                         loading={loading}
-                        data={records}
+                        data={patientData}
                         columns={chartTableColumns}
                     />
                 </div>
