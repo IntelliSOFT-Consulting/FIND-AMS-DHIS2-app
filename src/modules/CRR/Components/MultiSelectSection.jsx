@@ -26,3 +26,4 @@ export const MultiSelectSection = ({section, number, setCheckedValues, initialVa
 
     )
 }
+

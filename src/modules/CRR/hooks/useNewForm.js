@@ -5,7 +5,6 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {findSectionObject} from "../helpers";
-import {useDataElements} from "./useDataElements";
 import {clearMembers} from "../../../shared/redux/actions";
 import {useEntities} from "./useEntities";
 import {useInstances} from "./useInstances";
@@ -27,6 +26,8 @@ export const useNewForm = () => {
     const [formValues, setFormValues] = useState([])
 
     const [initialState, setInitialState] = useState({})
+
+    const [instanceData, setInstanceData] = useState({})
 
     const [recommendationInitialState, setRecommendationInitialState] = useState(null)
 
@@ -50,25 +51,22 @@ export const useNewForm = () => {
         message: "Please select a red flag"
     }]
 
-    const {program, dataElements} = useSelector(state => state.forms)
+    const {dataElements} = useSelector(state => state.forms)
 
     const {id: orgUnitID} = useSelector(state => state.orgUnit)
-
-    const members = useSelector(state => state.members)
 
     const crr = useSelector(state => state.crr)
 
     const dispatch = useDispatch()
 
-    const {getDataElementByID, getDataElementByName} = useDataElements()
 
     const {getEnrollmentData} = useInstances()
 
-    const {getEntityByID} = useEntities()
+    const {getEntityByID, getEntityByName} = useEntities()
 
     const [form] = Form.useForm()
 
-    const {eventId} = useParams()
+    const {teiID} = useParams()
 
     const engine = useDataEngine()
 
@@ -80,29 +78,30 @@ export const useNewForm = () => {
 
             const response = await engine.query({
                 events: {
-                    resource: `tracker/events/${eventId}`
+                    resource: `trackedEntityInstances/${teiID}`,
+                    params: {
+                        fields: "trackedEntityInstance,trackedEntityType, attributes[*],enrollments[*],createdAt",
+                    }
                 }
             })
 
-            const dataValues = response.events.dataValues
+            setInstanceData(response.events)
 
-            if (dataValues.length > 0) {
-                dataValues.forEach(dataValue => {
-                    const newObject = {}
+            const firstEnrollment = response.events.enrollments[0]
 
-                    const dataElementObject = getDataElementByID(dataValue.dataElement)
+            firstEnrollment.attributes.forEach(item => {
+                const newObject = {}
 
-                    if (dataElementObject.valueType === "DATE")
-                        newObject[dataValue.dataElement] = dayjs(dataValue.value)
-                    else
-                        newObject[dataValue.dataElement] = dataValue.value
+                if (item.valueType === "DATE")
+                    newObject[item.attribute] = dayjs(item.value)
+                else
+                    newObject[item.attribute] = item.value
 
-                    setInitialState(prevState => ({
-                        ...prevState, ...newObject
-                    }))
-                })
-            }
-
+                setInitialState(prevState => ({
+                    ...prevState,
+                    ...newObject
+                }))
+            })
 
         } catch (e) {
             notification.error({
@@ -176,8 +175,6 @@ export const useNewForm = () => {
             navigate("/crr")
 
         } catch (e) {
-            console.log(" chart error", e)
-
             notification.error({
                 message: "error",
                 description: "Couldn't save chart"
@@ -282,47 +279,55 @@ export const useNewForm = () => {
     }
 
     const populateMultiselectInitialStates = () => {
-        const initialRecommendation = formSections?.recommendation?.dataElements
-            ?.map(dataElement => dataElement.id)
-            .filter(dataElementId => initialState[dataElementId] == "true")
+        if (formSections?.recommendation?.dataElements && instanceData.enrollments) {
+            const recommendationEntity= formSections?.recommendation?.dataElements[0]
 
-        setInitialState(prevState => ({
-            ...prevState,
-            recommendation: formSections?.recommendation?.dataElements
-                ?.map(dataElement => dataElement.id)
-                .filter(dataElementId => initialState[dataElementId] == "true")
-        }))
+            const allCheckedOptions = instanceData?.enrollments[0]?.events.map(item =>({
+                code: item.dataValues[0]?.value,
+                dataElement: item.dataValues[0]?.dataElement
+            }))
 
-        setInitialState(prevState => ({
-            ...prevState,
-            redFlags: formSections?.redFlags?.dataElements
-                ?.map(dataElement => dataElement.id)
-                .filter(dataElementId => initialState[dataElementId] == "true")
-        }))
+            const checkedRecommendations = allCheckedOptions?.filter(item =>  item?.dataElement === recommendationEntity?.id).map(item =>{
+                const optionSetObject = recommendationEntity.optionSet.options.find(option => option.code === item.code)
+                return optionSetObject.id
+            })
 
-        const initialRedFlags = formSections?.redFlags?.dataElements
-            ?.map(dataElement => dataElement.id)
-            .filter(dataElementId => initialState[dataElementId] == "true")
+            setInitialState(prev => ({
+                ...prev,
+                recommendation: checkedRecommendations
+            }))
 
-        setRedFlagsInitialState(initialRedFlags)
+            setRecommendationInitialState(checkedRecommendations)
 
-        setRecommendationInitialState(initialRecommendation)
+            setRecommendationValues(checkedRecommendations)
 
-        setRedFlagValues(initialRedFlags)
+            const redFlagsEntity = formSections?.redFlags?.dataElements[0]
 
-        setRecommendationValues(initialRecommendation)
+            const checkedRedFlags = allCheckedOptions?.filter(item =>  item?.dataElement === redFlagsEntity?.id).map(item =>{
+                const optionSetObject = redFlagsEntity.optionSet.options.find(option => option.code === item.code)
+                return optionSetObject.id
+            })
 
+            setInitialState(prev => ({
+                ...prev,
+                redFlags: checkedRedFlags
+            }))
+
+            setRedFlagsInitialState(checkedRedFlags)
+
+            setRedFlagValues(checkedRedFlags)
+        }
     }
 
     useEffect(() => {
-        if (formSections.recommendation !== {} && formSections.redFlags !== {} && !chartDataLoading)
+        if (formSections?.recommendation !== {} && formSections?.redFlags !== {} && !chartDataLoading && instanceData)
             populateMultiselectInitialStates()
-    }, [formSections, dataElements, chartDataLoading]);
+    }, [formSections, dataElements, chartDataLoading, instanceData]);
 
     useEffect(() => {
-        if (eventId && eventId !== "new" && dataElements)
+        if (teiID && teiID !== "new" && dataElements)
             getChart()
-    }, [eventId, dataElements]);
+    }, [teiID, dataElements]);
 
     useEffect(() => {
         if (crr?.stages?.length > 0)
@@ -354,7 +359,7 @@ export const useNewForm = () => {
         loading,
         chartDataLoading,
         form,
-        eventId,
+        teiID,
         getChart,
         onFinish,
         checkIfValid,
