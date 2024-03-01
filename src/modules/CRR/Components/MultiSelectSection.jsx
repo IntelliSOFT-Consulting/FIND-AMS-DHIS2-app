@@ -7,9 +7,9 @@ export const MultiSelectSection = ({section, number, setCheckedValues, initialVa
     };
     return (
         <div>
-            <p className={styles.sectionTitle}><span style={{fontWeight: 700}}>{number}.</span>{section.dataElements[0].name}</p>
+            <p className={styles.sectionTitle}><span style={{fontWeight: 700}}>{number}.</span>{section?.dataElements[0]?.name}</p>
             <Form.Item
-                initialValue={initialValue[title]}
+                initialValue={initialValue}
                 rules={rules}
                 name={title}
                 className={styles.parentContainer}>

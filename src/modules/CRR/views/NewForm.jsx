@@ -77,25 +77,25 @@ export const NewForm = () => {
                                 />
 
 
-                                {recommendationInitialState &&
+                                {recommendationInitialState && formSections?.recommendation?.dataElements &&
                                     <MultiSelectSection
                                         title="recommendation"
                                         rules={recommendationRules}
-                                        initialValue={initialState}
+                                        initialValue={recommendationInitialState}
                                         setCheckedValues={setRecommendationValues}
-                                        number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
-                                        section={formSections.recommendation}
+                                        number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
+                                        section={formSections?.recommendation}
                                     />}
 
 
-                                {redFlagsInitialState &&
+                                {redFlagsInitialState && formSections?.redFlags?.dataElements &&
                                     <MultiSelectSection
                                         title="redFlags"
                                         rules={redFlagRules}
-                                        initialValue={initialState}
+                                        initialValue={redFlagsInitialState}
                                         setCheckedValues={setRedFlagValues}
-                                        number={formSections.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
-                                        section={formSections.redFlags}
+                                        number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
+                                        section={formSections?.redFlags}
                                     />
                                 }
 

@@ -27,7 +27,7 @@ export const useNewForm = () => {
 
     const [initialState, setInitialState] = useState({})
 
-    const [instanceData, setInstanceData] = useState({})
+    const [instanceData, setInstanceData] = useState(null)
 
     const [recommendationInitialState, setRecommendationInitialState] = useState(null)
 
@@ -62,7 +62,7 @@ export const useNewForm = () => {
 
     const {getEnrollmentData} = useInstances()
 
-    const {getEntityByID, getEntityByName} = useEntities()
+    const {getEntityByID} = useEntities()
 
     const [form] = Form.useForm()
 
@@ -131,15 +131,23 @@ export const useNewForm = () => {
             ]
         }
 
+        const mutationQuery = {
+            resource: "trackedEntityInstances",
+            type: "create",
+            data: payload
+        }
+
+        if (teiID !== "new") {
+            mutationQuery.type = "update"
+            mutationQuery.resource = `trackedEntityInstances/${teiID}`
+        }
+
         try {
             setLoading(true)
-            const {response} = await engine.mutate({
-                resource: "trackedEntityInstances",
-                type: "create",
-                data: payload
-            })
+            const {response} = await engine.mutate(mutationQuery)
+
             if (response?.status === "SUCCESS") {
-                const trackedEntityInstance = await getEnrollmentData(response?.importSummaries[0]?.reference, true)
+                const trackedEntityInstance = await getEnrollmentData(teiID === "new" ? response?.importSummaries[0]?.reference : teiID, true)
 
                 const recommendationStage = crr.stages.find(stage => stage.title.toLowerCase().includes("recommendation"))
 
@@ -204,7 +212,7 @@ export const useNewForm = () => {
 
         try {
             setLoading(true)
-            const {response} = await engine.mutate({
+            await engine.mutate({
                 resource: "/events",
                 type: "create",
                 data: {
@@ -214,7 +222,6 @@ export const useNewForm = () => {
 
 
         } catch (e) {
-            console.log(" event error", e)
             notification.error({
                 message: "error",
                 description: "Couldn't save event"
@@ -279,50 +286,48 @@ export const useNewForm = () => {
     }
 
     const populateMultiselectInitialStates = () => {
-        if (formSections?.recommendation?.dataElements && instanceData.enrollments) {
-            const recommendationEntity= formSections?.recommendation?.dataElements[0]
+        const recommendationEntity = formSections?.recommendation?.dataElements[0]
 
-            const allCheckedOptions = instanceData?.enrollments[0]?.events.map(item =>({
-                code: item.dataValues[0]?.value,
-                dataElement: item.dataValues[0]?.dataElement
-            }))
+        const allCheckedOptions = instanceData?.enrollments[0]?.events.map(item => ({
+            code: item.dataValues[0]?.value,
+            dataElement: item.dataValues[0]?.dataElement
+        }))
 
-            const checkedRecommendations = allCheckedOptions?.filter(item =>  item?.dataElement === recommendationEntity?.id).map(item =>{
-                const optionSetObject = recommendationEntity.optionSet.options.find(option => option.code === item.code)
-                return optionSetObject.id
-            })
+        const checkedRecommendations = allCheckedOptions?.filter(item => item?.dataElement === recommendationEntity?.id).map(item => {
+            const optionSetObject = recommendationEntity.optionSet.options.find(option => option.code === item.code)
+            return optionSetObject.id
+        })
 
-            setInitialState(prev => ({
-                ...prev,
-                recommendation: checkedRecommendations
-            }))
+        setInitialState(prev => ({
+            ...prev,
+            recommendation: checkedRecommendations
+        }))
 
-            setRecommendationInitialState(checkedRecommendations)
+        setRecommendationInitialState(checkedRecommendations)
 
-            setRecommendationValues(checkedRecommendations)
+        setRecommendationValues(checkedRecommendations)
 
-            const redFlagsEntity = formSections?.redFlags?.dataElements[0]
+        const redFlagsEntity = formSections?.redFlags?.dataElements[0]
 
-            const checkedRedFlags = allCheckedOptions?.filter(item =>  item?.dataElement === redFlagsEntity?.id).map(item =>{
-                const optionSetObject = redFlagsEntity.optionSet.options.find(option => option.code === item.code)
-                return optionSetObject.id
-            })
+        const checkedRedFlags = allCheckedOptions?.filter(item => item?.dataElement === redFlagsEntity?.id).map(item => {
+            const optionSetObject = redFlagsEntity.optionSet.options.find(option => option.code === item.code)
+            return optionSetObject.id
+        })
 
-            setInitialState(prev => ({
-                ...prev,
-                redFlags: checkedRedFlags
-            }))
+        setInitialState(prev => ({
+            ...prev,
+            redFlags: checkedRedFlags
+        }))
 
-            setRedFlagsInitialState(checkedRedFlags)
+        setRedFlagsInitialState(checkedRedFlags)
 
-            setRedFlagValues(checkedRedFlags)
-        }
+        setRedFlagValues(checkedRedFlags)
     }
 
     useEffect(() => {
         if (formSections?.recommendation !== {} && formSections?.redFlags !== {} && !chartDataLoading && instanceData)
             populateMultiselectInitialStates()
-    }, [formSections, dataElements, chartDataLoading, instanceData]);
+    }, [formSections, crr, chartDataLoading, instanceData]);
 
     useEffect(() => {
         if (teiID && teiID !== "new" && dataElements)
@@ -345,7 +350,6 @@ export const useNewForm = () => {
                 signature: findSectionObject({searchString: "Signature", sectionArray: crr.registration.sections}),
             })
     }, [crr]);
-
 
     return {
         formSections,
