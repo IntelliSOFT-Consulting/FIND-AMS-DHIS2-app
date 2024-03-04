@@ -4,10 +4,11 @@ import {FormSection} from "../../../shared/components/Forms/FormSection";
 import styles from "../styles/FormSection.module.css"
 import {MultiSelectSection} from "../Components/MultiSelectSection";
 import {useNewForm} from "../hooks/useNewForm";
+import {useParams} from "react-router-dom";
 
 
 export const NewForm = () => {
-
+    const {teiID} = useParams()
     const {
         formSections,
         initialState,
@@ -76,28 +77,32 @@ export const NewForm = () => {
                                     section={formSections.dosage}
                                 />
 
+                                {
+                                    formSections?.recommendation?.dataElements
+                                    && formSections?.redFlags?.dataElements
+                                    && (teiID !== "new" ? (initialState?.recommendation?.length > 0 && initialState?.redFlags?.length > 0): true)
+                                    && (
+                                        <>
+                                            <MultiSelectSection
+                                                title="recommendation"
+                                                rules={recommendationRules}
+                                                initialValue={initialState}
+                                                setCheckedValues={setRecommendationValues}
+                                                number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
+                                                section={formSections?.recommendation}
+                                            />
 
-                                {initialState.recommendation && formSections?.recommendation?.dataElements &&
-                                    <MultiSelectSection
-                                        title="recommendation"
-                                        rules={recommendationRules}
-                                        initialValue={initialState}
-                                        setCheckedValues={setRecommendationValues}
-                                        number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
-                                        section={formSections?.recommendation}
-                                    />}
 
-
-                                {initialState.redFlags && formSections?.redFlags?.dataElements &&
-                                    <MultiSelectSection
-                                        title="redFlags"
-                                        rules={redFlagRules}
-                                        initialValue={initialState}
-                                        setCheckedValues={setRedFlagValues}
-                                        number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
-                                        section={formSections?.redFlags}
-                                    />
-                                }
+                                            <MultiSelectSection
+                                                title="redFlags"
+                                                rules={redFlagRules}
+                                                initialValue={initialState}
+                                                setCheckedValues={setRedFlagValues}
+                                                number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
+                                                section={formSections?.redFlags}
+                                            />
+                                        </>
+                                    )}
 
 
                                 <FormSection

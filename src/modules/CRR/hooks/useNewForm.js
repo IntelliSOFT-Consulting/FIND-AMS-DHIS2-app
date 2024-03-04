@@ -106,6 +106,8 @@ export const useNewForm = () => {
                 }))
             })
 
+            await populateMultiselectInitialStates()
+
         } catch (e) {
             notification.error({
                 message: "error",
@@ -225,7 +227,6 @@ export const useNewForm = () => {
 
 
         } catch (e) {
-            console.log("error", e)
             notification.error({
                 message: "error",
                 description: "Couldn't save event"
@@ -290,7 +291,6 @@ export const useNewForm = () => {
     }
 
     const populateMultiselectInitialStates = async () => {
-        console.log("hit")
         const recommendationDataElement = findSectionObject({
             searchString: "Recommendation",
             sectionArray: crr?.stages
