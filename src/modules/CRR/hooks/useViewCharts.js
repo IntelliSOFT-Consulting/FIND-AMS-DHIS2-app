@@ -2,9 +2,9 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useDataElements} from "./useDataElements";
-import { useDataQuery} from "@dhis2/app-runtime";
+import {useDataQuery} from "@dhis2/app-runtime";
 import {FolderOutlined} from "@ant-design/icons";
-import { Space} from "antd";
+import {Space} from "antd";
 import styles from "../styles/ViewCharts.module.css";
 import {useEntities} from "./useEntities";
 
@@ -12,7 +12,7 @@ import {useEntities} from "./useEntities";
 const query = {
     events: {
         resource: "trackedEntityInstances.json",
-        params: ({filter= "", date= "", program}) => ({
+        params: ({filter = "", date = "", program}) => ({
             program,
             fields: "trackedEntityInstance,trackedEntityType, attributes[*],enrollments[*],createdAt",
             ouMode: "ALL",
@@ -44,7 +44,7 @@ export const useViewCharts = () => {
     const {refetch, data, loading} = useDataQuery(query)
 
     useEffect(() => {
-        if(data){
+        if (data) {
             const formattedPatientData = data?.events?.trackedEntityInstances.map(instance => ({
                 "patientIP": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("patient")))?.value,
                 "ward": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("ward")))?.value,
@@ -123,7 +123,7 @@ export const useViewCharts = () => {
             })
         else
             await refetch({
-                filter: `${getEntityByName("ward").id}:ILIKE:${wardCode}`
+                filter: `${getEntityByName("Ward (specialty)").id}:ILIKE:${wardCode}`
             })
     }
 
