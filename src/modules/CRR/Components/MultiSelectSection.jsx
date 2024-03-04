@@ -5,11 +5,12 @@ export const MultiSelectSection = ({section, number, setCheckedValues, initialVa
     const onChange = (checkedValues) => {
         setCheckedValues(checkedValues)
     };
+
     return (
         <div>
             <p className={styles.sectionTitle}><span style={{fontWeight: 700}}>{number}.</span>{section?.dataElements[0]?.name}</p>
             <Form.Item
-                initialValue={initialValue}
+                initialValue={initialValue[title]}
                 rules={rules}
                 name={title}
                 className={styles.parentContainer}>

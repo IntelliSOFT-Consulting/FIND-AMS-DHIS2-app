@@ -8,6 +8,7 @@ import {findSectionObject} from "../helpers";
 import {clearMembers} from "../../../shared/redux/actions";
 import {useEntities} from "./useEntities";
 import {useInstances} from "./useInstances";
+import {useOptions} from "../../../shared/hooks/useOptions";
 
 
 export const useNewForm = () => {
@@ -29,9 +30,9 @@ export const useNewForm = () => {
 
     const [instanceData, setInstanceData] = useState(null)
 
-    const [recommendationInitialState, setRecommendationInitialState] = useState(null)
+    const [recommendationInitialState, setRecommendationInitialState] = useState([])
 
-    const [redFlagsInitialState, setRedFlagsInitialState] = useState(null)
+    const [redFlagsInitialState, setRedFlagsInitialState] = useState([])
 
     const [recommendationValues, setRecommendationValues] = useState([])
 
@@ -62,7 +63,9 @@ export const useNewForm = () => {
 
     const {getEnrollmentData} = useInstances()
 
-    const {getEntityByID} = useEntities()
+    const {getEntityByID, getEntityByName} = useEntities()
+
+    const {getOptionSetByID} = useOptions()
 
     const [form] = Form.useForm()
 
@@ -222,6 +225,7 @@ export const useNewForm = () => {
 
 
         } catch (e) {
+            console.log("error", e)
             notification.error({
                 message: "error",
                 description: "Couldn't save event"
@@ -285,52 +289,66 @@ export const useNewForm = () => {
 
     }
 
-    const populateMultiselectInitialStates = () => {
-        const recommendationEntity = formSections?.recommendation?.dataElements[0]
+    const populateMultiselectInitialStates = async () => {
+        console.log("hit")
+        const recommendationDataElement = findSectionObject({
+            searchString: "Recommendation",
+            sectionArray: crr?.stages
+        })?.sections[0]?.dataElements[0]
+
+        const recommendationOptions = await getOptionSetByID(recommendationDataElement?.optionSet?.id)
 
         const allCheckedOptions = instanceData?.enrollments[0]?.events.map(item => ({
             code: item.dataValues[0]?.value,
             dataElement: item.dataValues[0]?.dataElement
         }))
 
-        const checkedRecommendations = allCheckedOptions?.filter(item => item?.dataElement === recommendationEntity?.id).map(item => {
-            const optionSetObject = recommendationEntity.optionSet.options.find(option => option.code === item.code)
+        let selectedRecommendationOptions = allCheckedOptions?.filter(option => option.dataElement === recommendationDataElement.id)
+
+        selectedRecommendationOptions = selectedRecommendationOptions?.map(item => {
+            const optionSetObject = recommendationOptions?.find(option => option.code === item.code)
             return optionSetObject.id
         })
 
+        setRecommendationInitialState(selectedRecommendationOptions)
+
         setInitialState(prev => ({
             ...prev,
-            recommendation: checkedRecommendations
+            recommendation: selectedRecommendationOptions
         }))
 
-        setRecommendationInitialState(checkedRecommendations)
+        const redFlagsDataElement = findSectionObject({
+            searchString: "Flags",
+            sectionArray: crr?.stages
+        })?.sections[0]?.dataElements[0]
 
-        setRecommendationValues(checkedRecommendations)
 
-        const redFlagsEntity = formSections?.redFlags?.dataElements[0]
+        const redFlagOptions = await getOptionSetByID(redFlagsDataElement?.optionSet?.id)
 
-        const checkedRedFlags = allCheckedOptions?.filter(item => item?.dataElement === redFlagsEntity?.id).map(item => {
-            const optionSetObject = redFlagsEntity.optionSet.options.find(option => option.code === item.code)
-            return optionSetObject.id
+        let selectedRedFlags = allCheckedOptions?.filter(option => option.dataElement === redFlagsDataElement.id)
+
+        selectedRedFlags = selectedRedFlags?.map(item => {
+            const optionSetObject = redFlagOptions?.find(option => option.code === item.code)
+            return optionSetObject?.id
         })
 
+        setRedFlagsInitialState(selectedRedFlags)
+
         setInitialState(prev => ({
             ...prev,
-            redFlags: checkedRedFlags
+            redFlags: selectedRedFlags
         }))
 
-        setRedFlagsInitialState(checkedRedFlags)
-
-        setRedFlagValues(checkedRedFlags)
     }
 
+
     useEffect(() => {
-        if (formSections?.recommendation !== {} && formSections?.redFlags !== {} && !chartDataLoading && instanceData)
+        if (formSections?.recommendation !== {} && formSections?.redFlags !== {} && !chartDataLoading && crr?.stages)
             populateMultiselectInitialStates()
     }, [formSections, crr, chartDataLoading, instanceData]);
 
     useEffect(() => {
-        if (teiID && teiID !== "new" && dataElements)
+        if (teiID !== "new" && dataElements)
             getChart()
     }, [teiID, dataElements]);
 

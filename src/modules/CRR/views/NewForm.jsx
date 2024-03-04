@@ -77,22 +77,22 @@ export const NewForm = () => {
                                 />
 
 
-                                {recommendationInitialState && formSections?.recommendation?.dataElements &&
+                                {initialState.recommendation && formSections?.recommendation?.dataElements &&
                                     <MultiSelectSection
                                         title="recommendation"
                                         rules={recommendationRules}
-                                        initialValue={recommendationInitialState}
+                                        initialValue={initialState}
                                         setCheckedValues={setRecommendationValues}
                                         number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
                                         section={formSections?.recommendation}
                                     />}
 
 
-                                {redFlagsInitialState && formSections?.redFlags?.dataElements &&
+                                {initialState.redFlags && formSections?.redFlags?.dataElements &&
                                     <MultiSelectSection
                                         title="redFlags"
                                         rules={redFlagRules}
-                                        initialValue={redFlagsInitialState}
+                                        initialValue={initialState}
                                         setCheckedValues={setRedFlagValues}
                                         number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
                                         section={formSections?.redFlags}
