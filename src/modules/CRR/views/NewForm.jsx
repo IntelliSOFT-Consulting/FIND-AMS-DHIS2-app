@@ -21,8 +21,6 @@ export const NewForm = () => {
         checkIfValid,
         checkIfCompulsory,
         onFieldsChange,
-        redFlagsInitialState,
-        recommendationInitialState,
         navigate,
         recommendationRules,
         redFlagRules
