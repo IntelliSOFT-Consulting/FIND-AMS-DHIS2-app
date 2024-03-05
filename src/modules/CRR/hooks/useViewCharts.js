@@ -105,7 +105,6 @@ export const useViewCharts = () => {
     }
 
     const filterByDate = async () => {
-        console.log("date entity", getEntityByName("date"))
         if (dateString)
             await refetch({
                 filter: `${getEntityByName("date").id}:ILIKE:${dateString}`
@@ -116,13 +115,16 @@ export const useViewCharts = () => {
         setIp(null)
         setDate(null)
         setDateString(null)
-        if (wardCode === "")
+
+        const wardEntity = getEntityByName("Ward (specialty)")
+
+        if (wardCode === "" || !wardEntity)
             await refetch({
                 filter: ""
             })
         else
             await refetch({
-                filter: `${getEntityByName("Ward (specialty)").id}:ILIKE:${wardCode}`
+                filter: `${wardEntity.id}:ILIKE:${wardCode}`
             })
     }
 

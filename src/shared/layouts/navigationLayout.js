@@ -60,11 +60,9 @@ function getItem(label, key, icon, children, type) {
 
 const items = [
     getItem("DASHBOARD", "/", <HomeIcon/>, null, "item"),
-    getItem("AMS CHART REVIEW", "/charts", <Pie/>, null, "item"),
+    getItem("CRR", "/crr", <Pie style={{width: "16px", height: "16px"}}/>, null, "item"),
     getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ArrowUpOutlined/>, null, "item"),
     getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon
-        style={{width: "16px", height: "16px"}}/>, null, "item"),
-    getItem("CRR", "/crr", <Pie
         style={{width: "16px", height: "16px"}}/>, null, "item"),
     {
       label: (

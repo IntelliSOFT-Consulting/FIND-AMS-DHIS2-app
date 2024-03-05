@@ -99,7 +99,7 @@ export default function Home() {
     const links = [
         {
             title: "AMS CHART REVIEW",
-            path: `/charts`,
+            path: `/crr`,
             icon: ChartPieIcon,
             external: false
         },
