@@ -119,9 +119,28 @@ export const useNewForm = () => {
     }
 
     const onFinish = async (values) => {
+
+        const {orgUnits} = await engine.query({
+            orgUnits: {
+                resource: "organisationUnits.json",
+                params: {
+                    filter: "level:eq:2",
+                    fields: "id,name,code"
+                }
+            }
+        })
+
+        const wardEntity = getEntityByName("Ward (specialty)")
+
+        const wardValue = values[wardEntity.id]
+
+        const orgUnit = orgUnits?.organisationUnits?.find(org =>  org.code.toLowerCase().includes(wardValue.toLowerCase()))
+
+
+
         const payload = {
             trackedEntityType: crr?.trackedEntityType?.id,
-            orgUnit: orgUnitID,
+            orgUnit: orgUnit?.id || orgUnitID,
             attributes: Object.keys(values).map(key => ({
                 attribute: key,
                 value: values[key]
