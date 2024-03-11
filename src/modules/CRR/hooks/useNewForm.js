@@ -177,12 +177,12 @@ export const useNewForm = () => {
 
                 const redFlagStage = crr.stages.find(stage => stage.title.toLowerCase().includes("flag"))
 
-                const recommendationOptionCodes = values["recommendation"].map(value => {
+                const recommendationOptionCodes = values["recommendation"].filter(value=> !initialState.recommendation.includes(value)).map(value => {
                     const option = formSections.recommendation.dataElements[0].optionSet?.options.find(option => option.id === value)
                     return option.code
                 })
 
-                const redFlagOptionCodes = values["redFlags"].map(value => {
+                const redFlagOptionCodes = values["redFlags"].filter(value=> !initialState.redFlags.includes(value)).map(value => {
                     const option = formSections.redFlags.dataElements[0].optionSet?.options.find(option => option.id === value)
                     return option.code
                 })
@@ -202,9 +202,14 @@ export const useNewForm = () => {
                     dataElementID: formSections.redFlags.dataElements[0]?.id,
                     programStage: redFlagStage.id
                 })
+                // console.log("initial red flags", initialState.redFlags)
+                // console.log("selected red flags", redFlagOptionCodes)
+                // console.log("red flag values", values["redFlags"])
             }
 
-            navigate("/crr")
+
+
+            // navigate("/crr")
 
         } catch (e) {
             notification.error({
@@ -301,7 +306,7 @@ export const useNewForm = () => {
         if (attribute.attributeValues.length === 0)
             return false
 
-        const compulsoryAttributeIndex = attribute.attributeValues.findIndex(attribute => attribute.attribute.name.toLowerCase().includes("compulsory"))
+        const compulsoryAttributeIndex = attribute.attributeValues.findIndex(attribute => attribute?.attribute?.name?.toLowerCase()?.includes("compulsory"))
 
         if (compulsoryAttributeIndex === -1) return false
 

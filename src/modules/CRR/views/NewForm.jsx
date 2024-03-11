@@ -110,6 +110,7 @@ export const NewForm = () => {
                                     section={formSections.comments}
                                 />
                                 <FormSection
+                                    checkIfCompulsory={checkIfCompulsory}
                                     ordered={false}
                                     containerStyles={styles.commentsSection}
                                     section={formSections.signature}

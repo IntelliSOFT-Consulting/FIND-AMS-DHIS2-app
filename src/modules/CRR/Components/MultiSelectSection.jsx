@@ -3,7 +3,7 @@ import styles from "../styles/Multiselect.module.css"
 
 export const MultiSelectSection = ({section = {}, number, setCheckedValues, initialValue, rules = [], title}) => {
    const onChange = (checkedValues) => {
-        setCheckedValues(checkedValues)
+        setCheckedValues(prev =>  prev.includes(checkedValues) ? "": checkedValues)
     };
 
     return (
