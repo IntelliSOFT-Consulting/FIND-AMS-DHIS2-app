@@ -147,7 +147,7 @@ export const useNewForm = () => {
             })).filter(attribute => attribute.value && !Array.isArray(attribute.value)),
             enrollments: [
                 {
-                    orgUnit: orgUnitID,
+                    orgUnit: orgUnit?.id || orgUnitID,
                     program: crr.program,
                     enrollmentDate: new Date(),
                     incidentDate: new Date(),
