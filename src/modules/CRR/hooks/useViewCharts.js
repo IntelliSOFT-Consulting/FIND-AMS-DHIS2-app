@@ -44,7 +44,7 @@ export const useViewCharts = () => {
     useEffect(() => {
         if (data) {
             const formattedPatientData = data?.events?.trackedEntityInstances.map(instance => ({
-                "patientIP": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("patient")))?.value,
+                "patientIP": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("ip")))?.value,
                 "ward": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("ward")))?.value,
                 "date": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("date")))?.value,
                 "teiID": instance.trackedEntityInstance
