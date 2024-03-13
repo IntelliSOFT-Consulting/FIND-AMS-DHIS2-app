@@ -139,10 +139,10 @@ export const useNewForm = () => {
         const originalRedFlagEvents = allOriginalEvents?.filter(event => event.programStage === redFlagsStageID)
 
 
-        const newRecommendationDataValues = currentRecommendationDataValues?.filter(dataValue => !originalRecommendationEvents?.some(event => event?.dataValues[0]?.value === dataValue?.value))
+        const newRecommendationDataValues = currentRecommendationDataValues?.filter(dataValue => !originalRecommendationEvents?.some(event => event?.dataValues[0]?.value === dataValue?.value))?.filter(dataValue => dataValue?.value)
         const discardedRecommendationEvents = originalRecommendationEvents?.filter(event => !currentRecommendationDataValues?.some(dataValue => dataValue?.value === event?.dataValues[0]?.value))
 
-        const newRedFlagDataValues = currentRedFlagDataValues?.filter(dataValue => !originalRedFlagEvents?.some(event => event?.dataValues[0]?.value === dataValue?.value))
+        const newRedFlagDataValues = currentRedFlagDataValues?.filter(dataValue => !originalRedFlagEvents?.some(event => event?.dataValues[0]?.value === dataValue?.value))?.filter(dataValue => dataValue?.value)
         const discardedRedFlagEvents = originalRedFlagEvents?.filter(event => !currentRedFlagDataValues?.some(dataValue => dataValue?.value === event?.dataValues[0]?.value))
 
 
