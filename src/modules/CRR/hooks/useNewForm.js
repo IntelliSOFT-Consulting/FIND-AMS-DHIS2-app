@@ -9,6 +9,7 @@ import {clearMembers} from "../../../shared/redux/actions";
 import {useEntities} from "./useEntities";
 import {useInstances} from "./useInstances";
 import {useOptions} from "../../../shared/hooks/useOptions";
+import {useCRR} from "./useCRR";
 
 
 export const useNewForm = () => {
@@ -67,6 +68,12 @@ export const useNewForm = () => {
 
     const {getOptionSetByID} = useOptions()
 
+    const {getForms} = useCRR()
+
+    useEffect(() => {
+        getForms()
+    }, []);
+
     const [form] = Form.useForm()
 
     const {teiID} = useParams()
@@ -118,6 +125,126 @@ export const useNewForm = () => {
         }
     }
 
+
+    const updateEvents = async ({
+                                    currentRedFlagDataValues,
+                                    currentRecommendationDataValues,
+                                    trackedEntityInstance,
+                                    wardOrgUnit
+                                }) => {
+        const allOriginalEvents = instanceData?.enrollments[0]?.events;
+        const recommendationStageID = (crr?.stages?.find(stage => stage?.title?.toLowerCase().includes("recommendation")))?.id
+        const redFlagsStageID = (crr?.stages?.find(stage => stage?.title?.toLowerCase()?.includes("flag")))?.id
+        const originalRecommendationEvents = allOriginalEvents?.filter(event => event?.programStage === recommendationStageID)
+        const originalRedFlagEvents = allOriginalEvents?.filter(event => event.programStage === redFlagsStageID)
+
+
+        const newRecommendationDataValues = currentRecommendationDataValues?.filter(dataValue => !originalRecommendationEvents?.some(event => event?.dataValues[0]?.value === dataValue?.value))
+        const discardedRecommendationEvents = originalRecommendationEvents?.filter(event => !currentRecommendationDataValues?.some(dataValue => dataValue?.value === event?.dataValues[0]?.value))
+
+        const newRedFlagDataValues = currentRedFlagDataValues?.filter(dataValue => !originalRedFlagEvents?.some(event => event?.dataValues[0]?.value === dataValue?.value))
+        const discardedRedFlagEvents = originalRedFlagEvents?.filter(event => !currentRedFlagDataValues?.some(dataValue => dataValue?.value === event?.dataValues[0]?.value))
+
+
+        try {
+            /**
+             * create events for new recommendation values
+             */
+            if (newRecommendationDataValues?.length > 0)
+                await engine.mutate({
+                    resource: "/events",
+                    type: "create",
+                    data: {
+                        events: newRecommendationDataValues.map(dataValue => ({
+                            program: crr?.program,
+                            programStage: recommendationStageID,
+                            trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
+                            orgUnit: wardOrgUnit,
+                            enrollment: trackedEntityInstance.enrollment,
+                            status: "ACTIVE",
+                            dataValues: [dataValue],
+                            eventDate: new Date().toISOString().slice(0, 10)
+                        })),
+                        eventDate: new Date().toISOString().slice(0, 10)
+                    }
+                })
+
+            /**
+             * create events for new red flag values
+             */
+            if (newRedFlagDataValues?.length > 0)
+                await engine.mutate({
+                    resource: "/events",
+                    type: "create",
+                    data: {
+                        events: newRedFlagDataValues.map(dataValue => ({
+                            program: crr?.program,
+                            programStage: redFlagsStageID,
+                            trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
+                            orgUnit: wardOrgUnit,
+                            enrollment: trackedEntityInstance.enrollment,
+                            status: "ACTIVE",
+                            dataValues: [dataValue],
+                            eventDate: new Date().toISOString().slice(0, 10)
+                        })),
+                        eventDate: new Date().toISOString().slice(0, 10)
+                    },
+                })
+
+            /**
+             * delete discarded recommendation events
+             */
+            if (discardedRecommendationEvents?.length > 0)
+                await engine.mutate({
+                    resource: "/events",
+                    type: "create",
+                    params: {
+                        importStrategy: "DELETE"
+                    },
+                    data: {
+                        events: discardedRecommendationEvents.map(event => ({
+                            program: crr?.program,
+                            programStage: recommendationStageID,
+                            trackedEntityInstance:trackedEntityInstance.trackedEntityInstance,
+                            orgUnit: wardOrgUnit,
+                            enrollment: trackedEntityInstance.enrollment,
+                            event: event.event
+                        })),
+                        // eventDate: new Date().toISOString().slice(0, 10)
+                    }
+                })
+
+            /**
+             * delete discarded red flag events
+             */
+            if (discardedRedFlagEvents?.length > 0)
+                await engine.mutate({
+                    resource: "/events",
+                    type: "create",
+                    params: {
+                        importStrategy: "DELETE"
+                    },
+                    data: {
+                        events: discardedRedFlagEvents.map(event => ({
+                            program: crr.program,
+                            programStage: redFlagsStageID,
+                            trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
+                            orgUnit: wardOrgUnit,
+                            enrollment: trackedEntityInstance.enrollment,
+                            event: event.event
+                        })),
+                        // eventDate: new Date().toISOString().slice(0, 10)
+                    }
+                })
+            return 200
+        } catch (e) {
+            return 400
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
     const onFinish = async (values) => {
 
         const {orgUnits} = await engine.query({
@@ -134,8 +261,7 @@ export const useNewForm = () => {
 
         const wardValue = values[wardEntity.id]
 
-        const orgUnit = orgUnits?.organisationUnits?.find(org =>  org.code.toLowerCase().includes(wardValue.toLowerCase()))
-
+        const orgUnit = orgUnits?.organisationUnits?.find(org => org.code.toLowerCase().includes(wardValue.toLowerCase()))
 
 
         const payload = {
@@ -177,34 +303,31 @@ export const useNewForm = () => {
 
                 const redFlagStage = crr.stages.find(stage => stage.title.toLowerCase().includes("flag"))
 
-                const recommendationOptionCodes = values["recommendation"].filter(value=> initialState?.recommendation ? !initialState?.recommendation?.includes(value): value).map(value => {
+                const currentRecommendationDataValues = values["recommendation"].map(value => {
                     const option = formSections.recommendation.dataElements[0].optionSet?.options.find(option => option.id === value)
-                    return option.code
+                    return {
+                        dataElement: recommendationStage.sections[0]?.dataElements[0]?.id,
+                        value: option.code
+                    }
                 })
 
-                const redFlagOptionCodes = values["redFlags"].filter(value=> initialState.redFlags ?  !initialState?.redFlags?.includes(value): value).map(value => {
+                const currentRedFlagDataValues = values["redFlags"].map(value => {
                     const option = formSections.redFlags.dataElements[0].optionSet?.options.find(option => option.id === value)
-                    return option.code
+                    return {
+                        dataElement: redFlagStage.sections[0]?.dataElements[0]?.id,
+                        value: option.code
+                    }
                 })
 
-                await createEvent({
-                    trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
-                    enrollment: trackedEntityInstance.enrollment,
-                    selectedOptions: recommendationOptionCodes,
-                    dataElementID: formSections.recommendation.dataElements[0]?.id,
-                    programStage: recommendationStage.id
+                const updateResponse = await updateEvents({
+                    currentRedFlagDataValues,
+                    currentRecommendationDataValues,
+                    trackedEntityInstance,
+                    wardOrgUnit: orgUnit?.id || orgUnitID
                 })
-
-                await createEvent({
-                    trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
-                    enrollment: trackedEntityInstance.enrollment,
-                    selectedOptions: redFlagOptionCodes,
-                    dataElementID: formSections.redFlags.dataElements[0]?.id,
-                    programStage: redFlagStage.id
-                })
+                updateResponse === 200 && navigate("/crr")
             }
 
-            navigate("/crr")
 
         } catch (e) {
             console.log("error", e)
@@ -214,44 +337,6 @@ export const useNewForm = () => {
             })
         } finally {
             dispatch(clearMembers())
-            setLoading(false)
-        }
-    }
-
-    const createEvent = async ({trackedEntityInstance, enrollment, selectedOptions, dataElementID, programStage}) => {
-        const events = selectedOptions.map(option => ({
-            program: crr.program,
-            programStage,
-            trackedEntityInstance,
-            orgUnit: orgUnitID,
-            enrollment,
-            status: "ACTIVE",
-            dataValues: [
-                {
-                    dataElement: dataElementID,
-                    value: option,
-                }
-            ],
-            eventDate: new Date().toISOString().slice(0, 10)
-        }))
-
-        try {
-            setLoading(true)
-            await engine.mutate({
-                resource: "/events",
-                type: "create",
-                data: {
-                    events
-                }
-            })
-
-
-        } catch (e) {
-            notification.error({
-                message: "error",
-                description: "Couldn't save event"
-            })
-        } finally {
             setLoading(false)
         }
     }

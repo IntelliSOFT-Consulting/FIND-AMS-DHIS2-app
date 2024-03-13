@@ -31,7 +31,6 @@ export const useCRR = () => {
 
             const program = programs?.programs[0]
 
-
             const registration = formatRegistration(program)
 
             const stages = formatStages(program)
