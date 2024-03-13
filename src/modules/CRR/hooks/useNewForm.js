@@ -145,15 +145,6 @@ export const useNewForm = () => {
         const newRedFlagDataValues = currentRedFlagDataValues?.filter(dataValue => !originalRedFlagEvents?.some(event => event?.dataValues[0]?.value === dataValue?.value))
         const discardedRedFlagEvents = originalRedFlagEvents?.filter(event => !currentRedFlagDataValues?.some(dataValue => dataValue?.value === event?.dataValues[0]?.value))
 
-        console.log("current red flag data values", currentRedFlagDataValues)
-        console.log("current recommendation data values", currentRecommendationDataValues)
-
-        console.log("original red flag events", originalRedFlagEvents)
-        console.log("original recommended events", originalRecommendationEvents)
-
-        console.log("discarded red flag events", discardedRedFlagEvents)
-        console.log("discarded recommendation events", discardedRecommendationEvents)
-
 
         try {
             /**
