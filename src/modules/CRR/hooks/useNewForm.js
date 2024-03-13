@@ -145,6 +145,15 @@ export const useNewForm = () => {
         const newRedFlagDataValues = currentRedFlagDataValues?.filter(dataValue => !originalRedFlagEvents?.some(event => event?.dataValues[0]?.value === dataValue?.value))
         const discardedRedFlagEvents = originalRedFlagEvents?.filter(event => !currentRedFlagDataValues?.some(dataValue => dataValue?.value === event?.dataValues[0]?.value))
 
+        console.log("current red flag data values", currentRedFlagDataValues)
+        console.log("current recommendation data values", currentRecommendationDataValues)
+
+        console.log("original red flag events", originalRedFlagEvents)
+        console.log("original recommended events", originalRecommendationEvents)
+
+        console.log("discarded red flag events", discardedRedFlagEvents)
+        console.log("discarded recommendation events", discardedRecommendationEvents)
+
 
         try {
             /**
@@ -165,7 +174,6 @@ export const useNewForm = () => {
                             dataValues: [dataValue],
                             eventDate: new Date().toISOString().slice(0, 10)
                         })),
-                        eventDate: new Date().toISOString().slice(0, 10)
                     }
                 })
 
@@ -187,7 +195,6 @@ export const useNewForm = () => {
                             dataValues: [dataValue],
                             eventDate: new Date().toISOString().slice(0, 10)
                         })),
-                        eventDate: new Date().toISOString().slice(0, 10)
                     },
                 })
 
@@ -210,7 +217,6 @@ export const useNewForm = () => {
                             enrollment: trackedEntityInstance.enrollment,
                             event: event.event
                         })),
-                        // eventDate: new Date().toISOString().slice(0, 10)
                     }
                 })
 
@@ -233,7 +239,6 @@ export const useNewForm = () => {
                             enrollment: trackedEntityInstance.enrollment,
                             event: event.event
                         })),
-                        // eventDate: new Date().toISOString().slice(0, 10)
                     }
                 })
             return 200
@@ -330,7 +335,6 @@ export const useNewForm = () => {
 
 
         } catch (e) {
-            console.log("error", e)
             notification.error({
                 message: "error",
                 description: "Couldn't save chart"
@@ -354,22 +358,22 @@ export const useNewForm = () => {
 
         const attributeObject = getEntityByID(entityID)
 
-        if (attributeObject.attributeValues.length === 0)
+        if (attributeObject?.attributeValues?.length === 0)
             return {validity: true}
 
         let validity = true
 
-        attributeObject.attributeValues.forEach(attribute => {
-            const attributeElementId = attribute.value.split(",")[0]
+        attributeObject?.attributeValues?.forEach(attribute => {
+            const attributeElementId = attribute?.value?.split(",")[0]
 
-            const attributeValuesArray = attribute.value.split(",").splice(1)
+            const attributeValuesArray = attribute?.value?.split(",")?.splice(1)
 
-            const conditionalCheck = form.getFieldValue(attributeElementId)
+            const conditionalCheck = form?.getFieldValue(attributeElementId)
 
             if (conditionalCheck === undefined)
                 validity = validity
             else
-                validity = validity && (attributeValuesArray.includes(conditionalCheck))
+                validity = validity && (attributeValuesArray?.includes(conditionalCheck))
 
         })
 
@@ -384,10 +388,10 @@ export const useNewForm = () => {
 
         const attribute = getEntityByID(attributeID)
 
-        if (attribute.attributeValues.length === 0)
+        if (attribute?.attributeValues?.length === 0)
             return false
 
-        const compulsoryAttributeIndex = attribute.attributeValues.findIndex(attribute => attribute?.attribute?.name?.toLowerCase()?.includes("compulsory"))
+        const compulsoryAttributeIndex = attribute?.attributeValues?.findIndex(attribute => attribute?.attribute?.name?.toLowerCase()?.includes("compulsory"))
 
         if (compulsoryAttributeIndex === -1) return false
 
