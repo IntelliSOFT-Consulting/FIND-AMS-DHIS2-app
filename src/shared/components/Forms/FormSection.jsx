@@ -51,7 +51,7 @@ export const FormSection = ({
                             options={dataElement.optionSet?.options?.map((option) => ({
                                 label: option.name || option?.displayName,
                                 value: option.code,
-                            }))}
+                            })).sort((a,b)=> a?.label > b?.label)}
                             placeholder={`Enter ${dataElement.name}`}
                         />
                     </Form.Item>
