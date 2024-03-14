@@ -160,7 +160,7 @@ export const useViewCharts = () => {
             ...option,
             icon: FolderOutlined,
             handler: () => filterByWards(option.code)
-        }))
+        })).sort((a,b)=> a.displayName > b.displayName)
 
         if (wardFolders?.length > 0)
             setWards([...wardFolders, {
