@@ -1,6 +1,6 @@
 import {Form} from "antd";
 import InputItem from "../Fields/InputItem";
-import styles from "../../../modules/Charts/styles/FormSection.module.css"
+import styles from "../../styles/FormSection.module.css"
 
 
 const Wrapper = ({ordered, children, listStyle, startingIndex, containerStyles}) => ordered ? (

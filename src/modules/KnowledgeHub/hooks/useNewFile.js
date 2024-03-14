@@ -4,7 +4,7 @@ import {useDataElements} from "./useDataElements";
 import {Form, notification} from "antd";
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useNavigate} from "react-router-dom";
-import {findSectionObject} from "../../Charts/helpers";
+import {findSectionObject} from "../../../shared/helpers";
 
 export const useNewFile = () => {
 
