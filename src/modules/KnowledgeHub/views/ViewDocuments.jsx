@@ -44,10 +44,11 @@ export const ViewDocuments = () => {
                     borderBottom: "1px solid #D3D3D3"
                 }}>
                     <p style={{fontSize: "14px", padding: "4px"}}>AMS KNOWLEDGE HUB</p>
-                    <button
+                    <Button
+                        type="primary"
                         onClick={() => navigate("/knowledge-hub/new-file")}
-                        className="outline-btn">UPLOAD NEW RESOURCE
-                    </button>
+                        >UPLOAD NEW RESOURCE
+                    </Button>
                 </div>
                 <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem"}}>
                     <Input
