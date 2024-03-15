@@ -23,12 +23,13 @@ export const NewForm = () => {
         onFieldsChange,
         navigate,
         recommendationRules,
-        redFlagRules
+        redFlagRules,
+        multiSectionsPopulated
     } = useNewForm()
 
     return (
         <>
-            {!chartDataLoading ? (
+            {!chartDataLoading && multiSectionsPopulated ? (
                     <Form
                         onFieldsChange={onFieldsChange}
                         initialValues={initialState}
@@ -78,7 +79,7 @@ export const NewForm = () => {
                                 {
                                     formSections?.recommendation?.dataElements
                                     && formSections?.redFlags?.dataElements
-                                    && (teiID !== "new" ? (initialState?.recommendation?.length > 0 && initialState?.redFlags?.length > 0): true)
+                                    // && (teiID !== "new" ? (initialState?.recommendation?.length > 0 && initialState?.redFlags?.length > 0): true)
                                     && (
                                         <>
                                             <MultiSelectSection

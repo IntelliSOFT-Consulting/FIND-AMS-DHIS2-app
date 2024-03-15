@@ -31,15 +31,13 @@ export const useNewForm = () => {
 
     const [instanceData, setInstanceData] = useState(null)
 
-    const [recommendationInitialState, setRecommendationInitialState] = useState([])
-
-    const [redFlagsInitialState, setRedFlagsInitialState] = useState([])
-
     const [recommendationValues, setRecommendationValues] = useState([])
 
     const [redFlagValues, setRedFlagValues] = useState([])
 
     const [loading, setLoading] = useState(false)
+
+    const [multiSectionsPopulated, setMultiSectionsPopulated] = useState(false)
 
     const [chartDataLoading, setChartDataLoading] = useState(false)
 
@@ -82,12 +80,70 @@ export const useNewForm = () => {
 
     const navigate = useNavigate()
 
+
+    const populateMultiselectInitialStates = async ({trackedEntityInstance}) => {
+        try {
+            const recommendationDataElement = findSectionObject({
+                searchString: "Recommendation",
+                sectionArray: crr?.stages
+            })?.sections[0]?.dataElements[0]
+
+
+            const recommendationOptions = await getOptionSetByID(recommendationDataElement?.optionSet?.id)
+
+            const allCheckedOptions = trackedEntityInstance?.enrollments[0]?.events.map(item => ({
+                code: item.dataValues[0]?.value,
+                dataElement: item.dataValues[0]?.dataElement
+            }))
+
+
+            let selectedRecommendationOptions = allCheckedOptions?.filter(option => option.dataElement === recommendationDataElement.id)
+
+            selectedRecommendationOptions = selectedRecommendationOptions?.map(item => {
+                const optionSetObject = recommendationOptions?.find(option => option.code === item.code)
+                return optionSetObject.id
+            })
+
+
+            setInitialState(prev => ({
+                ...prev,
+                recommendation: selectedRecommendationOptions
+            }))
+
+            const redFlagsDataElement = findSectionObject({
+                searchString: "Flags",
+                sectionArray: crr?.stages
+            })?.sections[0]?.dataElements[0]
+
+
+            const redFlagOptions = await getOptionSetByID(redFlagsDataElement?.optionSet?.id)
+
+            let selectedRedFlags = allCheckedOptions?.filter(option => option.dataElement === redFlagsDataElement.id)
+
+            selectedRedFlags = selectedRedFlags?.map(item => {
+                const optionSetObject = redFlagOptions?.find(option => option.code === item.code)
+                return optionSetObject?.id
+            })
+
+
+            setInitialState(prev => ({
+                ...prev,
+                redFlags: selectedRedFlags
+            }))
+        } catch (e) {
+            console.log("error", e)
+            return e
+        } finally {
+            setMultiSectionsPopulated(true)
+        }
+    }
+
     const getChart = async () => {
         try {
             setChartDataLoading(true)
 
             const response = await engine.query({
-                events: {
+                trackedEntityInstance: {
                     resource: `trackedEntityInstances/${teiID}`,
                     params: {
                         fields: "trackedEntityInstance,trackedEntityType, attributes[*],enrollments[*],createdAt",
@@ -95,9 +151,9 @@ export const useNewForm = () => {
                 }
             })
 
-            setInstanceData(response.events)
-
-            const firstEnrollment = response.events.enrollments[0]
+            setInstanceData(response.trackedEntityInstance)
+            await populateMultiselectInitialStates({trackedEntityInstance: response.trackedEntityInstance})
+            const firstEnrollment = response.trackedEntityInstance.enrollments[0]
 
             firstEnrollment.attributes.forEach(item => {
                 const newObject = {}
@@ -113,18 +169,24 @@ export const useNewForm = () => {
                 }))
             })
 
-            await populateMultiselectInitialStates()
+
 
         } catch (e) {
             notification.error({
                 message: "error",
                 description: "Error getting chart data"
             })
-        } finally {
+        }finally {
             setChartDataLoading(false)
         }
     }
 
+    useEffect(() => {
+        if (teiID !== "new" && dataElements && crr.stages)
+            getChart()
+        if(teiID === "new")
+            setMultiSectionsPopulated(true)
+    }, [teiID, dataElements, crr]);
 
     const updateEvents = async ({
                                     currentRedFlagDataValues,
@@ -203,7 +265,7 @@ export const useNewForm = () => {
                         events: discardedRecommendationEvents.map(event => ({
                             program: crr?.program,
                             programStage: recommendationStageID,
-                            trackedEntityInstance:trackedEntityInstance.trackedEntityInstance,
+                            trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
                             orgUnit: wardOrgUnit,
                             enrollment: trackedEntityInstance.enrollment,
                             event: event.event
@@ -390,67 +452,8 @@ export const useNewForm = () => {
 
     }
 
-    const populateMultiselectInitialStates = async () => {
-        const recommendationDataElement = findSectionObject({
-            searchString: "Recommendation",
-            sectionArray: crr?.stages
-        })?.sections[0]?.dataElements[0]
-
-        const recommendationOptions = await getOptionSetByID(recommendationDataElement?.optionSet?.id)
-
-        const allCheckedOptions = instanceData?.enrollments[0]?.events.map(item => ({
-            code: item.dataValues[0]?.value,
-            dataElement: item.dataValues[0]?.dataElement
-        }))
-
-        let selectedRecommendationOptions = allCheckedOptions?.filter(option => option.dataElement === recommendationDataElement.id)
-
-        selectedRecommendationOptions = selectedRecommendationOptions?.map(item => {
-            const optionSetObject = recommendationOptions?.find(option => option.code === item.code)
-            return optionSetObject.id
-        })
-
-        setRecommendationInitialState(selectedRecommendationOptions)
-
-        setInitialState(prev => ({
-            ...prev,
-            recommendation: selectedRecommendationOptions
-        }))
-
-        const redFlagsDataElement = findSectionObject({
-            searchString: "Flags",
-            sectionArray: crr?.stages
-        })?.sections[0]?.dataElements[0]
 
 
-        const redFlagOptions = await getOptionSetByID(redFlagsDataElement?.optionSet?.id)
-
-        let selectedRedFlags = allCheckedOptions?.filter(option => option.dataElement === redFlagsDataElement.id)
-
-        selectedRedFlags = selectedRedFlags?.map(item => {
-            const optionSetObject = redFlagOptions?.find(option => option.code === item.code)
-            return optionSetObject?.id
-        })
-
-        setRedFlagsInitialState(selectedRedFlags)
-
-        setInitialState(prev => ({
-            ...prev,
-            redFlags: selectedRedFlags
-        }))
-
-    }
-
-
-    useEffect(() => {
-        if (formSections?.recommendation !== {} && formSections?.redFlags !== {} && !chartDataLoading && crr?.stages)
-            populateMultiselectInitialStates()
-    }, [formSections, crr, chartDataLoading, instanceData]);
-
-    useEffect(() => {
-        if (teiID !== "new" && dataElements)
-            getChart()
-    }, [teiID, dataElements]);
 
     useEffect(() => {
         if (crr?.stages?.length > 0)
@@ -487,11 +490,10 @@ export const useNewForm = () => {
         checkIfValid,
         checkIfCompulsory,
         onFieldsChange,
-        redFlagsInitialState,
-        recommendationInitialState,
         navigate,
         recommendationRules,
-        redFlagRules
+        redFlagRules,
+        multiSectionsPopulated
     }
 
 }
