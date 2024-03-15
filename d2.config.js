@@ -1,7 +1,7 @@
 const config = {
     type: 'app',
-    title: "FIND AMS",
-    name: "FIND AMS",
+    title: "MCRH AMS",
+    name: "MCRH AMS",
     description: "AMS",
     version: "1.0",
     entryPoints: {

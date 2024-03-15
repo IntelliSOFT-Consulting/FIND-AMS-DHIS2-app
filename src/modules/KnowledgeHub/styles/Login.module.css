@@ -1,0 +1,63 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+}
+
+.link {
+    justify-self: flex-end;
+    text-align: end;
+}
+
+.linkBtn {
+    display: flex;
+    margin-left: auto;
+    background-color: #1d5288;
+    padding: .8rem 2rem;
+    border-radius: 12px;
+    color: white;
+    border: none;
+    text-decoration: underline;
+    font-weight: 300;
+    align-items: end;
+}
+
+.linkIcon {
+    width: 2rem;
+    height: 1.2rem;
+}
+
+.titleText {
+    font-size: 24px;
+    color: #1d5288;
+    text-align: center;
+    font-weight: 500;
+}
+
+.form {
+    box-shadow: #1d5288;
+    border: 1px solid #d3d3d3;
+    max-width: 1024px;
+    display: flex;
+    flex-direction: column;
+    margin: 0px auto;
+    padding: 1rem 4rem;
+    border-radius: 12px;
+}
+
+.loginText {
+    color: #1d5288;
+    font-weight: 500;
+    font-size: 18px;
+    text-align: center;
+}
+
+.formItem {
+    min-width: 600px;
+    width: 100%;
+}
+
+.checkboxText{
+
+}

@@ -1,6 +1,7 @@
 import React from "react";
-import { createUseStyles } from "react-jss";
-import { ChartPieIcon, ArrowTopRightOnSquareIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import {createUseStyles} from "react-jss";
+import {ArrowTopRightOnSquareIcon, ChartPieIcon, Cog6ToothIcon, DocumentIcon} from "@heroicons/react/24/solid";
+import {ArrowUpIcon} from "@heroicons/react/20/solid";
 import {Link} from "react-router-dom";
 
 const styles = createUseStyles({
@@ -74,43 +75,74 @@ const styles = createUseStyles({
     },
 });
 
+const LinkWrapper = ({external, path, children}) => {
+    const classes = styles()
+    return (
+        <>
+            {
+                external ? (
+                    <a href={path} className={classes.linkItem}>
+                        {children}
+                    </a>
+                ) : (
+                    <Link to={path} className={classes.linkItem}>
+                        {children}
+                    </Link>
+                )
+            }
+        </>
+    )
+}
+
 export default function Home() {
+    const domain = window.location.origin;
     const links = [
         {
-            title: "AMS Chart Review",
-            path: `/charts`,
-            icon: ArrowTopRightOnSquareIcon,
+            title: "AMS CHART REVIEW",
+            path: `/crr`,
+            icon: ChartPieIcon,
+            external: false
         },
         {
-            title: "AMS Knowledge Hub",
+            title: "AMS KNOWLEDGE HUB",
             path: `/knowledge-hub`,
-            icon: Cog6ToothIcon,
+            icon: ArrowUpIcon,
+            external: false
         },
         {
-            title: "Microbiology Data",
+            title: "MICROBIOLOGY DATA",
             path: `/microbiology-data`,
-            icon: ChartPieIcon,
+            icon: DocumentIcon,
+            external: false
         },
         {
-            title: "Configurations",
-            path: `/configurations`,
-            icon: ChartPieIcon,
-        }
+            title: "REPORTS",
+            path: `${domain}/dhis-web-dashboard`,
+            icon: ArrowTopRightOnSquareIcon,
+            external: true
+        },
+        {
+            title: "CONFIGURATIONS",
+            path: `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`,
+            icon: Cog6ToothIcon,
+            external: true
+        },
     ];
+
     const classes = styles();
 
     return (
         <div className={classes.container}>
             <div className={classes.links}>
                 {links.map((link) => (
-                    <Link key={link.title} to={link.path} className={classes.linkItem}>
+                    <LinkWrapper key={link.title} external={link.external} path={link.path}>
                         <div className={classes.iconSection}>
-                            <link.icon className={classes.icon} aria-hidden="true" />
+                            <link.icon className={classes.icon} aria-hidden="true"/>
                         </div>
                         <div className={classes.title}>
                             <span>{link.title}</span>
                         </div>
-                    </Link>
+                    </LinkWrapper>
                 ))}
             </div>
         </div>

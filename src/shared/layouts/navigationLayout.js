@@ -1,19 +1,19 @@
 import React, {useEffect} from "react";
 import {
-    ArrowDownOutlined as ArrowDownRightIcon,
+    ArrowUpOutlined,
     HomeOutlined as HomeIcon,
-    PieChartOutlined as ChartPieIcon,
     PieChartOutlined as Pie,
     SettingOutlined as Cog6ToothIcon,
-    ArrowUpOutlined
 } from "@ant-design/icons";
 import {Layout, Menu} from "antd";
 import {createUseStyles} from "react-jss";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import routes from "../../routes";
-import {useGetForms} from "../hooks/useGetForms";
+import {useGetChartReview} from "../hooks/useGetChartReview";
 import {useGetOrgUnit} from "../hooks/useGetOrgUnit";
 import {DocumentTextIcon} from "@heroicons/react/24/outline";
+import {useUser} from "../hooks/useUser";
+import {ArrowTopRightOnSquareIcon} from "@heroicons/react/24/solid";
 
 const {Content, Sider} = Layout;
 
@@ -46,9 +46,11 @@ const styles = createUseStyles({
     },
 });
 
+const domain = window.location.origin;
+
 function getItem(label, key, icon, children, type) {
     return {
-        key,
+        key ,
         icon,
         children,
         label,
@@ -57,19 +59,34 @@ function getItem(label, key, icon, children, type) {
 }
 
 const items = [
-    getItem("Dashboard", "/", <HomeIcon/>, null, "item"),
-    getItem("AMS Chart Review", "/charts", <Pie/>, null, "item"),
+    getItem("DASHBOARD", "/", <HomeIcon/>, null, "item"),
+    getItem("CHART REVIEW", "/crr", <Pie style={{width: "16px", height: "16px"}}/>, null, "item"),
     getItem("AMS KNOWLEDGE HUB", "/knowledge-hub", <ArrowUpOutlined/>, null, "item"),
-    getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon style={{width: "16px", height: "16px"}}/>, null, "item"),
-
-    getItem("Reports", "/reports", <ArrowDownRightIcon/>, null, "item"),
-    getItem("Configurations", "/configurations", <Cog6ToothIcon/>, null, "item"),
+    getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon
+        style={{width: "16px", height: "16px"}}/>, null, "item"),
+    {
+      label: (
+          <a href={`${domain}/dhis-web-dashboard`}>
+              <ArrowTopRightOnSquareIcon width={16} height={16} /> REPORTS
+          </a>
+      ),
+      key: "reports"
+    },
+    {
+      label: (
+          <a href={`${domain}/dhis-web-maintenance/index.html#/list/programSection/program`}>
+              <Cog6ToothIcon width={16} height={16} /> CONFIGURATIONS
+          </a>
+      ),
+      key: "configuration"
+    },
 ];
-const NavigationLayout = ({user, program, organisationUnits}) => {
+const NavigationLayout = ({user}) => {
     const classes = styles();
 
-    const {getForms} = useGetForms()
+    const {getForms} = useGetChartReview()
     const {getOrgUnit} = useGetOrgUnit()
+    const {getUser} = useUser()
 
     const navigate = useNavigate();
 
@@ -86,9 +103,8 @@ const NavigationLayout = ({user, program, organisationUnits}) => {
     useEffect(() => {
         getForms()
         getOrgUnit()
+        getUser()
     }, []);
-
-
 
 
     return (

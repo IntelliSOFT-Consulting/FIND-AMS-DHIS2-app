@@ -1,0 +1,47 @@
+.header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #2C6693;
+    color: white;
+    padding: 2px .5rem;
+    margin-bottom: 20px;
+    font-size: 14px;
+    width: 100%;
+    @media (min-width: 768px){
+        padding: 2px 1.5rem;
+    }
+}
+
+.breadCrumb{
+    margin-top: 2rem;
+    padding-left: 1rem;
+}
+
+.card{
+    height: fit-content!important;
+    width: 100%;
+    overflow: auto;
+    border: 1px solid #d3d3d3;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    position: relative;
+}
+
+.cardTitle{
+    background-color: #2C6693;
+    color: white;
+    padding: 1rem 1.5rem;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.cardBody{
+    padding: 20px;
+    width: 100%;
+}
+
+.footer{
+    padding: 10px 1.5rem;
+    background-color: #e3eef7;
+}

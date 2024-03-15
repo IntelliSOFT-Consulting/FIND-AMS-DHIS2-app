@@ -1,0 +1,80 @@
+.sideNavContainer {
+    display: flex;
+    box-shadow: 4px 4px 4px #D3D3D3;
+    border: 1px solid #d3d3d3;
+    padding: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    color: #1d5288;
+    border-radius: 6px;
+    flex-wrap: wrap;
+    gap: 2rem;
+
+    @media (min-width: 768px) {
+        flex-wrap: nowrap;
+        justify-content: start;
+        flex-direction: column;
+        align-items: center;
+        max-height:  75vh;
+        overflow-y: scroll;
+    }
+}
+
+.title {
+    font-size: 20px;
+    width: 100%;
+    justify-self: center;
+    text-align: center;
+    text-decoration: underline;
+    text-transform: uppercase;
+    @media (min-width: 1024px) {
+        text-align: left;
+    }
+}
+
+.navIcon{
+    font-size: 2rem;
+}
+
+.action{
+    margin-left: auto;
+}
+
+.sideNavItem{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 1rem;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: .1rem 1rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.activeSideNavItem{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 1rem;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: .1rem 1rem;
+    cursor: pointer;
+    width: 100%;
+    color: #1d5288;
+    background-color: #e3eef7;
+}
+
+
+.addNewNavItem{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: .1rem 1rem;
+    cursor: pointer;
+    width: 100%;
+}
