@@ -12,7 +12,7 @@ import {useOptions} from "../../../shared/hooks/useOptions";
 import {useCRR} from "./useCRR";
 
 
-export const useNewForm = () => {
+export const useChartReviewForm = () => {
 
     const [formSections, setFormSections] = useState({
         patients: {},
@@ -74,7 +74,7 @@ export const useNewForm = () => {
 
     const [form] = Form.useForm()
 
-    const {teiID} = useParams()
+    const {teiID, enrollmentID} = useParams()
 
     const engine = useDataEngine()
 
@@ -131,7 +131,6 @@ export const useNewForm = () => {
                 redFlags: selectedRedFlags
             }))
         } catch (e) {
-            console.log("error", e)
             return e
         } finally {
             setMultiSectionsPopulated(true)
@@ -182,9 +181,9 @@ export const useNewForm = () => {
     }
 
     useEffect(() => {
-        if (teiID !== "new" && dataElements && crr.stages)
+        if (teiID && dataElements && crr.stages)
             getChart()
-        if(teiID === "new")
+        if(!teiID)
             setMultiSectionsPopulated(true)
     }, [teiID, dataElements, crr]);
 
@@ -222,7 +221,7 @@ export const useNewForm = () => {
                             programStage: recommendationStageID,
                             trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
                             orgUnit: wardOrgUnit,
-                            enrollment: trackedEntityInstance.enrollment,
+                            enrollment: enrollmentID,
                             status: "ACTIVE",
                             dataValues: [dataValue],
                             eventDate: new Date().toISOString().slice(0, 10)
@@ -243,7 +242,7 @@ export const useNewForm = () => {
                             programStage: redFlagsStageID,
                             trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
                             orgUnit: wardOrgUnit,
-                            enrollment: trackedEntityInstance.enrollment,
+                            enrollment: enrollmentID,
                             status: "ACTIVE",
                             dataValues: [dataValue],
                             eventDate: new Date().toISOString().slice(0, 10)
@@ -267,7 +266,7 @@ export const useNewForm = () => {
                             programStage: recommendationStageID,
                             trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
                             orgUnit: wardOrgUnit,
-                            enrollment: trackedEntityInstance.enrollment,
+                            enrollment: enrollmentID,
                             event: event.event
                         })),
                     }
@@ -289,7 +288,7 @@ export const useNewForm = () => {
                             programStage: redFlagsStageID,
                             trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
                             orgUnit: wardOrgUnit,
-                            enrollment: trackedEntityInstance.enrollment,
+                            enrollment: enrollmentID,
                             event: event.event
                         })),
                     }
@@ -345,7 +344,7 @@ export const useNewForm = () => {
             data: payload
         }
 
-        if (teiID !== "new") {
+        if (teiID) {
             mutationQuery.type = "update"
             mutationQuery.resource = `trackedEntityInstances/${teiID}`
         }
@@ -355,7 +354,7 @@ export const useNewForm = () => {
             const {response} = await engine.mutate(mutationQuery)
 
             if (response?.status === "SUCCESS") {
-                const trackedEntityInstance = await getEnrollmentData(teiID === "new" ? response?.importSummaries[0]?.reference : teiID, true)
+                const trackedEntityInstance = await getEnrollmentData(teiID === undefined ? response?.importSummaries[0]?.reference : teiID, true)
 
                 const recommendationStage = crr.stages.find(stage => stage.title.toLowerCase().includes("recommendation"))
 

@@ -1,6 +1,6 @@
 import {ViewCharts} from "../views/ViewCharts";
 import {MembersForm} from "../views/MembersForm";
-import {NewForm} from "../views/NewForm";
+import {ChartReviewForm} from "../views/ChartReviewForm";
 import {EventDetails} from "../views/EventDetails";
 
 
@@ -14,11 +14,15 @@ export const crrRoutes = [
         component: MembersForm
     },
     {
-        path: "/new-form/:teiID",
-        component: NewForm
+        path: "/new-form/new",
+        component: ChartReviewForm
     },
     {
-        path: "/trackedEntity/:teiID",
+        path: "/form/:teiID/:enrollmentID",
+        component: ChartReviewForm
+    },
+    {
+        path: "/trackedEntity/:teiID/",
         component: EventDetails
     }
 

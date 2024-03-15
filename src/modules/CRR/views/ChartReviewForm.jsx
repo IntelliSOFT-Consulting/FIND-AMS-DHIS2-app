@@ -3,11 +3,11 @@ import {Form, Spin} from "antd";
 import {FormSection} from "../../../shared/components/Forms/FormSection";
 import styles from "../styles/FormSection.module.css"
 import {MultiSelectSection} from "../Components/MultiSelectSection";
-import {useNewForm} from "../hooks/useNewForm";
+import {useChartReviewForm} from "../hooks/useChartReviewForm";
 import {useParams} from "react-router-dom";
 
 
-export const NewForm = () => {
+export const ChartReviewForm = () => {
     const {teiID} = useParams()
     const {
         formSections,
@@ -25,7 +25,7 @@ export const NewForm = () => {
         recommendationRules,
         redFlagRules,
         multiSectionsPopulated
-    } = useNewForm()
+    } = useChartReviewForm()
 
     return (
         <>

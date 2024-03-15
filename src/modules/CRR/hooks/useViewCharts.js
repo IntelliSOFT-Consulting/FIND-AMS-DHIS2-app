@@ -47,7 +47,8 @@ export const useViewCharts = () => {
                 "patientIP": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("ip")))?.value,
                 "ward": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("ward")))?.value,
                 "date": (instance.enrollments[0]?.attributes.find(attribute => attribute.displayName.toLowerCase().includes("date")))?.value,
-                "teiID": instance.trackedEntityInstance
+                "teiID": instance.trackedEntityInstance,
+                "enrollmentID": instance.enrollments[0]?.enrollment
             }))
             setPatientData(formattedPatientData)
         }
@@ -83,7 +84,7 @@ export const useViewCharts = () => {
             render: (text, record) => (
                 <Space size="large">
                     <div
-                        onClick={() => navigate(`/crr/new-form/${record.teiID}`)}
+                        onClick={() => navigate(`/crr/form/${record.teiID}/${record.enrollmentID}`)}
                         className={styles.addLink}>edit
                     </div>
                     <div
