@@ -3,9 +3,9 @@ import styles from "../styles/ChartDetails.module.css"
 export const MultiSelectSectionDisplay = ({sectionForms, data, number}) => {
 
     const selectedOptionsArray = data?.map(item => ({
-        name: item.dataValues[0].value,
-        dataElement: item.dataValues[0].dataElement
-    })).filter(item =>  item.dataElement === sectionForms?.dataElements[0].id)
+        name: item.dataValues[0]?.value,
+        dataElement: item.dataValues[0]?.dataElement
+    }))?.filter(item =>  item?.dataElement === sectionForms?.dataElements[0]?.id)
 
 
     return (
