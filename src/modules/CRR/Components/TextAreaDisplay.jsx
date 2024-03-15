@@ -1,15 +1,13 @@
 import styles from "../styles/ChartDetails.module.css"
 
 export const TextAreaDisplay = ({sectionForms, data}) => {
-
-
     const sectionValues = sectionForms?.dataElements?.map(dataElement => {
 
         let item = {
             name: dataElement.name,
         }
 
-        const dataObject = data?.find(item => item.dataElement === dataElement.id)
+        const dataObject = data?.find(item => item.displayName === dataElement.name)
 
         const value = dataElement.valueType === "DATE" ? new Date(dataObject?.value)?.toLocaleDateString() : dataObject?.value
 
