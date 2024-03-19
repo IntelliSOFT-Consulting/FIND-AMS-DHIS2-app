@@ -87,11 +87,11 @@ export const MicrobiologyListing = () => {
             <MyTable
                 expandable={{
                     expandedRowRender: record => (
-                        <Space size="middle">
+                        <ol>
                             {record.conflictValues && record.conflictValues.map((conflictValue, key) => (
-                                <p className={styles.conflict} key={key}>{parseErrorMessage(conflictValue)}</p>
+                                <li className={styles.conflict} key={key}>{parseErrorMessage(conflictValue)}</li>
                             ))}
-                        </Space>
+                        </ol>
                     ),
                     rowExpandable: record => record.conflictValues?.length > 0
                 }}
