@@ -38,12 +38,9 @@ export const MicrobiologyListing = () => {
             key: 'status',
         },
         {
-            title: 'Batch No',
-            dataIndex: 'batchNo',
-            key: 'batchNo',
-            render: (text, record) => (
-                <Space>{record?.batchNo?.substring(0, 4) === "null" ? "NULL" : record.batchNo}</Space>
-            )
+            title: 'File Name',
+            dataIndex: 'fileName',
+            key: 'fileName',
         },
         {
             title: 'Date',

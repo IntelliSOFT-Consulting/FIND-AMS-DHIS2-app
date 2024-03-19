@@ -6,8 +6,8 @@ export const useAttributes = ()=>{
 
 
     const getAttributeByID = (searchID) => {
-        const attribute =  attributes.trackedEntityTypeAttributes.find(item => item.trackedEntityAttribute.id == searchID)
-        return attribute.trackedEntityAttribute
+        const attribute =  attributes.trackedEntityTypeAttributes.find(item => item?.trackedEntityAttribute?.id == searchID)
+        return attribute?.trackedEntityAttribute
     }
 
     const getOptionSetByID = (searchID) =>{
