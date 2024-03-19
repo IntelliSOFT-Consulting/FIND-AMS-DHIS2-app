@@ -3,6 +3,7 @@ import {useListing} from "../hooks/useListing";
 import {MyTable} from "../../../shared/components/Tables/Table";
 import {Space, Table} from "antd";
 import {DocumentIcon} from "@heroicons/react/24/solid";
+import dayjs from "dayjs";
 
 export const MicrobiologyListing = () => {
 
@@ -46,6 +47,9 @@ export const MicrobiologyListing = () => {
             title: 'Date',
             dataIndex: 'uploadDate',
             key: 'uploadDate',
+            render: (text, record) => (
+                <p>{record.uploadDate ? dayjs(new Date(record.uploadDate)).format("DD-MM-YYYY HH:mm") : '-'}</p>
+            )
         },
         {
             title: 'Deleted',
