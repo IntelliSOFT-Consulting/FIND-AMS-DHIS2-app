@@ -24,7 +24,9 @@ export const ChartReviewForm = () => {
         navigate,
         recommendationRules,
         redFlagRules,
-        multiSectionsPopulated
+        multiSectionsPopulated,
+        recommendationValues,
+        redFlagValues
     } = useChartReviewForm()
 
     return (
@@ -87,6 +89,7 @@ export const ChartReviewForm = () => {
                                                 rules={recommendationRules}
                                                 initialValue={initialState}
                                                 setCheckedValues={setRecommendationValues}
+                                                checkedValues={recommendationValues}
                                                 number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
                                                 section={formSections?.recommendation}
                                             />
@@ -97,6 +100,7 @@ export const ChartReviewForm = () => {
                                                 rules={redFlagRules}
                                                 initialValue={initialState}
                                                 setCheckedValues={setRedFlagValues}
+                                                checkedvalues={redFlagValues}
                                                 number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
                                                 section={formSections?.redFlags}
                                             />
