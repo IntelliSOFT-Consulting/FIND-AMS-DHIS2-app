@@ -157,7 +157,6 @@ export const useViewCharts = () => {
     useEffect(() => {
         const wardEntity = getDataElementByName("ward")
 
-        console.log('options', wardEntity?.optionSet?.options)
         const wardFolders = wardEntity?.optionSet?.options?.map(option => ({
             ...option,
             icon: FolderOutlined,
