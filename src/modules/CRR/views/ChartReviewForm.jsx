@@ -85,22 +85,18 @@ export const ChartReviewForm = () => {
                                     && (
                                         <>
                                             <MultiSelectSection
+                                                form={form}
                                                 title="recommendation"
                                                 rules={recommendationRules}
-                                                initialValue={initialState}
-                                                setCheckedValues={setRecommendationValues}
-                                                checkedValues={recommendationValues}
                                                 number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length}
                                                 section={formSections?.recommendation}
                                             />
 
 
                                             <MultiSelectSection
+                                                form={form}
                                                 title="redFlags"
                                                 rules={redFlagRules}
-                                                initialValue={initialState}
-                                                setCheckedValues={setRedFlagValues}
-                                                checkedvalues={redFlagValues}
                                                 number={formSections?.antibiotics?.dataElements?.length + 2 + formSections.dosage?.dataElements?.length + 1}
                                                 section={formSections?.redFlags}
                                             />
