@@ -157,11 +157,12 @@ export const useViewCharts = () => {
     useEffect(() => {
         const wardEntity = getDataElementByName("ward")
 
+        console.log('options', wardEntity?.optionSet?.options)
         const wardFolders = wardEntity?.optionSet?.options?.map(option => ({
             ...option,
             icon: FolderOutlined,
             handler: () => filterByWards(option.code)
-        })).sort((a,b)=> a.displayName > b.displayName)
+        })).sort((a, b) => a.code.localeCompare(b.code, 'en', {sensitivity: 'base'}))
 
         if (wardFolders?.length > 0)
             setWards([...wardFolders, {

@@ -169,13 +169,12 @@ export const useChartReviewForm = () => {
             })
 
 
-
         } catch (e) {
             notification.error({
                 message: "error",
                 description: "Error getting chart data"
             })
-        }finally {
+        } finally {
             setChartDataLoading(false)
         }
     }
@@ -183,7 +182,7 @@ export const useChartReviewForm = () => {
     useEffect(() => {
         if (teiID && dataElements && crr.stages)
             getChart()
-        if(!teiID)
+        if (!teiID)
             setMultiSectionsPopulated(true)
     }, [teiID, dataElements, crr]);
 
@@ -450,8 +449,6 @@ export const useChartReviewForm = () => {
         else return true
 
     }
-
-
 
 
     useEffect(() => {
