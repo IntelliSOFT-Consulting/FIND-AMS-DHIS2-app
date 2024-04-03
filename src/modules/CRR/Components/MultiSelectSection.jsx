@@ -13,7 +13,6 @@ export const MultiSelectSection = ({
     const [clearingOption, setClearingOption] = useState(null)
 
     const onChange = (checkedValues) => {
-        console.log('checked values', checkedValues)
         const hasClearingValue = checkedValues.includes(clearingOption.id)
         if (hasClearingValue)
             form.setFieldValue(title, [clearingOption.id])
@@ -26,14 +25,10 @@ export const MultiSelectSection = ({
     }
 
     useEffect(() => {
-
-        console.log('section', section.dataElements[0])
         getClearingOption()
     }, [section])
 
-    useEffect(() => {
-        console.log('form values', form.getFieldsValue())
-    }, [form.getFieldsValue()]);
+
 
     return (
         <div>
