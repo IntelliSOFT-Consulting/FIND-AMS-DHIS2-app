@@ -4,16 +4,12 @@ import {FormSection} from "../../../shared/components/Forms/FormSection";
 import styles from "../styles/FormSection.module.css"
 import {MultiSelectSection} from "../Components/MultiSelectSection";
 import {useChartReviewForm} from "../hooks/useChartReviewForm";
-import {useParams} from "react-router-dom";
 
 
 export const ChartReviewForm = () => {
-    const {teiID} = useParams()
     const {
         formSections,
         initialState,
-        setRecommendationValues,
-        setRedFlagValues,
         loading,
         chartDataLoading,
         form,
@@ -25,8 +21,6 @@ export const ChartReviewForm = () => {
         recommendationRules,
         redFlagRules,
         multiSectionsPopulated,
-        recommendationValues,
-        redFlagValues
     } = useChartReviewForm()
 
     return (
