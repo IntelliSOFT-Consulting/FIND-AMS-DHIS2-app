@@ -57,6 +57,9 @@ export const useChartReviewForm = () => {
 
     const crr = useSelector(state => state.crr)
 
+    const members = useSelector(state => state.members)
+
+
     const dispatch = useDispatch()
 
 
@@ -80,6 +83,11 @@ export const useChartReviewForm = () => {
 
     const navigate = useNavigate()
 
+
+    useEffect(() => {
+        console.log("members", members)
+        console.log("member attributes", getEntityByName("members"))
+    }, [members]);
 
     const populateMultiselectInitialStates = async ({trackedEntityInstance}) => {
         try {
@@ -169,13 +177,12 @@ export const useChartReviewForm = () => {
             })
 
 
-
         } catch (e) {
             notification.error({
                 message: "error",
                 description: "Error getting chart data"
             })
-        }finally {
+        } finally {
             setChartDataLoading(false)
         }
     }
@@ -183,7 +190,7 @@ export const useChartReviewForm = () => {
     useEffect(() => {
         if (teiID && dataElements && crr.stages)
             getChart()
-        if(!teiID)
+        if (!teiID)
             setMultiSectionsPopulated(true)
     }, [teiID, dataElements, crr]);
 
@@ -338,6 +345,15 @@ export const useChartReviewForm = () => {
             ]
         }
 
+        /**
+         * Add members to attributes
+         */
+        if (!teiID)
+            payload.attributes = [...payload.attributes, {
+                attribute: (getEntityByName("members"))?.id,
+                value: members.join(";")
+            }]
+
         const mutationQuery = {
             resource: "trackedEntityInstances",
             type: "create",
@@ -450,8 +466,6 @@ export const useChartReviewForm = () => {
         else return true
 
     }
-
-
 
 
     useEffect(() => {
