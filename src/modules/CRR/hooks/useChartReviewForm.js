@@ -84,11 +84,6 @@ export const useChartReviewForm = () => {
     const navigate = useNavigate()
 
 
-    useEffect(() => {
-        console.log("members", members)
-        console.log("member attributes", getEntityByName("members"))
-    }, [members]);
-
     const populateMultiselectInitialStates = async ({trackedEntityInstance}) => {
         try {
             const recommendationDataElement = findSectionObject({
