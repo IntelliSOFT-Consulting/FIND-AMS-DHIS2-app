@@ -4,11 +4,9 @@ import InputItem from "../../../shared/components/Fields/InputItem";
 import styles from "../styles/Members.module.css"
 import {useMembers} from "../hooks/useMembers";
 import {MyTable} from "../../../shared/components/Tables/Table";
-import {useSelector} from "react-redux";
 
 
 export const MembersForm = () => {
-    const members = useSelector(state => state.members)
 
     const {
         loading,
@@ -17,7 +15,8 @@ export const MembersForm = () => {
         tableColumns,
         addMembers,
         submitForm,
-        form
+        form,
+        deserializeMembersArray
     } = useMembers()
 
 
@@ -73,7 +72,7 @@ export const MembersForm = () => {
                     )}
 
                     <div className={styles.tableContainer}>
-                      <MyTable columns={tableColumns} data={members} rowKey="id"/>
+                      <MyTable columns={tableColumns} data={deserializeMembersArray()} rowKey="Full name"/>
                     </div>
 
                 </Form>

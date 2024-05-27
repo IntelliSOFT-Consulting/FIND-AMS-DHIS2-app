@@ -63,10 +63,10 @@ export const clearMembers = ()=>dispatch=>{
     })
 }
 
-export const removeMember = memberID=>dispatch=>{
+export const removeMember = memberName=>dispatch=>{
     dispatch({
         type: "REMOVE_MEMBER",
-        payload: memberID
+        payload: memberName
     })
 }
 

@@ -18,7 +18,7 @@ export const membersReducer = (state = [], action) => {
         case "CLEAR_MEMBERS":
             return []
         case "REMOVE_MEMBER":
-            return state.filter(member => member.id !== action.payload)
+            return state.filter(member => member.split('-')[0] !== action.payload)
         default:
             return state
 

@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import styles from "../styles/Members.module.css"
 import {addMemberAction, removeMember} from "../../../shared/redux/actions";
+import {useDataEngine} from "@dhis2/app-runtime";
 
 
 export const useMembers = () => {
@@ -23,6 +24,8 @@ export const useMembers = () => {
         "Full Names": user?.name
     })
 
+    const engine = useDataEngine()
+
     const navigate = useNavigate()
 
     const [form] = Form.useForm()
@@ -31,12 +34,12 @@ export const useMembers = () => {
         {
             title: 'Full Name',
             dataIndex: 'Full name',
-            key: 'id',
+            key: 'Full name',
         },
         {
             title: 'Designation',
             dataIndex: 'Designation',
-            key: 'id',
+            key: 'Full name',
         },
         {
             title: "Action",
@@ -44,7 +47,7 @@ export const useMembers = () => {
                 <Space size="middle">
                     <div
                         className={styles.removeLink}
-                        onClick={() => dispatch(removeMember(record.id))}
+                        onClick={() => dispatch(removeMember((record['Full name'])))}
                     >
                         Remove
                     </div>
@@ -55,8 +58,26 @@ export const useMembers = () => {
 
     const addMembers = () => {
         const formValues = form.getFieldsValue()
-        dispatch(addMemberAction({...formValues, id: Math.floor(1000 + Math.random() * 9000)}))
+        const serializedValues = serializeMemberObject(formValues)
+        dispatch(addMemberAction(serializedValues))
         form.resetFields()
+    }
+
+    const deserializeMembersArray =()=>members.map(member=> ({"Full name": member.split("-")[0], "Designation": member.split("-")[1]}))
+
+    const serializeMemberObject = item=>`${item['Full name']}-${item['Designation']}`
+
+    const populateFullName = async () => {
+        try {
+            const response = await engine.query({
+                me: {
+                    resource: "me"
+                }
+            })
+            form.setFieldValue("Full name", response.me.name)
+        } catch (error) {
+
+        }
     }
 
     const submitForm = async () => {
@@ -67,10 +88,15 @@ export const useMembers = () => {
 
 
     useEffect(() => {
-        if (crr?.registration) {
+        if (crr?.registration)
             setMembersSection(crr.registration.sections.find(section => section.title === "Members"))
-        }
     }, [crr]);
+
+
+    useEffect(() => {
+        populateFullName()
+    }, [membersSection]);
+
 
 
     return {
@@ -81,7 +107,8 @@ export const useMembers = () => {
         tableColumns,
         addMembers,
         submitForm,
-        form
+        form,
+        deserializeMembersArray,
     }
 
 
