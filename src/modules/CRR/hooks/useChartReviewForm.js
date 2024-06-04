@@ -320,7 +320,7 @@ export const useChartReviewForm = () => {
 
         const wardValue = values[wardEntity.id]
 
-        const orgUnit = orgUnits?.organisationUnits?.find(org => org.code.toLowerCase().includes(wardValue.toLowerCase()))
+        const orgUnit = orgUnits?.organisationUnits?.find(org => org?.code?.toLowerCase()?.includes(wardValue?.toLowerCase()))
 
 
         const payload = {
