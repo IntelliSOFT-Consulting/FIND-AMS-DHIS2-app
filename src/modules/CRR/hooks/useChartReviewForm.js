@@ -57,6 +57,9 @@ export const useChartReviewForm = () => {
 
     const crr = useSelector(state => state.crr)
 
+    const members = useSelector(state => state.members)
+
+
     const dispatch = useDispatch()
 
 
@@ -317,7 +320,7 @@ export const useChartReviewForm = () => {
 
         const wardValue = values[wardEntity.id]
 
-        const orgUnit = orgUnits?.organisationUnits?.find(org => org.code.toLowerCase().includes(wardValue.toLowerCase()))
+        const orgUnit = orgUnits?.organisationUnits?.find(org => org?.code?.toLowerCase()?.includes(wardValue?.toLowerCase()))
 
 
         const payload = {
@@ -336,6 +339,15 @@ export const useChartReviewForm = () => {
                 }
             ]
         }
+
+        /**
+         * Add members to attributes
+         */
+        if (!teiID)
+            payload.attributes = [...payload.attributes, {
+                attribute: (getEntityByName("members"))?.id,
+                value: members.join(";")
+            }]
 
         const mutationQuery = {
             resource: "trackedEntityInstances",
