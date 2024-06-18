@@ -9,11 +9,11 @@ import {Layout, Menu} from "antd";
 import {createUseStyles} from "react-jss";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import routes from "../../routes";
-import {useGetChartReview} from "../hooks/useGetChartReview";
 import {useGetOrgUnit} from "../hooks/useGetOrgUnit";
 import {DocumentTextIcon} from "@heroicons/react/24/outline";
 import {useUser} from "../hooks/useUser";
 import {ArrowTopRightOnSquareIcon} from "@heroicons/react/24/solid";
+import {useSelector} from "react-redux";
 
 const {Content, Sider} = Layout;
 
@@ -50,7 +50,7 @@ const domain = window.location.origin;
 
 function getItem(label, key, icon, children, type) {
     return {
-        key ,
+        key,
         icon,
         children,
         label,
@@ -65,28 +65,29 @@ const items = [
     getItem("MICROBIOLOGY DATA", "/microbiology-data", <DocumentTextIcon
         style={{width: "16px", height: "16px"}}/>, null, "item"),
     {
-      label: (
-          <a href={`${domain}/dhis-web-dashboard`}>
-              <ArrowTopRightOnSquareIcon width={16} height={16} /> REPORTS
-          </a>
-      ),
-      key: "reports"
+        label: (
+            <a href={`${domain}/dhis-web-dashboard`}>
+                <ArrowTopRightOnSquareIcon width={16} height={16}/> REPORTS
+            </a>
+        ),
+        key: "reports"
     },
     {
-      label: (
-          <a href={`${domain}/dhis-web-maintenance/index.html#/list/programSection/program`}>
-              <Cog6ToothIcon width={16} height={16} /> CONFIGURATIONS
-          </a>
-      ),
-      key: "configuration"
+        label: (
+            <a href={`${domain}/dhis-web-maintenance/index.html#/list/programSection/program`}>
+                <Cog6ToothIcon width={16} height={16}/> CONFIGURATIONS
+            </a>
+        ),
+        key: "configuration"
     },
 ];
 const NavigationLayout = ({user}) => {
     const classes = styles();
 
-    const {getForms} = useGetChartReview()
     const {getOrgUnit} = useGetOrgUnit()
     const {getUser} = useUser()
+    const {program, stages} = useSelector(state => state.crr)
+
 
     const navigate = useNavigate();
 
@@ -101,10 +102,13 @@ const NavigationLayout = ({user}) => {
     }, [location.pathname]);
 
     useEffect(() => {
-        getForms()
         getOrgUnit()
-        getUser()
-    }, []);
+    }, [])
+
+    useEffect(() => {
+        if (program) getUser()
+    }, [program])
+
 
 
     return (

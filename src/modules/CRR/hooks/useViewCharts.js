@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {useDataElements} from "./useDataElements";
 import {useDataQuery} from "@dhis2/app-runtime";
 import {FolderOutlined} from "@ant-design/icons";
 import {Space} from "antd";
 import styles from "../styles/ViewCharts.module.css";
 import {useEntities} from "./useEntities";
+import {findSectionObject} from "../helpers";
 
 
 const query = {
@@ -36,7 +36,6 @@ export const useViewCharts = () => {
     const {dataElements: reduxDataElements} = useSelector(state => state.forms)
     const crr = useSelector(state => state.crr)
 
-    const {getDataElementByName} = useDataElements()
     const {getEntityByName} = useEntities()
 
     const {refetch, data, loading} = useDataQuery(query)
@@ -155,23 +154,26 @@ export const useViewCharts = () => {
 
 
     useEffect(() => {
-        const wardEntity = getDataElementByName("ward")
 
-        const wardFolders = wardEntity?.optionSet?.options?.map(option => ({
-            ...option,
-            icon: FolderOutlined,
-            handler: () => filterByWards(option.code)
-        })).sort((a, b) => a.code.localeCompare(b.code, 'en', {sensitivity: 'base'}))
+        if(crr.registration){
+            const patientSection  = findSectionObject({searchString: "Patients", sectionArray: crr.registration.sections})
+            const wardOptions = (patientSection.dataElements.find(item =>  item.name.toLowerCase().includes("ward")))?.optionSet?.options
 
-        if (wardFolders?.length > 0)
+            const wardFolders = wardOptions.map(option => ({
+                ...option,
+                    icon: FolderOutlined,
+                    handler: () => filterByWards(option.code)
+            })).sort((a, b) => a.code.localeCompare(b.code, 'en', {sensitivity: 'base'}))
+
             setWards([...wardFolders, {
-                displayName: "All Charts",
+                displayName: "All charts",
                 code: "",
                 icon: FolderOutlined,
                 handler: () => filterByWards("")
             }])
+        }
 
-    }, [reduxDataElements]);
+    }, [crr]);
 
 
     return {
