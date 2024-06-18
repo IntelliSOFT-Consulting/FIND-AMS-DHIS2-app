@@ -192,6 +192,8 @@ export const useChartReviewForm = () => {
     const updateEvents = async ({
                                     currentRedFlagDataValues,
                                     currentRecommendationDataValues,
+                                    currentOtherRedFlagValue,
+                                    currentOtherRecommendationValue,
                                     trackedEntityInstance,
                                     wardOrgUnit
                                 }) => {
@@ -253,6 +255,52 @@ export const useChartReviewForm = () => {
                 })
 
             /**
+             * Create Events for other recommendation flag values
+             */
+            if(currentOtherRecommendationValue?.value)
+                await engine.mutate({
+                    resource: "/events",
+                    type: "create",
+                    data: {
+                        events: [
+                            {
+                                program: crr.program,
+                                programStage: recommendationStageID,
+                                trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
+                                orgUnit: wardOrgUnit,
+                                enrollment: enrollmentID,
+                                status: "ACTIVE",
+                                dataValues: [currentOtherRecommendationValue],
+                                eventDate: new Date().toISOString().slice(0, 10)
+                            }
+                        ]
+                    }
+                })
+
+            /**
+             * Create Events for other red flag values
+             */
+            if(currentOtherRedFlagValue?.value)
+                await engine.mutate({
+                    resource: "/events",
+                    type: "create",
+                    data: {
+                        events: [
+                            {
+                                program: crr.program,
+                                programStage: redFlagsStageID,
+                                trackedEntityInstance: trackedEntityInstance.trackedEntityInstance,
+                                orgUnit: wardOrgUnit,
+                                enrollment: enrollmentID,
+                                status: "ACTIVE",
+                                dataValues: [currentOtherRedFlagValue],
+                                eventDate: new Date().toISOString().slice(0, 10)
+                            }
+                        ]
+                    }
+                })
+
+            /**
              * delete discarded recommendation events
              */
             if (discardedRecommendationEvents?.length > 0)
@@ -303,9 +351,22 @@ export const useChartReviewForm = () => {
         }
     }
 
+    const getMultiSelectElementInSection = ({sectionString}) => {
+        const dataElement = (findSectionObject({searchString: sectionString, sectionArray: crr.stages}))?.sections[0].dataElements.find(dataElement => dataElement.options)
+        return dataElement
+    }
+
+    const getOtherDataElementInSection = ({sectionString}) => {
+        const dataElement = (findSectionObject({searchString: sectionString, sectionArray: crr.stages}))?.sections[0].dataElements.find(dataElement => dataElement.name.toLowerCase().includes("other"))
+        return dataElement
+    }
+
+    useEffect(() => {
+        if (crr.stages)
+            getOtherDataElementInSection({sectionString: "Flags"})
+    }, [crr]);
 
     const onFinish = async (values) => {
-
         const {orgUnits} = await engine.query({
             orgUnits: {
                 resource: "organisationUnits.json",
@@ -322,11 +383,13 @@ export const useChartReviewForm = () => {
 
         const orgUnit = orgUnits?.organisationUnits?.find(org => org?.code?.toLowerCase()?.includes(wardValue?.toLowerCase()))
 
-
         const payload = {
             trackedEntityType: crr?.trackedEntityType?.id,
             orgUnit: orgUnit?.id || orgUnitID,
-            attributes: Object.keys(values).map(key => ({
+            attributes: Object.keys(values)
+                .filter(id => id !== getOtherDataElementInSection({sectionString: "Flags"}).id)
+                .filter(id => id !== getOtherDataElementInSection({sectionString: "Recommendation"}).id)
+                .map(key => ({
                 attribute: key,
                 value: values[key]
             })).filter(attribute => attribute.value && !Array.isArray(attribute.value)),
@@ -387,9 +450,22 @@ export const useChartReviewForm = () => {
                     }
                 })
 
+                const currentOtherRedFlagValue = {
+                    value: values[getOtherDataElementInSection({sectionString: "Flag"}).id],
+                    dataElement: getOtherDataElementInSection({sectionString: "Flag"}).id
+                }
+
+                const currentOtherRecommendationValue = {
+                    value: values[getOtherDataElementInSection({sectionString: "Recommendation"}).id],
+                    dataElement: getOtherDataElementInSection({sectionString: "Recommendation"}).id
+                }
+
+
                 const updateResponse = await updateEvents({
                     currentRedFlagDataValues,
                     currentRecommendationDataValues,
+                    currentOtherRedFlagValue,
+                    currentOtherRecommendationValue,
                     trackedEntityInstance,
                     wardOrgUnit: orgUnit?.id || orgUnitID
                 })
