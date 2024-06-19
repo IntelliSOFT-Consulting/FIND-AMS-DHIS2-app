@@ -12,42 +12,52 @@ export const MultiSelectSection = ({
                                    }) => {
 
     const [clearingOption, setClearingOption] = useState(null)
-    const [otherOption, setOtherOption] = useState(false)
+    const [otherOption, setOtherOption] = useState(null)
     const [showOtherTextField, setShowOtherTextField] = useState(false)
 
     const onChange = (checkedValues) => {
-        const hasClearingValue = checkedValues.includes(clearingOption.id)
+        const hasClearingValue = checkedValues.includes(clearingOption?.id)
         if (hasClearingValue) {
-            form.setFieldValue(title, [clearingOption.id])
+            form.setFieldValue(title, [clearingOption?.id])
+            form.setFieldValue(getOtherDataElement().id, "")
+            setShowOtherTextField(false)
             return;
         }
 
-        const hasOtherOption = checkedValues.includes(otherOption.id)
-        if (hasOtherOption)
-            setShowOtherTextField(true)
-        else
-            setShowOtherTextField(false)
+        otherOptionHandler({valuesArray: checkedValues, otherOptionID: otherOption?.id})
     };
 
-    const getOptions = () => section?.dataElements.find(dataElementObject => dataElementObject.optionSet !== undefined)
+    const getOptions = () => section?.dataElements?.find(dataElementObject => dataElementObject?.optionSet !== undefined)
 
     const getClearingOption = () => {
-        const clearingOption = getOptions()?.optionSet?.options.find(option => option.attributeValues.find(attribute => attribute.attribute.name === "clear-options"))
+        const clearingOption = getOptions()?.optionSet?.options?.find(option => option?.attributeValues?.find(attribute => attribute.attribute.name === "clear-options"))
         setClearingOption(clearingOption)
     }
 
     const getOtherOption = () => {
-        const otherOpt = getOptions()?.optionSet?.options.find(option => option.attributeValues.find(attribute => attribute.attribute.name === "other-option"))
+        const otherOpt = getOptions()?.optionSet?.options?.find(option => option?.attributeValues?.find(attribute => attribute?.attribute?.name === "other-option"))
         setOtherOption(otherOpt)
     }
 
+    const getOtherDataElement = () => section?.dataElements?.find(dataElementObject => dataElementObject?.name?.toLowerCase()?.includes("other"))
 
-    const getOtherDataElement = () => section?.dataElements.find(dataElementObject => dataElementObject.name.toLowerCase().includes("other"))
+
+    const otherOptionHandler = ({
+                                    valuesArray,
+                                    otherOptionID = otherOption?.id
+                                }) => setShowOtherTextField(valuesArray?.includes(otherOptionID))
+
 
     useEffect(() => {
         getClearingOption()
         getOtherOption()
     }, [section])
+
+    useEffect(() => {
+        if (form.getFieldValue(title)?.length > 0 && otherOption?.id)
+            otherOptionHandler({valuesArray: form.getFieldValue(title), otherOptionID: otherOption?.id})
+
+    }, [form, otherOption, section]);
 
 
     return (
