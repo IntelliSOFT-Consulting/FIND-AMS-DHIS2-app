@@ -10,6 +10,7 @@ import {useEntities} from "./useEntities";
 import {useInstances} from "./useInstances";
 import {useOptions} from "../../../shared/hooks/useOptions";
 import {useCRR} from "./useCRR";
+import {useDataElements} from "./useDataElements";
 
 
 export const useChartReviewForm = () => {
@@ -66,6 +67,7 @@ export const useChartReviewForm = () => {
     const {getEnrollmentData} = useInstances()
 
     const {getEntityByID, getEntityByName} = useEntities()
+    const { getDataElementByName} = useDataElements()
 
     const {getOptionSetByID} = useOptions()
 
@@ -97,6 +99,34 @@ export const useChartReviewForm = () => {
             const allCheckedOptions = trackedEntityInstance?.enrollments[0]?.events.map(item => ({
                 code: item.dataValues[0]?.value,
                 dataElement: item.dataValues[0]?.dataElement
+            }))
+
+            /**
+             * Set the initial states of the "other" text fields in the recommendation multi-select section
+             */
+            const otherRecommendationID = (getDataElementByName("Other recommendation")).id
+
+            const otherRecommendationObject = {}
+
+            otherRecommendationObject[otherRecommendationID] = (allCheckedOptions.find(opt => opt.dataElement === otherRecommendationID))?.code
+
+            setInitialState(prev => ({
+                ...prev,
+                ...otherRecommendationObject
+            }))
+
+            /**
+             * Set the initial states of the "other" text fields in the red flags multi-select section
+             */
+            const otherRedFlagID = (getDataElementByName("Other red flag")).id
+
+            const otherRedFlagObject = {}
+
+            otherRedFlagObject[otherRedFlagID] = (allCheckedOptions.find(opt => opt.dataElement === otherRedFlagID))?.code
+
+            setInitialState(prev => ({
+                ...prev,
+                ...otherRedFlagObject
             }))
 
 
@@ -134,7 +164,10 @@ export const useChartReviewForm = () => {
                 redFlags: selectedRedFlags
             }))
         } catch (e) {
-            return e
+            notification.error({
+                message: "error",
+                description: "Error getting populating event data"
+            })
         } finally {
             setMultiSectionsPopulated(true)
         }
@@ -183,7 +216,7 @@ export const useChartReviewForm = () => {
     }
 
     useEffect(() => {
-        if (teiID && dataElements && crr.stages)
+        if (teiID  && crr.stages)
             getChart()
         if (!teiID)
             setMultiSectionsPopulated(true)
