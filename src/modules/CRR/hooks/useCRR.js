@@ -1,9 +1,9 @@
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useDispatch} from "react-redux";
 import {formatRegistration} from "../helpers";
-import {setCRR} from "../../../shared/redux/actions";
+import {setCRR, setForms} from "../../../shared/redux/actions";
 import {notification} from "antd";
-import {formatStages} from "../../../shared/helpers/formatData";
+import {formatStages, getArrayOfDataElements} from "../../../shared/helpers/formatData";
 
 
 export const useCRR = () => {
@@ -21,8 +21,8 @@ export const useCRR = () => {
                             "id",
                             "name",
                             "trackedEntityType",
-                            "programStages[id,name,repeatable,attributeValues[attribute[id,name],value],programStageSections[id,displayName,description,dataElements[id,displayName,description,attributeValues[attribute[id,name],value],valueType,optionSet[id,displayName,options[id,displayName,code]]]]]",
-                            "programSections[name,trackedEntityAttributes[id,name,searchable,description,attributeValues[attribute[id,name],value],valueType,optionSet[options[displayName, code]]]",
+                            "programStages[id,name,repeatable,attributeValues[attribute[id,name],value],programStageSections[id,displayName,description,dataElements[id,displayName,description,attributeValues[attribute[id,name],value],valueType,optionSet[id,displayName,options[id,displayName,code,attributeValues[attribute[id,name],value]]]]]]",
+                            "programSections[name,trackedEntityAttributes[id,name,searchable,description,attributeValues[attribute[id,name],value],valueType,optionSet[options[displayName, code,attributeValues[attribute[id,name],value]]]]",
                         ],
                         filter: "name:ilike:crr",
                     }
@@ -34,6 +34,14 @@ export const useCRR = () => {
             const registration = formatRegistration(program)
 
             const stages = formatStages(program)
+            dispatch(
+                setForms({
+                    program: program?.id,
+                    stages,
+                    trackedEntityType: program?.trackedEntityType,
+                    dataElements: getArrayOfDataElements(program?.programStages)
+                })
+            )
 
             dispatch(
                 setCRR({
