@@ -43,7 +43,19 @@ export const formatChartData = ({dataElement, dataValues}) => {
     return object?.value
 }
 
-export const getArrayOfDataElements = (programSections) => programSections.flatMap(section => section.dataElements.map(dataElement => dataElement))
+export const getArrayOfDataElements = (programSections) => {
+    let dataElements = []
+
+    for (let i =0; i < programSections.length; i++) {
+        for(let j=0; j < programSections[i].programStageSections.length; j++){
+            for (let k =0; k < programSections[i].programStageSections[j].dataElements.length; k++ ){
+                dataElements.push(programSections[i].programStageSections[j].dataElements[k])
+            }
+        }
+    }
+
+    return dataElements
+}
 
 
 
