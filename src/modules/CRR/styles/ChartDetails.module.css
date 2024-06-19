@@ -120,6 +120,20 @@ font-weight: 700;
     font-style: italic;
 }
 
+.multiSelectItemOtherWrapper{
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.multiSelectItemOtherTitle{
+    color: #1d5288;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-style: italic;
+}
+
+
 /*..............text area styles......*/
 .textAreaWrapper {
     display: grid;
