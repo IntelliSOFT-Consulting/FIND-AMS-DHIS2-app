@@ -12,12 +12,8 @@ export const MembersForm = () => {
     const {
         loading,
         membersSection,
-        initialFormValues,
         tableColumns,
-        addMembers,
         submitForm,
-        form,
-        deserializeMembersArray,
         dataStoreMembers,
         handleOptionClick,
         selectedMembers,

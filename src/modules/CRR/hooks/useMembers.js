@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {Form, notification, Space} from "antd";
+import { notification, Space} from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import styles from "../styles/Members.module.css"
@@ -15,11 +15,7 @@ export const useMembers = () => {
 
     const [membersSection, setMembersSection] = useState({})
 
-    const user = useSelector(state => state.user)
-
     const crr = useSelector(state => state.crr)
-
-    const members = useSelector(state => state.members)
 
     const [dataStoreMembers, setDataStoreMembers] = useState([])
 
@@ -32,15 +28,12 @@ export const useMembers = () => {
         designation : ""
     })
 
-    const [initialFormValues, setInitialFormValues] = useState({
-        "Full Names": user?.name
-    })
+
 
     const engine = useDataEngine()
 
     const navigate = useNavigate()
 
-    const [form] = Form.useForm()
 
     const tableColumns = [
         {
@@ -102,14 +95,6 @@ export const useMembers = () => {
         }
     }
 
-
-    const addMembers = () => {
-        const formValues = form.getFieldsValue()
-        const serializedValues = serializeMemberObject(formValues)
-        dispatch(addMembersAction(serializedValues))
-        form.resetFields()
-    }
-
     const fetchAllMembers = async () => {
         try {
             setLoading(true)
@@ -128,43 +113,33 @@ export const useMembers = () => {
         }
     }
 
+
+    useEffect(() => {
+        fetchAllMembers()
+    }, []);
+
     const handleOptionClick = (memberID) => {
         const exists = selectedMembers?.some(item => item?.id === memberID)
         if (!exists)
             setSelectedMembers(prev => [...prev, dataStoreMembers.find(member => member.id === memberID)])
     }
 
-    useEffect(() => {
-        fetchAllMembers()
-    }, []);
 
-    const deserializeMembersArray = () => members.map(member => ({
-        "Full name": member.split("-")[0],
-        "Designation": member.split("-")[1]
-    }))
-
-    const serializeMemberObject = item => `${item['Full name']}-${item['Designation']}`
-
-    const populateFullName = async () => {
-        try {
-            const response = await engine.query({
-                me: {
-                    resource: "me"
-                }
-            })
-            form.setFieldValue("Full name", response.me.name)
-        } catch (error) {
-
-        }
-    }
 
     const submitForm = async () => {
-        if (members.length < 1)
-            return
-        let serializedMemberIDs = selectedMembers.map((member) => member.id)
-        serializedMemberIDs = serializedMemberIDs.join(";")
-        dispatch(addMembersAction(serializedMemberIDs))
-        navigate(`/crr/new-form/new`)
+        try{
+            if (selectedMembers.length < 1)
+                return
+            let serializedMemberIDs = selectedMembers.map((member) => member.id)
+            serializedMemberIDs = serializedMemberIDs.join(";")
+            dispatch(addMembersAction(serializedMemberIDs))
+            navigate(`/crr/new-form/new`)
+        }catch(err){
+            notification.error({
+                message: "Failed to submit",
+            })
+        }
+
     }
 
 
@@ -179,27 +154,19 @@ export const useMembers = () => {
     }, [crr]);
 
 
-    useEffect(() => {
-        populateFullName()
-    }, [membersSection]);
 
 
     return {
         loading,
         membersSection,
-        initialFormValues,
-        navigate,
         tableColumns,
-        addMembers,
         submitForm,
-        form,
-        deserializeMembersArray,
         dataStoreMembers,
         handleOptionClick,
         selectedMembers,
+        addMemberToDataStore,
         newMember,
         setNewMember,
-        addMemberToDataStore,
         designationOptions
     }
 
