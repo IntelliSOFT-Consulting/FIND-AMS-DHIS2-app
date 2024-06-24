@@ -4,8 +4,9 @@
     grid-template-columns: 1fr;
     gap: 2rem;
     align-content: center;
+    max-width: 1200px;
     @media (min-width: 768px) {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 0rem 4rem;
     }
 }
@@ -68,4 +69,23 @@
 .spinner{
     grid-column: 1;
     margin-left: auto;
+}
+
+.selectDropdown{
+    padding: 1rem;
+}
+
+.dropdownTitle{
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.addContainer {
+    display: flex;
+    width: 100%;
+    gap: 2rem;
+}
+
+.addInput{
+    width: 100%;
 }

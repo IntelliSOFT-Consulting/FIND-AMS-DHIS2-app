@@ -13,8 +13,8 @@ export const formsReducer = (state = {}, action) => {
 
 export const membersReducer = (state = [], action) => {
     switch (action.type) {
-        case "ADD_MEMBER":
-            return [...state, action.payload]
+        case "ADD_MEMBERS":
+            return [action.payload]
         case "CLEAR_MEMBERS":
             return []
         case "REMOVE_MEMBER":
