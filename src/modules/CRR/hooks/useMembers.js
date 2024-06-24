@@ -1,16 +1,17 @@
 import {useNavigate} from "react-router-dom";
-import {Form, Space} from "antd";
+import {Form, notification, Space} from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import styles from "../styles/Members.module.css"
-import {addMemberAction, removeMember} from "../../../shared/redux/actions";
+import {addMembersAction} from "../../../shared/redux/actions";
 import {useDataEngine} from "@dhis2/app-runtime";
+import { v4 as uuidv4 } from 'uuid';
 
 
 export const useMembers = () => {
     const dispatch = useDispatch()
 
-    const [loading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const [membersSection, setMembersSection] = useState({})
 
@@ -19,6 +20,17 @@ export const useMembers = () => {
     const crr = useSelector(state => state.crr)
 
     const members = useSelector(state => state.members)
+
+    const [dataStoreMembers, setDataStoreMembers] = useState([])
+
+    const [selectedMembers, setSelectedMembers] = useState([])
+
+    const [designationOptions, setDesignationOptions] = useState([])
+
+    const [newMember, setNewMember] = useState({
+        name: "",
+        designation : ""
+    })
 
     const [initialFormValues, setInitialFormValues] = useState({
         "Full Names": user?.name
@@ -32,13 +44,13 @@ export const useMembers = () => {
 
     const tableColumns = [
         {
-            title: 'Full Name',
-            dataIndex: 'Full name',
-            key: 'Full name',
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Designation',
-            dataIndex: 'Designation',
+            dataIndex: 'designation',
             key: 'Full name',
         },
         {
@@ -47,7 +59,8 @@ export const useMembers = () => {
                 <Space size="middle">
                     <div
                         className={styles.removeLink}
-                        onClick={() => dispatch(removeMember((record['Full name'])))}
+                        // onClick={() => dispatch(removeMember((record['Full name'])))}
+                        onClick={() => setSelectedMembers(prev => prev.filter(member => member.id !== record.id))}
                     >
                         Remove
                     </div>
@@ -56,16 +69,81 @@ export const useMembers = () => {
         }
     ]
 
+    const addMemberToDataStore = async() => {
+        try{
+            setLoading(true)
+
+            const newMemberPayload = {
+                id: uuidv4(),
+                ...newMember
+            }
+            const response = await engine.mutate({
+                resource: "dataStore/Members/members",
+                type: "update",
+                data: [...dataStoreMembers, newMemberPayload]
+            })
+
+            setNewMember({
+                name: "",
+                designation: "",
+            })
+            setSelectedMembers(prev => [...prev, newMemberPayload])
+            setDataStoreMembers(prev => [...prev, newMemberPayload])
+        }catch(err){
+            notification.error({
+                message: "Failed to add",
+            })
+        }finally {
+            setLoading(false)
+        }
+
+        if(newMember?.designation && newMember?.name ){
+
+        }
+    }
+
+
     const addMembers = () => {
         const formValues = form.getFieldsValue()
         const serializedValues = serializeMemberObject(formValues)
-        dispatch(addMemberAction(serializedValues))
+        dispatch(addMembersAction(serializedValues))
         form.resetFields()
     }
 
-    const deserializeMembersArray =()=>members.map(member=> ({"Full name": member.split("-")[0], "Designation": member.split("-")[1]}))
+    const fetchAllMembers = async () => {
+        try {
+            setLoading(true)
+            const response = await engine.query({
+                membersStore: {
+                    resource: "dataStore/Members/members"
+                }
+            })
+            setDataStoreMembers(response.membersStore)
+        } catch (error) {
+            notification.error({
+                message: "Failed to fetch",
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
 
-    const serializeMemberObject = item=>`${item['Full name']}-${item['Designation']}`
+    const handleOptionClick = (memberID) => {
+        const exists = selectedMembers?.some(item => item?.id === memberID)
+        if (!exists)
+            setSelectedMembers(prev => [...prev, dataStoreMembers.find(member => member.id === memberID)])
+    }
+
+    useEffect(() => {
+        fetchAllMembers()
+    }, []);
+
+    const deserializeMembersArray = () => members.map(member => ({
+        "Full name": member.split("-")[0],
+        "Designation": member.split("-")[1]
+    }))
+
+    const serializeMemberObject = item => `${item['Full name']}-${item['Designation']}`
 
     const populateFullName = async () => {
         try {
@@ -83,20 +161,27 @@ export const useMembers = () => {
     const submitForm = async () => {
         if (members.length < 1)
             return
+        let serializedMemberIDs = selectedMembers.map((member) => member.id)
+        serializedMemberIDs = serializedMemberIDs.join(";")
+        dispatch(addMembersAction(serializedMemberIDs))
         navigate(`/crr/new-form/new`)
     }
 
 
     useEffect(() => {
-        if (crr?.registration)
+        if (crr?.registration){
             setMembersSection(crr.registration.sections.find(section => section.title === "Members"))
+            // set options for designation
+            const designationDE = (crr.registration.sections.find(section => section.title === "Members")).dataElements?.find(DE => DE.name === "Designation")
+            setDesignationOptions(designationDE.optionSet.options)
+        }
+
     }, [crr]);
 
 
     useEffect(() => {
         populateFullName()
     }, [membersSection]);
-
 
 
     return {
@@ -109,6 +194,13 @@ export const useMembers = () => {
         submitForm,
         form,
         deserializeMembersArray,
+        dataStoreMembers,
+        handleOptionClick,
+        selectedMembers,
+        newMember,
+        setNewMember,
+        addMemberToDataStore,
+        designationOptions
     }
 
 

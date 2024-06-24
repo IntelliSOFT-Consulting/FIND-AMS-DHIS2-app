@@ -43,9 +43,9 @@ export const setUser = user => dispatch => {
     })
 }
 
-export const addMemberAction = member =>dispatch =>{
+export const addMembersAction = member => dispatch =>{
     dispatch({
-        type: "ADD_MEMBER",
+        type: "ADD_MEMBERS",
         payload: member
     })
 }
