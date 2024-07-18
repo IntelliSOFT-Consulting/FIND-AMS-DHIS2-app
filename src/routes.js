@@ -6,15 +6,18 @@ import {CRRLayout} from "./modules/CRR/parent/CRRLayout";
 const routes = [
     {
         path: "/crr/*",
-        component: CRRLayout
+        component: CRRLayout,
+        program: "CRR Tracker"
     },
     {
         path: "/knowledge-hub/*",
-        component: KnowledgeHub
+        component: KnowledgeHub,
+        program: "AMS KNOWLEDGE HUB"
     },
     {
         path: "/microbiology-data/*",
-        component: Microbiology
+        component: Microbiology,
+        program: "Microbiology"
     },
 
 ];

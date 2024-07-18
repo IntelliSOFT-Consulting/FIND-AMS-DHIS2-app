@@ -4,6 +4,7 @@ import {useState} from "react";
 export const usePermissions = () => {
     const engine = useDataEngine()
     const [allowedLinks, setAllowedLinks] = useState([])
+    const [allowedRoutes, setAllowedRoutes] = useState([])
 
     const getProgramAccesses = async () => {
         try {
@@ -30,7 +31,6 @@ export const usePermissions = () => {
             const programs = await getProgramAccesses()
 
             const allowedPrograms = programs.filter(program => program.userGroupAccesses.some(access => access.access === "rwrw----" && user.userGroups.some(group => group.id === access.userGroupUid)))
-
             const allowedLinks = links.filter(link => !link.checkAccess ||
                 (link.checkAccess && allowedPrograms.some(program => program.displayName.toLowerCase().includes(link.code.toLowerCase())))
             )
@@ -43,5 +43,17 @@ export const usePermissions = () => {
         }
     }
 
-    return {getProgramAccesses, exportAllowedLinks, allowedLinks}
+    const exportAllowedRoutes = async ({routes, user}) => {
+        try {
+            const programs = await getProgramAccesses();
+            const allowedPrograms = programs.filter(program => program.userGroupAccesses.some(access => access.access === "rwrw----" && user.userGroups.some(group => group.id === access.userGroupUid)))
+            const allowedRoutes = routes.filter(route => allowedPrograms.some(program => program.displayName.toLowerCase().includes(route.program.toLowerCase())))
+            setAllowedRoutes(allowedRoutes)
+            return allowedRoutes
+        } catch (e) {
+            return e
+        }
+    }
+
+    return {getProgramAccesses, exportAllowedLinks, allowedLinks, exportAllowedRoutes, allowedRoutes}
 }
