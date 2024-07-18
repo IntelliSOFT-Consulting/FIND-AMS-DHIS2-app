@@ -1,8 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {createUseStyles} from "react-jss";
-import {ArrowTopRightOnSquareIcon, ChartPieIcon, Cog6ToothIcon, DocumentIcon} from "@heroicons/react/24/solid";
-import {ArrowUpIcon} from "@heroicons/react/20/solid";
 import {Link} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {setUser} from "../redux/actions";
+import {navLinks} from "../assets/navLinks";
+import {usePermissions} from "../hooks/usePermissions";
 
 const styles = createUseStyles({
     container: {
@@ -94,47 +96,23 @@ const LinkWrapper = ({external, path, children}) => {
     )
 }
 
-export default function Home() {
-    const domain = window.location.origin;
-    const links = [
-        {
-            title: "AMS CHART REVIEW",
-            path: `/crr`,
-            icon: ChartPieIcon,
-            external: false
-        },
-        {
-            title: "AMS KNOWLEDGE HUB",
-            path: `/knowledge-hub`,
-            icon: ArrowUpIcon,
-            external: false
-        },
-        {
-            title: "MICROBIOLOGY DATA",
-            path: `/microbiology-data`,
-            icon: DocumentIcon,
-            external: false
-        },
-        {
-            title: "REPORTS",
-            path: `${domain}/dhis-web-dashboard`,
-            icon: ArrowTopRightOnSquareIcon,
-            external: true
-        },
-        {
-            title: "CONFIGURATIONS",
-            path: `${domain}/dhis-web-maintenance/index.html#/list/programSection/program`,
-            icon: Cog6ToothIcon,
-            external: true
-        },
-    ];
-
+export default function Home({user}) {
     const classes = styles();
+    const dispatch = useDispatch();
+
+    const {exportAllowedLinks, allowedLinks} = usePermissions()
+
+    useEffect(() => {
+        if(user){
+            dispatch(setUser(user))
+            exportAllowedLinks({links: navLinks, user})
+        }
+    }, [user]);
 
     return (
         <div className={classes.container}>
             <div className={classes.links}>
-                {links.map((link) => (
+                {allowedLinks.map((link) => (
                     <LinkWrapper key={link.title} external={link.external} path={link.path}>
                         <div className={classes.iconSection}>
                             <link.icon className={classes.icon} aria-hidden="true"/>

@@ -12,6 +12,11 @@ import {store} from "./shared/redux/store/index"
 const query = {
     me: {
         resource: 'me',
+        params: {
+            fields: [
+                "all","organisationUnits[id]","userGroups[id]","userCredentials[:all,!user,userRoles[id]",
+            ]
+        }
     },
 }
 

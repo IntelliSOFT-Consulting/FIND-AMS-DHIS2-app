@@ -14,6 +14,11 @@ export const useUser = () => {
             const response = await engine.query({
                 me: {
                     resource: 'me',
+                    params: {
+                        fields: [
+                            "all","organisationUnits[id]","userGroups[id]","userCredentials[:all,!user,userRoles[id]",
+                        ]
+                    }
                 },
             })
             dispatch(
