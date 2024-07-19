@@ -3,8 +3,8 @@ import {DataQuery} from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { HashRouter, Route, Routes} from "react-router-dom";
 import {ConfigProvider} from "antd";
-import NavigationLayout from "./shared/layouts/navigationLayout";
-import Home from "./shared/pages/Home";
+import AMSLayout from "./shared/layouts/AMSLayout";
+import Home from "./shared/views/Home";
 import "./styles/index.css"
 import {Provider} from "react-redux";
 import {store} from "./shared/redux/store/index"
@@ -12,6 +12,11 @@ import {store} from "./shared/redux/store/index"
 const query = {
     me: {
         resource: 'me',
+        params: {
+            fields: [
+                "all","organisationUnits[id]","userGroups[id]","userCredentials[:all,!user,userRoles[id]",
+            ]
+        }
     },
 }
 
@@ -62,7 +67,7 @@ const MyApp = () => (
                                 <Route
                                     path="/*"
                                     element={
-                                        <NavigationLayout
+                                        <AMSLayout
                                             user={data?.me}
                                             title={i18n.t("FIND AMS")}
                                         />

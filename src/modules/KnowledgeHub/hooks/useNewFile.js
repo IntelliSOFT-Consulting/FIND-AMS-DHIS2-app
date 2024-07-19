@@ -141,7 +141,7 @@ export const useNewFile = () => {
 
     const isHidden = (dataElementId) => {
         const dataElementObject = getDataElementByID(dataElementId)
-        const hiddenAttributeIndex = dataElementObject.attributeValues.findIndex(attribute => attribute.attribute.name.toLowerCase().includes("hide"))
+        const hiddenAttributeIndex = dataElementObject?.attributeValues.findIndex(attribute => attribute.attribute.name.toLowerCase().includes("hide"))
         if (hiddenAttributeIndex === -1)
             return false
         else {
