@@ -31,7 +31,6 @@ export const ViewDocuments = () => {
         data
     } = useViewDocuments()
 
-
     return (
         <div className={styles.parentContainer}>
             <SideNav title="Categories" options={documentCategories}/>

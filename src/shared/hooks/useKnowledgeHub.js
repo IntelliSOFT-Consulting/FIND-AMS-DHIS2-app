@@ -1,15 +1,16 @@
-
-
 import {useDataEngine} from "@dhis2/app-runtime";
 import {useDispatch} from "react-redux";
-import { setKnowledgeHub} from "../redux/actions";
-import {formatStages, getArrayOfDataElements} from "../helpers/formatData";
+import {setKnowledgeHub} from "../redux/actions";
+import {formatStages} from "../helpers/formatData";
 import {notification} from "antd";
 
 
 export const useKnowledgeHub = () => {
     const engine = useDataEngine()
     const dispatch = useDispatch()
+
+    const getKnowledgeHubDataElements = ({sections}) => sections.flatMap(section => section.dataElements)
+
 
     const getKnowledgeForm = async () => {
         try {
@@ -30,7 +31,6 @@ export const useKnowledgeHub = () => {
             })
             const program = programs?.programs[0];
 
-
             const stages = formatStages(program)
 
             dispatch(
@@ -38,7 +38,7 @@ export const useKnowledgeHub = () => {
                     program: program?.id,
                     stages,
                     trackedEntityType: program?.trackedEntityType,
-                    dataElements: getArrayOfDataElements(program?.programStages[0]?.programStageSections)
+                    dataElements: getKnowledgeHubDataElements({sections: program?.programStages[0]?.programStageSections})
                 })
             )
 

@@ -14,7 +14,12 @@ const query = {
         resource: 'me',
         params: {
             fields: [
-                "all","organisationUnits[id]","userGroups[id]","userCredentials[:all,!user,userRoles[id]",
+                "all",
+                "firstName",
+                "surname",
+                "organisationUnits[id]",
+                "userGroups[id]",
+                "userCredentials[:all,!user,userRoles[id]",
             ]
         }
     },

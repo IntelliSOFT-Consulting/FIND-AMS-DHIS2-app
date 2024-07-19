@@ -3,11 +3,11 @@ import {Layout, Menu} from "antd";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import routes from "../../routes";
 import {useGetOrgUnit} from "../hooks/useGetOrgUnit";
-import {useUser} from "../hooks/useUser";
-import {useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {sidebarItems} from "../assets/navLinks";
 import {sidebarStyles} from "../styles/sidebarStyles";
 import {usePermissions} from "../hooks/usePermissions";
+import {setUser} from "../redux/actions";
 
 const {Content, Sider} = Layout;
 
@@ -16,9 +16,7 @@ const AMSLayout = ({user}) => {
 
     const {getOrgUnit} = useGetOrgUnit()
 
-    const {getUser} = useUser()
-
-    const {program} = useSelector(state => state.crr)
+    const dispatch = useDispatch()
 
     const {exportAllowedLinks, allowedLinks, exportAllowedRoutes, allowedRoutes} = usePermissions()
 
@@ -38,12 +36,10 @@ const AMSLayout = ({user}) => {
         getOrgUnit()
     }, [])
 
-    useEffect(() => {
-        if (program) getUser()
-    }, [program])
 
     useEffect(() => {
         if (user){
+            dispatch(setUser(user))
             exportAllowedLinks({links: sidebarItems, user})
             exportAllowedRoutes({routes, user})
         }
@@ -54,7 +50,7 @@ const AMSLayout = ({user}) => {
     return (
         <Layout>
             <Sider breakpoint="lg" collapsedWidth="0">
-                <Menu onClick={onClick} defaultSelectedKeys={["/crr"]} defaultOpenKeys={["/crr"]} mode="inline"
+                <Menu onClick={onClick} defaultSelectedKeys={[location.pathname]} defaultOpenKeys={[location.pathname]} mode="inline"
                       items={allowedLinks}/>
             </Sider>
 
