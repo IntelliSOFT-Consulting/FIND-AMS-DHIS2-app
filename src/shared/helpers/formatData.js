@@ -46,10 +46,10 @@ export const formatChartData = ({dataElement, dataValues}) => {
 export const getArrayOfDataElements = (programSections) => {
     let dataElements = []
 
-    for (let i =0; i < programSections?.length; i++) {
+    for (let i =0; i < programSections.length; i++) {
         for(let j=0; j < programSections[i].programStageSections?.length; j++){
             for (let k =0; k < programSections[i].programStageSections[j].dataElements?.length; k++ ){
-                dataElements.push(programSections[i].programStageSections[j]?.dataElements[k])
+                dataElements.push(programSections[i].programStageSections[j].dataElements[k])
             }
         }
     }

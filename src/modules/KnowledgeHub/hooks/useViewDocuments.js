@@ -32,7 +32,6 @@ export const useViewDocuments = () => {
     const [documentCategories, setDocumentCategories] = useState([])
 
     const {dataElements} = useSelector(state => state.knowledgeHub)
-
     const navigate = useNavigate()
 
     const engine = useDataEngine()
